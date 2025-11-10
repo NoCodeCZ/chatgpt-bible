@@ -1,0 +1,495 @@
+# Quality Gate Decision
+# Story 1.2: Set Up Directus Backend and Database Schema
+
+metadata:
+  story_id: "1.2"
+  story_title: "Set Up Directus Backend and Database Schema"
+  epic: "Epic 1 - Foundation & Prompt Display System"
+  reviewed_by: "Quinn (Test Architect)"
+  review_date: "2025-11-09"
+  review_duration: "90 minutes"
+  review_type: "Comprehensive with Schema Analysis"
+
+decision:
+  status: "CONCERNS"
+  approval: conditional
+  quality_score: 6.0  # Out of 10
+  confidence: "high"
+
+summary:
+  description: |
+    Story 1.2 successfully delivers a functional Directus backend with operational
+    REST API, proper RBAC configuration, and working data collections. The Directus
+    instance is stable and accessible.
+
+    However, CRITICAL schema deviations from the original specification were
+    discovered. The implementation diverged to support hierarchical categories
+    (subcategories), prompt type taxonomy, and Thai/English bilingual content.
+    While these enhancements appear valuable for the business need, they create
+    significant technical debt due to undocumented changes and foreign key type
+    mismatches that prevent proper M2M relationship functionality.
+
+  strengths:
+    - "Directus instance deployed successfully with MCP integration"
+    - "RBAC configured correctly (public read-only for published prompts)"
+    - "Bilingual support (Thai/English) addresses real market need"
+    - "Hierarchical category structure enables better content organization"
+    - "Prompt type taxonomy improves discoverability"
+    - "Implementation demonstrates strong understanding of business domain"
+
+  concerns:
+    priority:
+      - code: "SCHEMA-001"
+        severity: "critical"
+        title: "Schema Specification Mismatch"
+        description: "Implemented schema significantly differs from story specification - UUID vs INTEGER primary keys, added subcategories and prompt_types collections"
+        location: "app-planning/stories/story-1.2-setup-directus-backend.md:124-202"
+        impact: "critical"
+        recommendation: "Choose Option A (update story) or Option B (revert implementation) - see gate decision"
+
+      - code: "SCHEMA-002"
+        severity: "critical"
+        title: "Junction Table Foreign Key Type Mismatch"
+        description: "Junction tables defined with UUID foreign keys but prompts/job_roles use INTEGER primary keys, causing relationship failures"
+        location: "Directus schema: prompt_categories, prompt_job_roles collections"
+        impact: "critical"
+        recommendation: "Fix foreign key types to match actual primary key types"
+
+      - code: "DOC-001"
+        severity: "critical"
+        title: "Undocumented Schema Changes"
+        description: "New collections (subcategories, prompt_types) and bilingual fields not documented in acceptance criteria"
+        location: "app-planning/stories/story-1.2-setup-directus-backend.md:AC4"
+        impact: "high"
+        recommendation: "Update story ACs or create schema addendum document"
+
+    medium:
+      - code: "PERF-001"
+        severity: "medium"
+        title: "Database Indexes Not Verified"
+        description: "AC5 requires specific performance indexes but no evidence they were created"
+        location: "app-planning/stories/story-1.2-setup-directus-backend.md:213-229"
+        impact: "medium"
+        recommendation: "Verify indexes exist or create per AC5 specification"
+
+      - code: "SCOPE-001"
+        severity: "medium"
+        title: "Feature Scope Expansion"
+        description: "Hierarchical categories and bilingual support not in original Epic 1 requirements"
+        location: "Implementation: subcategories, prompt_types collections, *_th/*_en fields"
+        impact: "medium"
+        recommendation: "Consider formalizing as Epic 1.5 or document as discovered requirements"
+
+requirements_traceability:
+  total_acceptance_criteria: 8
+  verified: 5
+  partial: 2
+  failed: 1
+  testable: 8
+
+  acceptance_criteria:
+    - id: "AC1"
+      title: "Directus 10+ Instance Deployed and Accessible"
+      testability: "excellent"
+      verification_method: "manual_browser"
+      risk_level: "low"
+      status: "complete"
+      notes: "Instance accessible at https://directus-ywk84gg0gsg0swcck0kscwcc.app.thit.io"
+
+    - id: "AC2"
+      title: "PostgreSQL 14+ Database Connected and Operational"
+      testability: "excellent"
+      verification_method: "automated_cli"
+      risk_level: "low"
+      status: "complete"
+      notes: "Database operational, collections created successfully"
+
+    - id: "AC3"
+      title: "MCP Server Connected to Directus Instance"
+      testability: "excellent"
+      verification_method: "mcp_query"
+      risk_level: "low"
+      status: "complete"
+      notes: "MCP configuration exists in .mcp.json, connection validated"
+
+    - id: "AC4"
+      title: "Core Collections Created with Correct Schema"
+      testability: "excellent"
+      verification_method: "api_inspection"
+      risk_level: "critical"
+      status: "failed"
+      notes: |
+        CRITICAL ISSUES:
+        - job_roles: INTEGER primary key (spec says UUID)
+        - prompts: INTEGER primary key (spec says UUID)
+        - Added subcategories collection (not in spec)
+        - Added prompt_types collection (not in spec)
+        - Added bilingual fields across all collections (not in spec)
+        - Junction table foreign key types mismatch
+
+    - id: "AC5"
+      title: "Database Indexes Created for Performance"
+      testability: "partial"
+      verification_method: "sql_query"
+      risk_level: "medium"
+      status: "not_verified"
+      notes: "No evidence indexes were created - requires database access to verify"
+
+    - id: "AC6"
+      title: "Directus REST API Accessible and Functional"
+      testability: "excellent"
+      verification_method: "automated_curl"
+      risk_level: "low"
+      status: "complete"
+      notes: "API responding successfully to health checks and data queries"
+
+    - id: "AC7"
+      title: "Admin Account and Access Tokens Configured"
+      testability: "excellent"
+      verification_method: "automated_curl"
+      risk_level: "low"
+      status: "complete"
+      notes: "Admin token working for authenticated requests"
+
+    - id: "AC8"
+      title: "Test Data Created to Validate Schema"
+      testability: "excellent"
+      verification_method: "api_query"
+      risk_level: "medium"
+      status: "partial"
+      notes: "Test data created but reflects hierarchical structure, not flat structure from spec"
+
+nfr_assessment:
+  security:
+    score: "good"
+    strengths:
+      - "RBAC properly configured (Public = read-only published prompts)"
+      - "Admin token secured and not committed to codebase"
+      - "HTTPS enforced via Directus Cloud"
+      - "Public role restricted appropriately"
+    concerns:
+      - "Admin token visible in story file (should be redacted in final version)"
+
+  performance:
+    score: "partial"
+    strengths:
+      - "Directus handles pagination and filtering efficiently"
+      - "Relational queries optimized by Directus"
+    concerns:
+      - "AC5 indexes not verified - could impact query performance at scale"
+      - "No load testing performed"
+      - "No query performance benchmarks established"
+
+  accessibility:
+    score: "not_applicable"
+    notes: "Backend API - accessibility applies to frontend consumers"
+
+  reliability:
+    score: "good"
+    strengths:
+      - "Directus instance stable on managed cloud"
+      - "Database connections healthy"
+      - "API endpoints responding consistently"
+      - "RBAC prevents unauthorized access"
+    concerns:
+      - "Junction table relationships have known issues (type mismatch)"
+      - "M2M relationship functionality impaired"
+
+  maintainability:
+    score: "concerns"
+    strengths:
+      - "Directus provides admin UI for content management"
+      - "REST API well-documented by Directus"
+    concerns:
+      - "Undocumented schema changes complicate maintenance"
+      - "No migration path documented if reverting to original spec"
+      - "Schema drift between specification and implementation"
+      - "Foreign key type inconsistencies create technical debt"
+
+  testability:
+    score: "partial"
+    strengths:
+      - "Manual API testing successful"
+      - "Directus Admin UI enables easy testing"
+    concerns:
+      - "Schema mismatch complicates automated testing"
+      - "No seed data script for reproducible testing"
+      - "No test fixtures for hierarchical bilingual data"
+
+test_coverage:
+  manual_tests: 9
+  automated_tests: 0
+
+  provided_tests:
+    - "Admin UI access verification"
+    - "Collection structure inspection"
+    - "Content creation testing"
+    - "Relationship linking via UI"
+    - "API health checks (curl)"
+    - "Authenticated API requests"
+    - "Relationship query testing"
+    - "Public access validation"
+    - "Public access restriction verification"
+
+  missing_critical_tests:
+    priority:
+      - "End-to-end M2M relationship validation (currently failing due to type mismatch)"
+      - "Foreign key constraint testing"
+      - "Data integrity validation (unique constraints, required fields)"
+    medium:
+      - "Performance testing (query response times)"
+      - "Index effectiveness verification"
+      - "Concurrent user testing"
+    low:
+      - "Bulk data import testing"
+      - "API rate limiting validation"
+
+risk_assessment:
+  risks:
+    - id: "RISK-001"
+      description: "Schema specification mismatch blocks frontend integration"
+      probability: "high"
+      impact: "critical"
+      severity: "critical"
+      mitigation: "Choose Option A (update story) or Option B (revert implementation)"
+
+    - id: "RISK-002"
+      description: "Junction table foreign key type mismatch prevents M2M relationships"
+      probability: "high"
+      impact: "critical"
+      severity: "critical"
+      mitigation: "Fix foreign key types immediately before Story 1.3"
+
+    - id: "RISK-003"
+      description: "Frontend TypeScript types mismatch with actual schema"
+      probability: "high"
+      impact: "high"
+      severity: "critical"
+      mitigation: "Provide updated schema documentation before Story 1.3"
+
+    - id: "RISK-004"
+      description: "Undocumented bilingual feature increases frontend complexity"
+      probability: "high"
+      impact: "medium"
+      severity: "high"
+      mitigation: "Document bilingual requirements, update UI designs"
+
+    - id: "RISK-005"
+      description: "Missing database indexes cause performance issues at scale"
+      probability: "medium"
+      impact: "medium"
+      severity: "medium"
+      mitigation: "Verify/create indexes before production deployment"
+
+    - id: "RISK-006"
+      description: "Hierarchical structure not in UI designs"
+      probability: "high"
+      impact: "medium"
+      severity: "medium"
+      mitigation: "Review UI mockups, update for subcategory navigation"
+
+technical_debt:
+  immediate:
+    - priority: "critical"
+      code: "DEBT-001"
+      title: "Foreign key type resolution required"
+      impact: "Blocks M2M relationship functionality, prevents linking prompts to categories/roles"
+      effort: "low"
+      recommendation: "Fix junction table foreign key types to match INTEGER primary keys - 1-2 hours"
+
+    - priority: "critical"
+      code: "DEBT-002"
+      title: "Schema documentation update required"
+      impact: "Blocks frontend development, unclear API contract"
+      effort: "medium"
+      recommendation: "Update story ACs to reflect actual implementation OR create schema addendum - 2-3 hours"
+
+    - priority: "high"
+      code: "DEBT-003"
+      title: "Decision on schema specification approach"
+      impact: "Entire Epic 1 timeline affected by uncertainty"
+      effort: "low"
+      recommendation: "Product Owner decision required: Option A (keep enhancements) or Option B (revert to spec)"
+
+  medium_term:
+    - priority: "medium"
+      code: "DEBT-004"
+      title: "Database index verification"
+      impact: "Performance degradation at scale"
+      effort: "low"
+      recommendation: "Verify AC5 indexes exist or create them - 30 minutes"
+
+    - priority: "medium"
+      code: "DEBT-005"
+      title: "API contract definition"
+      impact: "Frontend integration complexity increases"
+      effort: "medium"
+      recommendation: "Define TypeScript types matching actual schema, create OpenAPI spec - 2-3 hours"
+
+  future:
+    - priority: "low"
+      code: "DEBT-006"
+      title: "Automated testing infrastructure"
+      impact: "Manual testing burden increases with scale"
+      effort: "high"
+      recommendation: "Create seed data scripts, integration tests - defer to Epic 2"
+
+    - priority: "low"
+      code: "DEBT-007"
+      title: "ERD diagram creation"
+      impact: "Architectural understanding requires code inspection"
+      effort: "medium"
+      recommendation: "Create visual schema diagram showing hierarchical structure"
+
+recommendations:
+  immediate:
+    - action: "Resolve schema specification conflict"
+      priority: "critical_blocker"
+      before: "Story 1.3 (frontend integration)"
+      details: |
+        OPTION A: Update Story to Match Implementation (RECOMMENDED)
+        - Update AC4 to document actual schema (hierarchical, bilingual)
+        - Change primary key specs from UUID to INTEGER for job_roles, prompts
+        - Add ACs for subcategories and prompt_types collections
+        - Document bilingual field requirements (name_th/en, description_th/en)
+        - Justification: Implementation better matches real business need (Thai market)
+
+        OPTION B: Correct Implementation to Match Original Story
+        - Convert job_roles and prompts to UUID primary keys
+        - Remove subcategories and prompt_types collections
+        - Remove bilingual fields
+        - Revert to flat, English-only structure
+        - Justification: Maintain original MVP scope, avoid scope creep
+
+    - action: "Fix junction table foreign key types"
+      priority: "critical_blocker"
+      before: "Story 1.3"
+      details: |
+        Current state: Junction tables have UUID foreign keys pointing to INTEGER primary keys
+        Required: Align foreign key types with actual primary key types
+        Steps:
+          1. Delete/recreate subcategory_id field on prompts (currently UUID, should be INTEGER)
+          2. Verify prompt_categories foreign keys match primary key types
+          3. Verify prompt_job_roles foreign keys match primary key types
+          4. Test M2M relationships end-to-end via API
+        Estimated effort: 1-2 hours
+
+  medium_term:
+    - action: "Verify/create database indexes per AC5"
+      priority: "recommended"
+      before: "Epic 1 completion"
+      details: |
+        Required indexes:
+        - prompts.status (for filtering published prompts)
+        - prompts.date_created (for sorting by newest)
+        - categories.sort (for taxonomy ordering)
+        - job_roles.sort (for taxonomy ordering)
+        Verification: Query PostgreSQL \d tables or use Directus SQL console
+
+    - action: "Update project documentation"
+      priority: "recommended"
+      before: "Story 1.3"
+      details: |
+        - Update architecture.md with actual schema
+        - Create ERD diagram showing hierarchical structure
+        - Document bilingual field patterns (Thai/English naming convention)
+        - Update PRD to reflect discovered requirements
+
+  future:
+    - action: "Formalize bilingual support requirements"
+      priority: "planned"
+      before: "Epic 2"
+      details: "Consider creating Epic 1.5 for Thai language support or document as enhancement"
+
+    - action: "Create seed data migration script"
+      priority: "planned"
+      before: "Production deployment"
+      details: "Script to populate Directus with initial prompt library data"
+
+approval:
+  can_proceed: conditional
+  conditions:
+    - "MUST resolve schema specification conflict (Option A or B) within 2 working days"
+    - "MUST fix junction table foreign key types before Story 1.3"
+    - "MUST provide updated schema documentation to frontend team"
+    - "SHOULD verify database indexes exist or create them"
+    - "SHOULD document technical debt items in project tracking"
+
+  blocking_conditions:
+    - "Story 1.3 BLOCKED until schema specification resolved"
+    - "M2M relationship functionality BLOCKED until foreign keys fixed"
+    - "Cannot define frontend TypeScript types until schema finalized"
+
+  rationale: |
+    The implementation successfully delivers a functional backend infrastructure and
+    unblocks API-based development. The Directus instance is stable and properly
+    configured with RBAC.
+
+    However, the significant schema deviations create critical blockers for frontend
+    integration (Story 1.3). The frontend cannot proceed without clarity on whether
+    to expect UUID or INTEGER primary keys, flat or hierarchical categories, and
+    English-only or bilingual content.
+
+    The enhanced schema (hierarchical + bilingual) appears to better match the actual
+    business need (Thai prompt library with organized categories). RECOMMENDATION is
+    to formally accept these enhancements (Option A), update the story documentation,
+    and fix the technical issues (foreign key types).
+
+    This is pragmatic over purist - the implementation demonstrates good product
+    understanding, but requires formal acceptance and documentation to unblock
+    downstream work.
+
+sign_off_conditions:
+  required:
+    - status: "incomplete"
+      condition: "Schema specification conflict resolved (Option A or B selected)"
+      owner: "Product Owner + Tech Lead"
+
+    - status: "incomplete"
+      condition: "Foreign key types fixed and tested"
+      owner: "Backend Developer (James)"
+
+    - status: "incomplete"
+      condition: "Story acceptance criteria updated to match reality"
+      owner: "Scrum Master (Bob)"
+
+    - status: "incomplete"
+      condition: "Technical debt items documented in backlog"
+      owner: "Scrum Master (Bob)"
+
+next_steps:
+  - "Product Owner decision required: Accept enhanced schema (Option A) or revert to original (Option B)"
+  - "If Option A: Update story AC4 with actual schema specification"
+  - "Fix junction table foreign key types to align with INTEGER primary keys"
+  - "Provide schema documentation to frontend team before Story 1.3"
+  - "Verify database indexes exist or create per AC5"
+  - "Update architecture.md and create ERD diagram"
+  - "Consider formalizing Thai language support as separate epic or story"
+
+impact_assessment:
+  story_1_3:
+    status: "blocked"
+    reason: "Frontend TypeScript types cannot be defined without finalized schema"
+    required_action: "Resolve schema specification conflict, provide updated schema docs"
+
+  story_1_5:
+    status: "at_risk"
+    reason: "UI designs may not account for hierarchical categories or bilingual content"
+    required_action: "Review UI mockups against new schema, plan for subcategory navigation"
+
+  epic_1_timeline:
+    status: "at_risk"
+    reason: "Schema conflict resolution may delay Story 1.3 start"
+    impact: "Potential 1-2 day delay if Option B (revert) chosen"
+
+  mvp_scope:
+    status: "expanded"
+    reason: "Thai language support and hierarchical structure not in original Epic 1"
+    recommendation: "Formalize as requirements or defer to Epic 2"
+
+attachments:
+  story_file: "app-planning/stories/story-1.2-setup-directus-backend.md"
+  qa_results_section: "Lines 1004-1257"
+  directus_instance: "https://directus-ywk84gg0gsg0swcck0kscwcc.app.thit.io"
+  mcp_config: ".mcp.json"
+  architecture_doc: "Directus-website/docs/architecture.md"
