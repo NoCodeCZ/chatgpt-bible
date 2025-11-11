@@ -1,0 +1,883 @@
+# Directus Schema for Page Management System
+# Apply with: npx directus schema apply --yes < directus-page-schema.yaml
+
+version: 1
+directus: 10.x
+
+collections:
+  # ========================================
+  # PAGES COLLECTION
+  # ========================================
+  - collection: pages
+    meta:
+      icon: article
+      note: Website pages (landing, about, pricing, etc.)
+      display_template: "{{title}}"
+      archive_field: status
+      archive_value: archived
+      unarchive_value: draft
+      sort_field: sort
+      singleton: false
+      translations: null
+    schema:
+      name: pages
+
+  # ========================================
+  # PAGE_BLOCKS JUNCTION COLLECTION
+  # ========================================
+  - collection: page_blocks
+    meta:
+      icon: view_module
+      note: Junction table for page-to-blocks relationships
+      hidden: true
+      singleton: false
+    schema:
+      name: page_blocks
+
+  # ========================================
+  # BLOCK COLLECTIONS
+  # ========================================
+  - collection: block_hero
+    meta:
+      icon: wallpaper
+      note: Hero/banner sections
+      display_template: "{{heading}}"
+    schema:
+      name: block_hero
+
+  - collection: block_cta
+    meta:
+      icon: ads_click
+      note: Call-to-action blocks
+      display_template: "{{heading}}"
+    schema:
+      name: block_cta
+
+  - collection: block_features
+    meta:
+      icon: star
+      note: Feature list blocks
+      display_template: "{{heading}}"
+    schema:
+      name: block_features
+
+  - collection: block_richtext
+    meta:
+      icon: article
+      note: Rich text content blocks
+    schema:
+      name: block_richtext
+
+  - collection: block_form
+    meta:
+      icon: contact_mail
+      note: Contact/newsletter forms
+      display_template: "{{heading}}"
+    schema:
+      name: block_form
+
+  - collection: block_testimonials
+    meta:
+      icon: format_quote
+      note: Customer testimonials
+      display_template: "{{heading}}"
+    schema:
+      name: block_testimonials
+
+fields:
+  # ========================================
+  # PAGES FIELDS
+  # ========================================
+  - collection: pages
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+      has_auto_increment: false
+
+  - collection: pages
+    field: status
+    type: string
+    meta:
+      interface: select-dropdown
+      required: true
+      note: Publication status
+      width: half
+      options:
+        choices:
+          - text: Draft
+            value: draft
+          - text: Published
+            value: published
+          - text: Archived
+            value: archived
+    schema:
+      default_value: draft
+      max_length: 20
+      is_nullable: false
+
+  - collection: pages
+    field: title
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Page title (internal use)
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: false
+
+  - collection: pages
+    field: permalink
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: URL path (e.g., "about-us", "pricing")
+      width: half
+    schema:
+      max_length: 255
+      is_nullable: false
+      is_unique: true
+
+  - collection: pages
+    field: seo_title
+    type: string
+    meta:
+      interface: input
+      note: SEO title override (60 chars recommended)
+      width: half
+      group: seo
+    schema:
+      max_length: 255
+      is_nullable: true
+
+  - collection: pages
+    field: seo_description
+    type: text
+    meta:
+      interface: textarea
+      note: Meta description (160 chars recommended)
+      width: full
+      group: seo
+    schema:
+      is_nullable: true
+
+  - collection: pages
+    field: seo_image
+    type: uuid
+    meta:
+      interface: file-image
+      note: Social sharing image (1200x630px)
+      width: half
+      group: seo
+      special:
+        - file
+    schema:
+      is_nullable: true
+      foreign_key_table: directus_files
+      foreign_key_column: id
+
+  - collection: pages
+    field: seo_canonical_url
+    type: string
+    meta:
+      interface: input
+      note: Canonical URL for SEO
+      width: half
+      group: seo
+    schema:
+      max_length: 500
+      is_nullable: true
+
+  - collection: pages
+    field: sort
+    type: integer
+    meta:
+      interface: input
+      note: Manual ordering
+      width: half
+      hidden: true
+    schema:
+      is_nullable: true
+
+  - collection: pages
+    field: date_created
+    type: timestamp
+    meta:
+      interface: datetime
+      readonly: true
+      hidden: true
+      special:
+        - date-created
+    schema:
+      is_nullable: true
+
+  - collection: pages
+    field: date_updated
+    type: timestamp
+    meta:
+      interface: datetime
+      readonly: true
+      hidden: true
+      special:
+        - date-updated
+    schema:
+      is_nullable: true
+
+  - collection: pages
+    field: user_created
+    type: uuid
+    meta:
+      interface: select-dropdown-m2o
+      readonly: true
+      hidden: true
+      special:
+        - user-created
+    schema:
+      is_nullable: true
+      foreign_key_table: directus_users
+      foreign_key_column: id
+
+  - collection: pages
+    field: user_updated
+    type: uuid
+    meta:
+      interface: select-dropdown-m2o
+      readonly: true
+      hidden: true
+      special:
+        - user-updated
+    schema:
+      is_nullable: true
+      foreign_key_table: directus_users
+      foreign_key_column: id
+
+  # M2M Relationship to blocks
+  - collection: pages
+    field: blocks
+    type: alias
+    meta:
+      interface: list-m2m
+      special:
+        - m2m
+      options:
+        enableCreate: true
+        enableSelect: true
+
+  # ========================================
+  # PAGE_BLOCKS FIELDS (Junction)
+  # ========================================
+  - collection: page_blocks
+    field: id
+    type: integer
+    meta:
+      interface: input
+      hidden: true
+      readonly: true
+    schema:
+      is_primary_key: true
+      is_nullable: false
+      has_auto_increment: true
+
+  - collection: page_blocks
+    field: pages_id
+    type: uuid
+    meta:
+      interface: select-dropdown-m2o
+      required: true
+      hidden: true
+      special:
+        - m2o
+    schema:
+      is_nullable: false
+      foreign_key_table: pages
+      foreign_key_column: id
+
+  - collection: page_blocks
+    field: collection
+    type: string
+    meta:
+      interface: select-dropdown
+      required: true
+      note: Block type
+      options:
+        choices:
+          - text: Hero
+            value: block_hero
+          - text: Call to Action
+            value: block_cta
+          - text: Features
+            value: block_features
+          - text: Rich Text
+            value: block_richtext
+          - text: Form
+            value: block_form
+          - text: Testimonials
+            value: block_testimonials
+    schema:
+      max_length: 50
+      is_nullable: false
+
+  - collection: page_blocks
+    field: item
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Block item ID
+    schema:
+      max_length: 255
+      is_nullable: false
+
+  - collection: page_blocks
+    field: sort
+    type: integer
+    meta:
+      interface: input
+      note: Display order
+    schema:
+      is_nullable: true
+
+  - collection: page_blocks
+    field: hide_block
+    type: boolean
+    meta:
+      interface: boolean
+      note: Hide this block
+      width: half
+    schema:
+      default_value: false
+      is_nullable: false
+
+  # ========================================
+  # BLOCK_HERO FIELDS
+  # ========================================
+  - collection: block_hero
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_hero
+    field: heading
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Main headline
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: false
+
+  - collection: block_hero
+    field: subheading
+    type: text
+    meta:
+      interface: textarea
+      note: Supporting text
+      width: full
+    schema:
+      is_nullable: true
+
+  - collection: block_hero
+    field: cta_text
+    type: string
+    meta:
+      interface: input
+      note: Button text
+      width: half
+    schema:
+      max_length: 100
+      is_nullable: true
+
+  - collection: block_hero
+    field: cta_link
+    type: string
+    meta:
+      interface: input
+      note: Button URL
+      width: half
+    schema:
+      max_length: 500
+      is_nullable: true
+
+  - collection: block_hero
+    field: background_image
+    type: uuid
+    meta:
+      interface: file-image
+      note: Background image
+      width: half
+      special:
+        - file
+    schema:
+      is_nullable: true
+      foreign_key_table: directus_files
+      foreign_key_column: id
+
+  - collection: block_hero
+    field: text_align
+    type: string
+    meta:
+      interface: select-dropdown
+      note: Text alignment
+      width: half
+      options:
+        choices:
+          - text: Left
+            value: left
+          - text: Center
+            value: center
+          - text: Right
+            value: right
+    schema:
+      default_value: center
+      max_length: 20
+      is_nullable: true
+
+  - collection: block_hero
+    field: theme
+    type: string
+    meta:
+      interface: select-dropdown
+      note: Color theme
+      width: half
+      options:
+        choices:
+          - text: Light
+            value: light
+          - text: Dark
+            value: dark
+    schema:
+      default_value: light
+      max_length: 20
+      is_nullable: true
+
+  # ========================================
+  # BLOCK_CTA FIELDS
+  # ========================================
+  - collection: block_cta
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_cta
+    field: heading
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: CTA headline
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: false
+
+  - collection: block_cta
+    field: description
+    type: text
+    meta:
+      interface: textarea
+      note: Supporting description
+      width: full
+    schema:
+      is_nullable: true
+
+  - collection: block_cta
+    field: button_text
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Button label
+      width: half
+    schema:
+      max_length: 100
+      is_nullable: false
+
+  - collection: block_cta
+    field: button_link
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Target URL
+      width: half
+    schema:
+      max_length: 500
+      is_nullable: false
+
+  - collection: block_cta
+    field: button_style
+    type: string
+    meta:
+      interface: select-dropdown
+      note: Button style
+      width: half
+      options:
+        choices:
+          - text: Primary
+            value: primary
+          - text: Secondary
+            value: secondary
+          - text: Outline
+            value: outline
+    schema:
+      default_value: primary
+      max_length: 20
+      is_nullable: true
+
+  - collection: block_cta
+    field: background_color
+    type: string
+    meta:
+      interface: select-color
+      note: Background color
+      width: half
+    schema:
+      max_length: 20
+      is_nullable: true
+
+  # ========================================
+  # BLOCK_FEATURES FIELDS
+  # ========================================
+  - collection: block_features
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_features
+    field: heading
+    type: string
+    meta:
+      interface: input
+      note: Section heading
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: true
+
+  - collection: block_features
+    field: description
+    type: text
+    meta:
+      interface: textarea
+      note: Section description
+      width: full
+    schema:
+      is_nullable: true
+
+  - collection: block_features
+    field: features
+    type: json
+    meta:
+      interface: list
+      required: true
+      note: Array of feature objects
+      special:
+        - cast-json
+      options:
+        template: "{{icon}} {{title}}"
+        fields:
+          - field: icon
+            name: Icon
+            type: string
+            meta:
+              interface: select-icon
+              width: half
+          - field: title
+            name: Title
+            type: string
+            meta:
+              interface: input
+              width: half
+          - field: description
+            name: Description
+            type: text
+            meta:
+              interface: textarea
+              width: full
+    schema:
+      is_nullable: false
+
+  # ========================================
+  # BLOCK_RICHTEXT FIELDS
+  # ========================================
+  - collection: block_richtext
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_richtext
+    field: content
+    type: text
+    meta:
+      interface: input-rich-text-html
+      required: true
+      note: HTML content
+      width: full
+    schema:
+      is_nullable: false
+
+  # ========================================
+  # BLOCK_FORM FIELDS
+  # ========================================
+  - collection: block_form
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_form
+    field: heading
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Form title
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: false
+
+  - collection: block_form
+    field: description
+    type: text
+    meta:
+      interface: textarea
+      note: Form description
+      width: full
+    schema:
+      is_nullable: true
+
+  - collection: block_form
+    field: form_fields
+    type: json
+    meta:
+      interface: list
+      required: true
+      note: Field definitions
+      special:
+        - cast-json
+      options:
+        template: "{{type}}: {{name}}"
+        fields:
+          - field: type
+            name: Field Type
+            type: string
+            meta:
+              interface: select-dropdown
+              width: half
+              options:
+                choices:
+                  - text: Text
+                    value: text
+                  - text: Email
+                    value: email
+                  - text: Textarea
+                    value: textarea
+                  - text: Checkbox
+                    value: checkbox
+          - field: name
+            name: Field Name
+            type: string
+            meta:
+              interface: input
+              width: half
+          - field: label
+            name: Label
+            type: string
+            meta:
+              interface: input
+              width: half
+          - field: required
+            name: Required
+            type: boolean
+            meta:
+              interface: boolean
+              width: half
+          - field: placeholder
+            name: Placeholder
+            type: string
+            meta:
+              interface: input
+              width: full
+    schema:
+      is_nullable: false
+
+  - collection: block_form
+    field: submit_text
+    type: string
+    meta:
+      interface: input
+      required: true
+      note: Submit button text
+      width: half
+    schema:
+      max_length: 100
+      is_nullable: false
+
+  - collection: block_form
+    field: success_message
+    type: text
+    meta:
+      interface: textarea
+      required: true
+      note: Post-submit message
+      width: full
+    schema:
+      is_nullable: false
+
+  - collection: block_form
+    field: webhook_url
+    type: string
+    meta:
+      interface: input
+      note: Form submission endpoint
+      width: full
+    schema:
+      max_length: 500
+      is_nullable: true
+
+  # ========================================
+  # BLOCK_TESTIMONIALS FIELDS
+  # ========================================
+  - collection: block_testimonials
+    field: id
+    type: uuid
+    meta:
+      interface: input-hash
+      hidden: true
+      readonly: true
+      special:
+        - uuid
+    schema:
+      is_primary_key: true
+      is_nullable: false
+
+  - collection: block_testimonials
+    field: heading
+    type: string
+    meta:
+      interface: input
+      note: Section heading
+      width: full
+    schema:
+      max_length: 255
+      is_nullable: true
+
+  - collection: block_testimonials
+    field: testimonials
+    type: json
+    meta:
+      interface: list
+      required: true
+      note: Array of testimonials
+      special:
+        - cast-json
+      options:
+        template: "{{author}} - {{role}}"
+        fields:
+          - field: quote
+            name: Quote
+            type: text
+            meta:
+              interface: textarea
+              width: full
+          - field: author
+            name: Author
+            type: string
+            meta:
+              interface: input
+              width: half
+          - field: role
+            name: Role/Title
+            type: string
+            meta:
+              interface: input
+              width: half
+          - field: avatar_url
+            name: Avatar URL
+            type: string
+            meta:
+              interface: input
+              width: full
+    schema:
+      is_nullable: false
+
+relations:
+  # M2M relationship between pages and blocks
+  - collection: page_blocks
+    field: pages_id
+    related_collection: pages
+    meta:
+      many_collection: page_blocks
+      many_field: pages_id
+      one_collection: pages
+      one_field: blocks
+      junction_field: item
+
+  # File relations
+  - collection: pages
+    field: seo_image
+    related_collection: directus_files
+    meta:
+      many_collection: pages
+      many_field: seo_image
+      one_collection: directus_files
+
+  - collection: block_hero
+    field: background_image
+    related_collection: directus_files
+    meta:
+      many_collection: block_hero
+      many_field: background_image
+      one_collection: directus_files
