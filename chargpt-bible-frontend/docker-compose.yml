@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_DIRECTUS_URL=${NEXT_PUBLIC_DIRECTUS_URL}
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_DIRECTUS_URL=${NEXT_PUBLIC_DIRECTUS_URL}
+      # Internal URL for server-side requests (use Coolify service name)
+      # In Coolify, this would be something like http://directus:8055
+      - DIRECTUS_INTERNAL_URL=${DIRECTUS_INTERNAL_URL:-}
+      - DIRECTUS_TOKEN=${DIRECTUS_TOKEN:-}
+    restart: unless-stopped
+    # For local testing with a local Directus instance
+    # networks:
+    #   - directus-network
+
+# networks:
+#   directus-network:
+#     external: true
