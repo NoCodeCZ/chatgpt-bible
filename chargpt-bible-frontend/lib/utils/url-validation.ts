@@ -69,7 +69,7 @@ export function getSafeRedirectUrl(
   returnUrl: string | null | undefined,
   fallback: string = '/dashboard'
 ): string {
-  if (isValidInternalUrl(returnUrl)) {
+  if (returnUrl && isValidInternalUrl(returnUrl)) {
     return returnUrl;
   }
 
