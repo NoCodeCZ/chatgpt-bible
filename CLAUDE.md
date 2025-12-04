@@ -1,335 +1,332 @@
-# CLAUDE.md
+## 1. Core Principles
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+- **Type safety**: All app code in `app/`, `components/`, `lib/`, and `types/` is written in TypeScript. Prefer explicit types on exported functions, props, and public APIs.
+- **App Router first**: Use Next.js App Router patterns (`app/` structure, `generateMetadata`, `generateStaticParams`, `revalidate`, server vs client components) consistently.
+- **Separation of concerns**: 
+  - **Data fetching & Directus access** live in `lib/` and `scripts/`, not inside UI components.
+  - **Presentational components** (in `components/`) receive fully shaped props and do not call Directus directly.
+- **Environment configuration**: All Directus URLs and other environment values must come from `process.env` with early validation (see `lib/directus.ts`).
+- **Error handling**: Catch and log errors at service boundaries; UI surfaces friendly fallbacks (e.g. `notFound()` or skeleton components) rather than raw error messages.
+- **Accessibility & semantics**: Use semantic HTML tags (`main`, `section`, `footer`, `h1`–`h3`) and ARIA roles/labels where appropriate (as in `app/page.tsx`).
+- **Tailwind-first styling**: Use Tailwind utility classes for layout and design. Avoid inline styles except when strictly necessary.
+- **Consistency over cleverness**: Follow existing patterns in this repo (naming, folder structure, hook usage) even if they're slightly more verbose.
+- **Documentation in code**: Use short, focused comments and JSDoc-style docblocks for non-trivial functions, especially in `lib/` and `scripts/`.
+- **No silent failures**: Service functions must never fail silently; they either throw or log with clear context.
 
-## Project Overview
+## 2. Tech Stack
 
-CharGPT Bible is a subscription-based web application that provides curated, job-specific ChatGPT prompt templates for professionals. The platform addresses the problem of professionals struggling to craft effective prompts by offering a searchable library organized by role and task type.
+- **Runtime & Framework**
+  - **Frontend**: Next.js **16.0.1** (App Router) on React **19.2.0**.
+  - **Language**: TypeScript **^5** for app code; Node.js CommonJS for migration scripts.
+- **Styling**
+  - **Tailwind CSS** **^3.4.18** with PostCSS **^8.5.6** and Autoprefixer **^10.4.21**.
+- **CMS / Backend**
+  - **Directus** via `@directus/sdk` **^20.1.1** using REST transport.
+- **Linting & Formatting**
+  - **ESLint** **^9** with `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript` (`eslint.config.mjs`).
+  - Use Prettier-compatible formatting (2 spaces, single quotes) as seen in existing files.
+- **Package Manager & Scripts**
+  - **Package manager**: npm (see `package-lock.json`).
+  - **Core scripts** (from `package.json`):
+    - `npm run dev` → `next dev --webpack`
+    - `npm run build` → `next build --webpack`
+    - `npm start` → `next start`
+    - `npm run lint` → `eslint`
+    - `npm run migrate` → `node scripts/migrate-prompts.js`
+    - `npm run migrate:dry-run` → `node scripts/migrate-prompts.js --dry-run`
+    - `npm run validate` → `node scripts/validate-migration.js`
 
-**Target MVP Timeline:** 2 weeks
-**Business Model:** Freemium SaaS ($15-25/month subscription)
-**Key Value Prop:** Browse, copy, and use proven prompts - no prompt engineering required
+## 3. Architecture
 
-### Previous Context
-- A previous version (GPT Bible on Airtable) successfully validated market demand
-- Sales/marketing partner handles customer acquisition
-- Existing prompt content library ready for migration
+- **High-level structure**
+  - **`app/`**: Next.js App Router entrypoints, layouts, and route segments.
+    - `app/page.tsx`: marketing landing page.
+    - `app/prompts/*`: prompt listing & detail pages (data from Directus).
+    - `app/(pages)/[...slug]/page.tsx`: dynamic page builder integrated with Directus.
+  - **`components/`**:
+    - `components/blocks/*`: reusable page-builder blocks rendered by `BlockRenderer`.
+    - `components/prompts/*`: presentational components for the prompt catalog (cards, lists, filters).
+    - `components/layout/*`: site-level shared UI like `Navbar`.
+    - `components/ui/*`: low-level UI primitives like `DifficultyBadge`.
+  - **`lib/`**:
+    - `directus.ts`: Directus client initialization (URL validation, REST transport).
+    - `directus-pages.ts`: page builder service functions (`getPageByPermalink`, `getPageBlocks`, `getPageWithBlocks`, etc.).
+    - `lib/services/` & `lib/hooks/`: feature-specific services and hooks (follow existing filename patterns).
+  - **`types/`**: shared TypeScript types (`Prompt`, `Category`, `Navigation`, `blocks` types).
+  - **`scripts/`**: Node-based migration and data utilities targeting Directus.
 
-## Tech Stack
+- **Patterns**
+  - **Service pattern for Directus** (example from `lib/directus-pages.ts`):
 
-### Frontend
-- **Framework:** Next.js 14+ with App Router (TypeScript strict mode)
-- **Styling:** Tailwind CSS 3+ with default breakpoints (360px, 640px, 768px, 1024px, 1440px)
-- **State Management:** React Context for auth/session + SWR for server cache (5-min TTL)
-- **Data Fetching:** React Server Components (SSR) + SWR for client-side caching
-- **Forms:** React Hook Form + Zod validation
-- **Deployment:** Vercel (free tier, automatic HTTPS, serverless functions)
-
-### Backend
-- **BaaS:** Directus 10+ (managed headless CMS)
-- **Database:** PostgreSQL 14+ (managed by Directus Cloud or Railway)
-- **API:** Directus REST API (prefer over GraphQL for MVP simplicity)
-- **Authentication:** Directus built-in JWT auth (httpOnly cookies)
-- **Hosting:** Directus Cloud ($20/mo) OR Railway/Render ($7-10/mo Docker)
-
-### Payment Processing
-- **Provider:** Stripe
-- **Integration:** Stripe Checkout (hosted payment page), Customer Portal
-- **Webhook Handling:** Next.js API routes at `/api/webhooks/stripe`
-
-### Development Tooling
-- **MCP Integration:** Critical for rapid development
-  - Directus MCP: Real-time schema inspection, automated collection creation, live API testing
-  - Stripe MCP: Real-time webhook testing, Checkout Session validation, event simulation
-- **Testing:** Vitest for unit tests (minimal MVP scope), manual E2E testing
-- **CI/CD:** Vercel Git integration (automatic deploys on push to main)
-
-## Repository Structure
-
-**Architecture:** Polyrepo (separate repositories for MVP speed)
-
-### Main Repositories
-1. **`chargpt-bible-frontend`** (Next.js application)
-   - `app/` - Next.js App Router pages and API routes
-   - `components/` - Reusable React components
-   - `lib/` - Utilities, Directus client, Stripe client, auth helpers
-   - `types/` - TypeScript interfaces (mirror Directus schema)
-   - `public/` - Static assets
-
-2. **`directus-config`** (Directus schema and migrations)
-   - `scripts/` - Migration scripts (e.g., migrate-prompts.js)
-   - `snapshots/` - Directus schema snapshots (schema.yaml)
-   - `data/` - Seed data and prompt sources
-
-**Current State:** Documentation-only (brief.md, architecture.md, prd.md)
-
-## Core Data Models
-
-### User (Extended Directus User)
-- Built-in Directus fields + custom subscription fields
-- `subscription_status`: 'free' | 'paid' (default: 'free')
-- `stripe_customer_id`, `stripe_subscription_id`, `subscription_expires_at`
-- Access control enforced via Directus RBAC (Free vs Paid roles)
-
-### Prompt
-- `title`, `description`, `prompt_text` (max 5000 chars)
-- `difficulty_level`: 'beginner' | 'intermediate' | 'advanced'
-- `status`: 'draft' | 'published' | 'archived'
-- Many-to-Many relationships: Categories, Job Roles
-
-### Category & JobRole (Taxonomy)
-- `name`, `slug`, `description`, `sort` order
-- Used for filtering and organizing prompts
-
-### Junction Tables
-- `prompt_categories`, `prompt_job_roles` (Many-to-Many)
-
-## Key Technical Patterns
-
-### Authentication Flow
-1. User submits email/password → Next.js calls Directus `/auth/login`
-2. Receives JWT access token (15-min expiry) + refresh token (7-day)
-3. Tokens stored in httpOnly cookies (XSS protection)
-4. Next.js middleware checks token validity on protected routes
-5. Directus SDK handles automatic token refresh
-
-### Freemium Access Control
-- Free users: See 3 prompts fully (configurable via `FREE_PROMPT_LIMIT` env var)
-- Paid users: Unrestricted access to all prompts
-- Access enforced at Directus API level via RBAC (security in-depth)
-- Frontend checks `subscription_status` from authenticated user session
-
-### Stripe Webhook Flow
-1. Stripe event (e.g., `checkout.session.completed`) → Next.js `/api/webhooks/stripe`
-2. Verify webhook signature using `STRIPE_WEBHOOK_SECRET`
-3. Parse event, extract customer_id and subscription details
-4. Update Directus user record via API (subscription_status, stripe IDs)
-5. Handler is idempotent (check for duplicate events by event ID)
-6. Log all events for debugging, return 200 OK to Stripe
-
-### Performance Optimizations
-- **SSR for initial load:** Server Components fetch data, URL params drive filters
-- **SWR for client caching:** 5-minute stale-while-revalidate cache
-- **Pagination:** 20 prompts per page (Directus API limit/offset)
-- **Static generation:** Landing page and marketing content
-- **Code splitting:** Automatic per-route bundles via Next.js
-
-## Development Workflow
-
-### Initial Setup (Not Yet Done)
-```bash
-# Frontend
-git clone https://github.com/your-org/chargpt-bible-frontend.git
-cd chargpt-bible-frontend
-npm install
-cp .env.local.example .env.local
-# Edit .env.local with credentials
-npm run dev
+```ts
+export async function getPageByPermalink(permalink: string): Promise<Page | null> {
+  try {
+    const pages = await directus.request(
+      readItems('pages', {
+        filter: { permalink: { _eq: permalink }, status: { _eq: 'published' } },
+        fields: ['id', 'title', 'permalink', 'seo_title', 'seo_description', 'seo_image', 'page_type', 'priority', 'tags', 'published_date', 'status'],
+        limit: 1,
+      }),
+    );
+    if (!pages || pages.length === 0) return null;
+    return pages[0] as unknown as Page;
+  } catch (error) {
+    console.error('Error fetching page:', error);
+    return null;
+  }
+}
 ```
 
-### Common Commands (Future)
-```bash
-# Frontend Development
-npm run dev              # Start dev server (localhost:3000)
-npm run type-check       # TypeScript validation
-npm run lint             # ESLint
-npm run build            # Production build
-npm run test             # Unit tests (Vitest)
+  - **Page builder route**: `app/(pages)/[...slug]/page.tsx` uses:
+    - `generateStaticParams()` → uses `getAllPagePermalinks()`.
+    - `generateMetadata()` → derives SEO fields from Directus `pages`.
+    - Default export → calls `getPageWithBlocks()` and renders via `BlockRenderer`.
 
-# Backend (Directus Config)
-npm run seed:categories  # Seed taxonomy
-npm run seed:roles       # Seed job roles
-npm run migrate          # Migrate prompts from docs
-npm run schema:snapshot  # Export Directus schema
+## 4. Code Style
+
+- **General**
+  - **Imports**: Framework imports (`next`, `react`) first, then third-party, then absolute app imports (`@/lib/...`, `@/components/...`), then relative.
+  - **Naming**:
+    - Components: `PascalCase` (e.g. `PromptCard`, `HeroBlock`).
+    - Functions & variables: `camelCase` (e.g. `getPageWithBlocks`, `truncateDescription`).
+    - Types & interfaces: `PascalCase` with `Type` suffix only when disambiguation is needed.
+
+- **React components**
+  - Use function components with explicit props interfaces:
+
+```tsx
+'use client';
+
+import Link from 'next/link';
+import type { PromptCard as PromptCardType } from '@/types/Prompt';
+import DifficultyBadge from '@/components/ui/DifficultyBadge';
+
+interface PromptCardProps {
+  prompt: PromptCardType;
+}
+
+export default function PromptCard({ prompt }: PromptCardProps) {
+  const truncateDescription = (text: string, maxLength: number = 100): string => {
+    if (!text) return '';
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength).trim() + '...';
+  };
+
+  // ...
+}
 ```
 
-### Environment Variables (Required)
-```bash
-# Frontend (.env.local)
-NEXT_PUBLIC_DIRECTUS_URL=https://your-instance.directus.app
-DIRECTUS_URL=https://your-instance.directus.app
-DIRECTUS_ADMIN_TOKEN=your_admin_token
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_ID=price_...
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-FREE_PROMPT_LIMIT=3
+  - Use `"use client";` only where hooks, browser APIs, or client-only libraries are needed.
+  - Keep components focused: single responsibility, with derived data computed inside (e.g. `subcategoryName`, `displayCategories`).
+
+- **Docstrings & comments**
+  - Use JSDoc-style headers for non-trivial utilities, especially in `lib/` and `scripts/`:
+
+```ts
+/**
+ * Fetch a page with all its blocks (complete page data)
+ */
+export async function getPageWithBlocks(permalink: string): Promise<PageWithBlocks | null> { /* ... */ }
 ```
 
-## Implementation Approach
+  - Use inline comments to explain *why*, not *what*, when the intent is non-obvious.
 
-### Epic Structure (4 Epics, 28 Stories)
-1. **Epic 1: Foundation & Prompt Display** (8 stories)
-   - Next.js + Directus setup, basic prompt browsing
-   - Deploy to Vercel, seed initial data
-   - Result: Public website with visible prompts
+## 5. Logging
 
-2. **Epic 2: Content Management & Discovery** (8 stories)
-   - Migrate existing prompt library
-   - Implement search, filtering by category/role/difficulty
-   - Optimize performance with caching
+- **Frontend logging**
+  - Use `console.error`/`console.warn` in server utilities (`lib/`) when external services (Directus) fail.
+  - Do **not** spam logs from react components; handle errors via fallbacks (e.g. conditional rendering, `notFound()`).
 
-3. **Epic 3: Authentication & Access Control** (8 stories)
-   - User registration/login (Directus JWT)
-   - Freemium model (3 free prompts, rest locked)
-   - User dashboard
+- **Service logging pattern** (from `lib/directus-pages.ts`):
 
-4. **Epic 4: Subscription & Payment** (8 stories)
-   - Stripe Checkout integration
-   - Webhook processing for subscription sync
-   - Customer Portal for self-service management
-   - Full library access for paid users
+```ts
+try {
+  const blocks = await directus.request(/* ... */);
+  return (blocks || []) as unknown as PageBlock[];
+} catch (error) {
+  console.error('Error fetching page blocks:', error);
+  return [];
+}
+```
 
-### Story Sizing
-- Each story designed for 2-4 hour AI agent implementation sessions
-- Detailed acceptance criteria in PRD (Directus-website/docs/prd.md)
-- Dependencies clearly sequenced (foundation → content → auth → payments)
+- **Script logging** (from `scripts/migrate-prompts.js`):
+  - Use a centralized logger with timestamps and types:
 
-## Critical Development Practices
+```js
+function log(message, type = 'info') {
+  const timestamp = new Date().toISOString();
+  const prefix = { info: '📝', success: '✅', error: '❌', warning: '⚠️', progress: '📊', dryrun: '🔍' }[type] || '📝';
+  console.log(`${prefix} [${timestamp}] ${message}`);
+}
+```
 
-### MCP-Assisted Development
-- **Always use MCP when working with Directus or Stripe**
-- MCP enables real-time schema inspection, validation, and testing
-- Significantly reduces learning curve and accelerates Epic 1, 2, and 4
-- Example use cases:
-  - Creating Directus collections and relationships
-  - Testing Stripe webhook events without Stripe CLI
-  - Validating API responses against live schema
+  - Always include contextual fields in messages (prompt title, collection name, file name, IDs).
 
-### Security Requirements
-- **Never commit secrets:** Use `.env.local` (gitignored) and Vercel env vars
-- **Directus RBAC:** Enforce Free vs Paid permissions at API level
-- **Webhook security:** Always verify Stripe webhook signatures
-- **Input sanitization:** Directus handles internally, avoid raw SQL
-- **Rate limiting:** Configure Directus for 100 req/min per IP
-- **XSS protection:** httpOnly cookies, React auto-escaping
-- **HTTPS everywhere:** Automatic via Vercel and Directus Cloud
+- **Sensitive data**
+  - Never log secrets, access tokens, or raw environment variables. You may log that a required variable is missing by name, but not its value.
 
-### TypeScript Standards
-- **Strict mode enforced:** No implicit any, explicit return types required
-- **Type sharing:** Define shared types in `types/` directory (mirror Directus schema)
-- **Never use `any`:** Use `unknown` with type guards instead
-- **Explicit nullables:** Use `| null` not `?` for optional fields
+## 6. Testing
 
-### API Integration Patterns
-- **Never direct fetch in components:** Use service layer (`lib/services/`)
-- **Directus SDK everywhere:** No raw SQL, use SDK for all DB operations
-- **Error handling:** Standard error handler for all API routes
-- **Authentication:** Directus client auto-handles token refresh
+> Note: There is no dedicated testing setup yet; when adding tests, follow these conventions.
 
-### Testing Strategy (MVP)
-- **Primary:** TypeScript strict mode as bug prevention
-- **Secondary:** Manual testing of critical flows (15-min checklist)
-- **Selective unit tests:** High-value utilities only (webhook signature, formatters)
-- **No E2E tests yet:** Deferred to post-MVP per PRD
-- **Performance:** Lighthouse validation (<3s load, 90+ score)
+- **Frameworks**
+  - Use **Vitest** or **Jest** for unit tests and **Testing Library** for React component tests (prefer React Testing Library).
+- **Structure & naming**
+  - Place tests next to the file under test:
+    - `components/prompts/PromptCard.tsx` → `components/prompts/PromptCard.test.tsx`
+    - `lib/directus-pages.ts` → `lib/directus-pages.test.ts`
+  - Use `.test.ts` / `.test.tsx` suffixes.
+- **Patterns**
+  - Test service functions with mocked Directus client.
+  - Test components by rendering with meaningful props and asserting on visible text and ARIA attributes.
+- **Commands**
+  - When tests are added, define:
+    - `npm test` → unit test runner.
+    - `npm run test:watch` → watch mode.
 
-## Architecture Decisions & Rationale
+## 7. API Contracts (Next.js ↔ Directus)
 
-### Why Polyrepo (Not Monorepo)?
-- **Speed:** Simpler deployment, no Turborepo/Nx overhead for 2-week timeline
-- **Independence:** Frontend and backend deploy separately (Vercel vs Directus Cloud)
-- **Future-proof:** Can consolidate to monorepo post-MVP if shared code emerges
+- **Types vs CMS models**
+  - Define shared types in `types/` that mirror Directus collections (e.g. `Prompt`, `Page`, `PageBlock`, `PageWithBlocks`).
+  - Service functions returning data from Directus must cast to these types before returning, as in:
 
-### Why Directus BaaS (Not Custom Backend)?
-- **Eliminates weeks of work:** REST API, auth, RBAC, admin UI out-of-box
-- **Production-grade:** Battle-tested, handles 100+ concurrent users
-- **2-week feasibility:** Only achievable by avoiding custom backend code
-- **Content management:** Native CMS for admins to add prompts (<3 min per prompt)
+```ts
+return pages[0] as unknown as Page;
+```
 
-### Why Stripe Checkout (Not Custom)?
-- **PCI compliance:** Stripe handles card data, reduces security burden
-- **Reliability:** Webhooks with automatic retry, idempotency built-in
-- **Time-saving:** Hosted UI eliminates payment form development
-- **Customer Portal:** Self-service subscription management included
+  - When adding fields in Directus, update the `fields` arrays in service functions and the corresponding TypeScript types together.
 
-### Why Next.js App Router?
-- **Server Components:** Reduces client JS by 60-70%, improves performance
-- **Built-in API routes:** Perfect for webhook handlers
-- **Vercel-optimized:** Zero-config deployment, automatic edge distribution
-- **TypeScript-first:** Excellent DX with strict mode
+- **Error handling across boundary**
+  - Service functions talking to Directus:
+    - Either return `null`/empty arrays on failure and log errors, or throw explicit errors.
+    - Callers (like route handlers) must handle these cases (e.g. `if (!page) notFound();`).
 
-## Performance Targets
+- **Example contract (Page + blocks)**
 
-- **Initial Page Load:** <3 seconds (4G connection)
-- **Time to Interactive:** <5 seconds
-- **Search/Filter Response:** <500ms
-- **Lighthouse Score:** 90+ (Performance, Accessibility, Best Practices, SEO)
-- **Concurrent Users:** 100+ without degradation
-- **Infrastructure Cost:** <$100/month
+```ts
+// Service
+export async function getPageWithBlocks(permalink: string): Promise<PageWithBlocks | null> { /* ... */ }
 
-## Accessibility Requirements
+// Route usage
+export default async function DynamicPage({ params }: PageProps) {
+  const { slug } = await params;
+  const permalink = slug ? `/${slug.join('/')}` : '/';
+  const page = await getPageWithBlocks(permalink);
+  if (!page) notFound();
+  return (
+    <main className="min-h-screen">
+      {page.blocks.map((block) => (
+        <BlockRenderer key={block.id} block={block} />
+      ))}
+    </main>
+  );
+}
+```
 
-- **Target:** WCAG 2.1 Level AA compliance
-- **Keyboard navigation:** All interactive elements
-- **Color contrast:** 4.5:1 minimum for text
-- **Semantic HTML:** Proper headings, landmarks, buttons
-- **Screen reader friendly:** aria-labels where needed
-- **Touch targets:** 48px minimum for mobile
+## 8. Common Patterns
 
-## Key Files to Reference
+- **Backend-like service pattern (Directus data fetching)**
 
-- **Project Brief:** `Directus-website/brief.md` - Business context, problem statement, success metrics
-- **Architecture Doc:** `Directus-website/docs/architecture.md` - Complete technical specifications, diagrams, workflows
-- **PRD:** `Directus-website/docs/prd.md` - All 28 user stories with detailed acceptance criteria
+```ts
+export async function getAllPages(): Promise<Page[]> {
+  try {
+    const pages = await directus.request(
+      readItems('pages', {
+        filter: { status: { _eq: 'published' } },
+        fields: ['id', 'title', 'permalink', 'page_type', 'published_date'],
+        sort: ['sort', 'published_date'],
+        limit: -1,
+      }),
+    );
+    return (pages || []) as unknown as Page[];
+  } catch (error) {
+    console.error('Error fetching all pages:', error);
+    return [];
+  }
+}
+```
 
-## Known Constraints
+- **Frontend component pattern (card/list UI)**
 
-- **Timeline:** 2-week hard deadline for MVP
-- **Budget:** $0 upfront, ~$20-35/month operational costs
-- **Resources:** Solo developer with Claude Code assistance
-- **Technical:** Must use Directus (non-negotiable), must integrate Stripe
-- **Scope:** MVP features only - no AI generation, social features, or mobile apps
+```tsx
+export default function PromptCard({ prompt }: PromptCardProps) {
+  const subcategory = prompt.subcategory_id;
+  const subcategoryName =
+    subcategory && typeof subcategory === 'object' && subcategory !== null
+      ? subcategory.name_en || subcategory.name_th || null
+      : null;
 
-## Post-MVP Considerations
+  const displayCategories = prompt.categories?.slice(0, 3) || [];
+  const displayTitle = prompt.title_en || prompt.title_th || 'Untitled Prompt';
 
-Features explicitly deferred (see PRD "Out of Scope"):
-- AI-powered prompt generation/customization
-- In-app ChatGPT integration
-- Social features (comments, ratings, favorites)
-- Multiple subscription tiers or annual billing
-- Mobile native apps (web-only for MVP)
-- Advanced analytics dashboard
-- User-generated content
+  return (
+    <Link href={`/prompts/${prompt.id}`}>
+      <article className="group block h-full p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-lg hover:border-blue-400 transition-all duration-200 cursor-pointer flex flex-col">
+        {/* ... */}
+      </article>
+    </Link>
+  );
+}
+```
 
-## Development Notes
+- **Migration script pattern**
+  - Use a clearly documented CLI entry, env loading, and logger:
 
-### When Starting Epic 1
-1. Confirm Directus hosting choice (Cloud $20/mo vs Railway $7/mo)
-2. Set up MCP servers for both Directus and Stripe
-3. Create `.env.local.example` with all required variables
-4. Initialize Next.js with TypeScript strict mode + Tailwind
+```js
+try {
+  require('dotenv').config({ path: '.env.local' });
+} catch (e) {
+  // dotenv not installed, use process.env directly
+}
+```
 
-### Migration Script Strategy
-- Parse existing prompt docs (format TBD during Epic 1)
-- Use Directus SDK for bulk import (not raw SQL)
-- Include dry-run mode for preview
-- Handle errors gracefully (log failures, continue)
-- Target: Complete in <5 minutes for full library
+  - Validate inputs, process in batches, and track results in an object (`migrationResult`).
 
-### Webhook Idempotency Pattern
-- Log all Stripe event IDs to Directus or file
-- Check if event ID already processed before updating user
-- Return 200 OK even if already processed (Stripe expects this)
-- Set reasonable timeout for webhook handler (<10s)
+## 9. Development Commands
 
-## Common Pitfalls to Avoid
+- **Setup**
+  - **Install dependencies**: `npm install`
+- **Local development**
+  - **Run dev server**: `npm run dev` (Next.js dev on the default port; see `next.config.ts` for customizations if any).
+- **Build & serve**
+  - **Build**: `npm run build`
+  - **Start production server**: `npm start`
+- **Linting**
+  - **Run ESLint**: `npm run lint`
+  - Fix issues using editor auto-fix or `eslint --fix` when necessary (keep changes small and focused).
+- **Data migration & validation**
+  - **Dry-run prompt migration**: `npm run migrate:dry-run`
+  - **Run prompt migration**: `npm run migrate`
+  - **Validate migration data**: `npm run validate`
 
-1. **Don't skip Directus RBAC setup:** Access control must be at API level, not just UI
-2. **Don't trust webhook events blindly:** Always verify Stripe signatures
-3. **Don't forget pagination:** Prompt library will grow, always paginate (20 per page)
-4. **Don't over-engineer:** Stick to MVP scope, resist feature creep
-5. **Don't neglect mobile:** Every story requires mobile-responsive design
-6. **Don't cache subscription status too long:** Max 5 minutes to avoid access issues
-7. **Don't skip error states:** Empty states, loading states, error messages all required
+## 10. Reference Guides
 
-## Quick Reference
+**CRITICAL: Always consult the reference guides in `reference/` before starting any coding task.**
 
-**Freemium Logic:** `FREE_PROMPT_LIMIT=3` (env var)
-**Pagination:** 20 prompts per page
-**Cache TTL:** 5 minutes (SWR)
-**JWT Expiry:** 15 min access, 7 day refresh
-**Webhook Events:** `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
-**Browser Support:** Chrome 90+, Firefox 88+, Safari 14+, Edge 90+ (no IE11)
-**Mobile Breakpoints:** 360px (mobile), 640px (sm), 768px (md), 1024px (lg), 1440px (xl)
+On-demand reference guides provide step-by-step instructions for essential development tasks:
+
+- **[Service Functions Guide](chargpt-bible-frontend/reference/service-functions-guide.md)** - Creating Directus service functions
+- **[React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md)** - Creating Server/Client components
+- **[Custom Hooks Guide](chargpt-bible-frontend/reference/custom-hooks-guide.md)** - Creating SWR hooks and UI state hooks
+- **[TypeScript Types Guide](chargpt-bible-frontend/reference/typescript-types-guide.md)** - Defining types for Directus collections
+- **[App Router Pages Guide](chargpt-bible-frontend/reference/app-router-pages-guide.md)** - Creating Next.js pages with metadata/static generation
+- **[API Routes Guide](chargpt-bible-frontend/reference/api-routes-guide.md)** - Creating serverless API routes
+- **[Migration Scripts Guide](chargpt-bible-frontend/reference/migration-scripts-guide.md)** - Creating Directus migration scripts
+- **[HTML to Next.js + Directus Guide](chargpt-bible-frontend/reference/html-to-nextjs-directus-guide.md)** - Converting HTML files to Next.js components and integrating with Directus
+- **[Directus + Next.js Workflow](chargpt-bible-frontend/reference/directus-nextjs-workflow.md)** - Complete workflow for collections, blocks, and components
+
+**Workflow:** Before coding, identify the task type → Read the relevant reference guide → Follow the checklist → Implement using patterns from the guide.
+
+## 11. AI Coding Assistant Instructions
+
+- **ALWAYS check `reference/` guides first** - Read the relevant reference guide for the task type before writing any code. Follow the step-by-step instructions and checklists.
+- **Always read this `GLOBAL_RULES.md` and existing code in the relevant directory before making changes**; match the patterns you see.
+- **Use TypeScript consistently**, adding or updating types in `types/` whenever you introduce new Directus fields or component props. See [TypeScript Types Guide](chargpt-bible-frontend/reference/typescript-types-guide.md).
+- **Keep Directus access inside `lib/` and `scripts/`**, not inside React components; UI components should consume typed data passed as props. See [Service Functions Guide](chargpt-bible-frontend/reference/service-functions-guide.md).
+- **Preserve and extend error-handling and logging patterns**, especially for Directus interactions; never introduce silent failures.
+- **Prefer small, focused components and utilities**, following examples like `PromptCard` and `directus-pages` functions. See [React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md).
+- **Respect server vs client component boundaries**, only adding `"use client";` when React hooks or browser APIs are required. See [React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md) and [App Router Pages Guide](chargpt-bible-frontend/reference/app-router-pages-guide.md).
+- **Run `npm run lint` before concluding non-trivial changes** and fix any new issues you introduce.
+- **When adding tests**, colocate them next to the files they cover, and keep them aligned with the patterns described in Section 6.
+- **When integrating new Directus collections or fields**, update service `fields` arrays and TypeScript types together, and keep API contracts explicit. See [Directus + Next.js Workflow](chargpt-bible-frontend/reference/directus-nextjs-workflow.md).
+- **Document new patterns in this file (or a close variant) when they become common**, keeping the document under 500 lines and focused on actionable guidance.
