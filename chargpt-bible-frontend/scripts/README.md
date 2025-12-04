@@ -1,6 +1,41 @@
-# Upload Scripts Overview
+# Scripts Overview
 
 ## Scripts Available
+
+### Admin User Creation
+
+#### `create-admin-user.js` 🔐
+
+**Purpose:** Create an admin user in Directus with full access permissions
+
+**Usage:**
+```bash
+# Basic usage (email and password only)
+node scripts/create-admin-user.js admin@example.com "SecurePassword123!"
+
+# With name
+node scripts/create-admin-user.js admin@example.com "SecurePassword123!" "John" "Doe"
+```
+
+**What it does:**
+- Creates a new user in Directus
+- Assigns Administrator role (full access)
+- Sets user status to active
+- Validates email format and password length
+
+**Requirements:**
+- `DIRECTUS_TOKEN` or `DIRECTUS_ADMIN_TOKEN` must be set in `.env.local`
+- Token must have admin permissions
+
+**Example:**
+```bash
+cd chargpt-bible-frontend
+node scripts/create-admin-user.js admin@mysite.com "MySecurePass123!" "Admin" "User"
+```
+
+---
+
+## Upload Scripts
 
 ### 1. `upload-prompts-automated.js` ⭐ **RECOMMENDED**
 

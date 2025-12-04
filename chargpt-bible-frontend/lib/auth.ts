@@ -13,6 +13,7 @@ import type {
 } from '@/types/User';
 
 const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL;
+const DIRECTUS_ADMIN_TOKEN = process.env.DIRECTUS_TOKEN || process.env.DIRECTUS_ADMIN_TOKEN;
 
 if (!DIRECTUS_URL) {
   throw new Error('NEXT_PUBLIC_DIRECTUS_URL environment variable is required');
@@ -250,6 +251,44 @@ export async function directusLogout(refreshToken: string): Promise<void> {
 }
 
 /**
+ * Server-side: Get Admin role ID from Directus
+ * 
+ * @returns Admin role UUID
+ * @throws Error if admin role not found
+ */
+export async function getAdminRoleId(): Promise<string> {
+  if (!DIRECTUS_ADMIN_TOKEN) {
+    throw new Error('DIRECTUS_TOKEN or DIRECTUS_ADMIN_TOKEN environment variable is required');
+  }
+
+  // Get all roles and find Admin role
+  const response = await fetch(`${DIRECTUS_URL}/roles`, {
+    headers: {
+      'Authorization': `Bearer ${DIRECTUS_ADMIN_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch roles from Directus');
+  }
+
+  const data = await response.json();
+  const roles = data.data as Array<{ id: string; name: string }>;
+  
+  // Find Admin role (could be "Administrator" or "Admin")
+  const adminRole = roles.find(
+    (role) => role.name === 'Administrator' || role.name === 'Admin'
+  );
+
+  if (!adminRole) {
+    throw new Error('Admin role not found in Directus');
+  }
+
+  return adminRole.id;
+}
+
+/**
  * Server-side: Create new user in Directus
  *
  * @param data - Registration data
@@ -257,9 +296,16 @@ export async function directusLogout(refreshToken: string): Promise<void> {
  * @throws Error on validation failure
  */
 export async function directusRegister(data: RegisterData): Promise<User> {
+  if (!DIRECTUS_ADMIN_TOKEN) {
+    throw new Error('DIRECTUS_TOKEN or DIRECTUS_ADMIN_TOKEN environment variable is required for user registration');
+  }
+
   const response = await fetch(`${DIRECTUS_URL}/users`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${DIRECTUS_ADMIN_TOKEN}`,
+    },
     body: JSON.stringify({
       email: data.email,
       password: data.password,
@@ -272,6 +318,49 @@ export async function directusRegister(data: RegisterData): Promise<User> {
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.errors?.[0]?.message || 'Registration failed');
+  }
+
+  const result = await response.json();
+  return result.data as User;
+}
+
+/**
+ * Server-side: Create new admin user in Directus
+ * Creates a user with Administrator role for full access
+ *
+ * @param data - Registration data with email and password
+ * @returns Created admin user
+ * @throws Error on validation failure
+ */
+export async function directusCreateAdminUser(data: RegisterData): Promise<User> {
+  if (!DIRECTUS_ADMIN_TOKEN) {
+    throw new Error('DIRECTUS_TOKEN or DIRECTUS_ADMIN_TOKEN environment variable is required for admin user creation');
+  }
+
+  // Get Admin role ID first
+  const adminRoleId = await getAdminRoleId();
+
+  // Create user with Admin role
+  const response = await fetch(`${DIRECTUS_URL}/users`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${DIRECTUS_ADMIN_TOKEN}`,
+    },
+    body: JSON.stringify({
+      email: data.email,
+      password: data.password,
+      first_name: data.first_name || null,
+      last_name: data.last_name || null,
+      role: adminRoleId, // Assign Admin role
+      status: 'active', // Set status to active
+      subscription_status: 'free', // Can be updated later if needed
+    }),
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.errors?.[0]?.message || 'Failed to create admin user');
   }
 
   const result = await response.json();
