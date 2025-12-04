@@ -12,12 +12,21 @@ import type {
   DirectusAuthResponse,
 } from '@/types/User';
 
-const DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL;
-const DIRECTUS_ADMIN_TOKEN = process.env.DIRECTUS_TOKEN || process.env.DIRECTUS_ADMIN_TOKEN;
+/**
+ * Base Directus URL (normalized to avoid trailing slashes)
+ *
+ * We strip any trailing slash so that usages like `${DIRECTUS_URL}/auth/login`
+ * or `${DIRECTUS_URL}/users` don't accidentally become `//auth/login` or
+ * `//users` when NEXT_PUBLIC_DIRECTUS_URL is configured with a trailing slash.
+ */
+const RAW_DIRECTUS_URL = process.env.NEXT_PUBLIC_DIRECTUS_URL;
 
-if (!DIRECTUS_URL) {
+if (!RAW_DIRECTUS_URL) {
   throw new Error('NEXT_PUBLIC_DIRECTUS_URL environment variable is required');
 }
+
+const DIRECTUS_URL = RAW_DIRECTUS_URL.replace(/\/+$/, '');
+const DIRECTUS_ADMIN_TOKEN = process.env.DIRECTUS_TOKEN || process.env.DIRECTUS_ADMIN_TOKEN;
 
 /**
  * Login user with email and password
