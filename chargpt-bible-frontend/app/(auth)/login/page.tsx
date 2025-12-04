@@ -1,22 +1,15 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { getSafeRedirectUrl } from '@/lib/utils/url-validation';
 
 /**
- * Login Page
- *
- * Features:
- * - Email/password form with validation
- * - Error handling with user-friendly messages
- * - Loading state during authentication
- * - Link to registration page
- * - Mobile-responsive design
+ * Login Form Component (uses useSearchParams)
  */
-export default function LoginPage() {
+function LoginForm() {
   const { login, isLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -53,6 +46,94 @@ export default function LoginPage() {
   };
 
   return (
+    <form onSubmit={handleSubmit} className="space-y-6">
+      {/* Error Message */}
+      {error && (
+        <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
+          {error}
+        </div>
+      )}
+
+      {/* Email Field */}
+      <div>
+        <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-2">
+          อีเมล
+        </label>
+        <input
+          id="email"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+          placeholder="your@email.com"
+          disabled={isLoading}
+          autoComplete="email"
+        />
+      </div>
+
+      {/* Password Field */}
+      <div>
+        <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-2">
+          รหัสผ่าน
+        </label>
+        <input
+          id="password"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+          placeholder="••••••••"
+          disabled={isLoading}
+          autoComplete="current-password"
+        />
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        disabled={isLoading}
+        className="w-full py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-semibold shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2"
+      >
+        {isLoading ? (
+          <>
+            <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            กำลังเข้าสู่ระบบ...
+          </>
+        ) : (
+          'เข้าสู่ระบบ'
+        )}
+      </button>
+    </form>
+  );
+}
+
+/**
+ * Login Page
+ *
+ * Features:
+ * - Email/password form with validation
+ * - Error handling with user-friendly messages
+ * - Loading state during authentication
+ * - Link to registration page
+ * - Mobile-responsive design
+ */
+export default function LoginPage() {
+  return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-b from-black via-zinc-900 to-black">
       <div className="w-full max-w-md">
         {/* Header */}
@@ -72,80 +153,10 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Error Message */}
-          {error && (
-            <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-sm">
-              {error}
-            </div>
-          )}
-
-          {/* Email Field */}
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-zinc-300 mb-2">
-              อีเมล
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              placeholder="your@email.com"
-              disabled={isLoading}
-              autoComplete="email"
-            />
-          </div>
-
-          {/* Password Field */}
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-zinc-300 mb-2">
-              รหัสผ่าน
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-zinc-800/50 border border-zinc-700 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
-              placeholder="••••••••"
-              disabled={isLoading}
-              autoComplete="current-password"
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full py-3 px-4 rounded-xl bg-purple-600 hover:bg-purple-500 disabled:bg-purple-600/50 disabled:cursor-not-allowed text-white font-semibold shadow-lg shadow-purple-500/25 transition-all flex items-center justify-center gap-2"
-          >
-            {isLoading ? (
-              <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                กำลังเข้าสู่ระบบ...
-              </>
-            ) : (
-              'เข้าสู่ระบบ'
-            )}
-          </button>
-        </form>
+        {/* Login Form - wrapped in Suspense for useSearchParams */}
+        <Suspense fallback={<div className="h-64 animate-pulse bg-zinc-800/50 rounded-xl" />}>
+          <LoginForm />
+        </Suspense>
 
         {/* Footer */}
         <p className="mt-8 text-center text-sm text-zinc-500">
