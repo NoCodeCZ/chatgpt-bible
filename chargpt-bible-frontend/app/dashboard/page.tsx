@@ -61,7 +61,15 @@ export default function DashboardPage() {
   };
 
   const renewalDate = formatDate(user.subscription_expires_at);
-  const displayName = user.first_name || user.email.split('@')[0];
+
+  // Safely derive a display name. In some edge cases (e.g. freshly created
+  // Directus users), the `email` field might be missing or undefined, which
+  // would cause `user.email.split(...)` to throw a runtime error.
+  const displayName =
+    user.first_name ||
+    (typeof user.email === 'string' && user.email.includes('@')
+      ? user.email.split('@')[0]
+      : 'ผู้ใช้');
 
   return (
     <div className="min-h-screen bg-black text-white antialiased">
