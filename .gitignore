@@ -39,5 +39,5 @@ Thumbs.db
 # Vercel
 .vercel
 
-# Frontend app (has its own git repo)
-chargpt-bible-frontend/
+# Frontend app nested git (remove if present)
+chargpt-bible-frontend/.git/
