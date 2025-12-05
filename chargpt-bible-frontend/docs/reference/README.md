@@ -52,7 +52,7 @@ Each guide follows this structure:
 
 - **Always read the relevant guide before starting a task**
 - **Follow the checklists** to ensure nothing is missed
-- **Refer to GLOBAL_RULES.md** for project-wide conventions
+- **Refer to CLAUDE.md** (project root) for project-wide conventions
 - **Check existing code** in the codebase for similar patterns
 
 ## Contributing

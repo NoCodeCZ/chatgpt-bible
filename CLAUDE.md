@@ -301,32 +301,32 @@ try {
 
 ## 10. Reference Guides
 
-**CRITICAL: Always consult the reference guides in `reference/` before starting any coding task.**
+**CRITICAL: Always consult the reference guides in `docs/reference/` before starting any coding task.**
 
 On-demand reference guides provide step-by-step instructions for essential development tasks:
 
-- **[Service Functions Guide](chargpt-bible-frontend/reference/service-functions-guide.md)** - Creating Directus service functions
-- **[React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md)** - Creating Server/Client components
-- **[Custom Hooks Guide](chargpt-bible-frontend/reference/custom-hooks-guide.md)** - Creating SWR hooks and UI state hooks
-- **[TypeScript Types Guide](chargpt-bible-frontend/reference/typescript-types-guide.md)** - Defining types for Directus collections
-- **[App Router Pages Guide](chargpt-bible-frontend/reference/app-router-pages-guide.md)** - Creating Next.js pages with metadata/static generation
-- **[API Routes Guide](chargpt-bible-frontend/reference/api-routes-guide.md)** - Creating serverless API routes
-- **[Migration Scripts Guide](chargpt-bible-frontend/reference/migration-scripts-guide.md)** - Creating Directus migration scripts
-- **[HTML to Next.js + Directus Guide](chargpt-bible-frontend/reference/html-to-nextjs-directus-guide.md)** - Converting HTML files to Next.js components and integrating with Directus
-- **[Directus + Next.js Workflow](chargpt-bible-frontend/reference/directus-nextjs-workflow.md)** - Complete workflow for collections, blocks, and components
+- **[Service Functions Guide](chargpt-bible-frontend/docs/reference/service-functions-guide.md)** - Creating Directus service functions
+- **[React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md)** - Creating Server/Client components
+- **[Custom Hooks Guide](chargpt-bible-frontend/docs/reference/custom-hooks-guide.md)** - Creating SWR hooks and UI state hooks
+- **[TypeScript Types Guide](chargpt-bible-frontend/docs/reference/typescript-types-guide.md)** - Defining types for Directus collections
+- **[App Router Pages Guide](chargpt-bible-frontend/docs/reference/app-router-pages-guide.md)** - Creating Next.js pages with metadata/static generation
+- **[API Routes Guide](chargpt-bible-frontend/docs/reference/api-routes-guide.md)** - Creating serverless API routes
+- **[Migration Scripts Guide](chargpt-bible-frontend/docs/reference/migration-scripts-guide.md)** - Creating Directus migration scripts
+- **[HTML to Next.js + Directus Guide](chargpt-bible-frontend/docs/reference/html-to-nextjs-directus-guide.md)** - Converting HTML files to Next.js components and integrating with Directus
+- **[Directus + Next.js Workflow](chargpt-bible-frontend/docs/reference/directus-nextjs-workflow.md)** - Complete workflow for collections, blocks, and components
 
 **Workflow:** Before coding, identify the task type → Read the relevant reference guide → Follow the checklist → Implement using patterns from the guide.
 
 ## 11. AI Coding Assistant Instructions
 
-- **ALWAYS check `reference/` guides first** - Read the relevant reference guide for the task type before writing any code. Follow the step-by-step instructions and checklists.
-- **Always read this `GLOBAL_RULES.md` and existing code in the relevant directory before making changes**; match the patterns you see.
-- **Use TypeScript consistently**, adding or updating types in `types/` whenever you introduce new Directus fields or component props. See [TypeScript Types Guide](chargpt-bible-frontend/reference/typescript-types-guide.md).
-- **Keep Directus access inside `lib/` and `scripts/`**, not inside React components; UI components should consume typed data passed as props. See [Service Functions Guide](chargpt-bible-frontend/reference/service-functions-guide.md).
+- **ALWAYS check `docs/reference/` guides first** - Read the relevant reference guide for the task type before writing any code. Follow the step-by-step instructions and checklists.
+- **Always read this `CLAUDE.md` and existing code in the relevant directory before making changes**; match the patterns you see.
+- **Use TypeScript consistently**, adding or updating types in `types/` whenever you introduce new Directus fields or component props. See [TypeScript Types Guide](chargpt-bible-frontend/docs/reference/typescript-types-guide.md).
+- **Keep Directus access inside `lib/` and `scripts/`**, not inside React components; UI components should consume typed data passed as props. See [Service Functions Guide](chargpt-bible-frontend/docs/reference/service-functions-guide.md).
 - **Preserve and extend error-handling and logging patterns**, especially for Directus interactions; never introduce silent failures.
-- **Prefer small, focused components and utilities**, following examples like `PromptCard` and `directus-pages` functions. See [React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md).
-- **Respect server vs client component boundaries**, only adding `"use client";` when React hooks or browser APIs are required. See [React Components Guide](chargpt-bible-frontend/reference/react-components-guide.md) and [App Router Pages Guide](chargpt-bible-frontend/reference/app-router-pages-guide.md).
+- **Prefer small, focused components and utilities**, following examples like `PromptCard` and `directus-pages` functions. See [React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md).
+- **Respect server vs client component boundaries**, only adding `"use client";` when React hooks or browser APIs are required. See [React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md) and [App Router Pages Guide](chargpt-bible-frontend/docs/reference/app-router-pages-guide.md).
 - **Run `npm run lint` before concluding non-trivial changes** and fix any new issues you introduce.
 - **When adding tests**, colocate them next to the files they cover, and keep them aligned with the patterns described in Section 6.
-- **When integrating new Directus collections or fields**, update service `fields` arrays and TypeScript types together, and keep API contracts explicit. See [Directus + Next.js Workflow](chargpt-bible-frontend/reference/directus-nextjs-workflow.md).
+- **When integrating new Directus collections or fields**, update service `fields` arrays and TypeScript types together, and keep API contracts explicit. See [Directus + Next.js Workflow](chargpt-bible-frontend/docs/reference/directus-nextjs-workflow.md).
 - **Document new patterns in this file (or a close variant) when they become common**, keeping the document under 500 lines and focused on actionable guidance.
