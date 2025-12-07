@@ -299,34 +299,131 @@ try {
   - **Run prompt migration**: `npm run migrate`
   - **Validate migration data**: `npm run validate`
 
-## 10. Reference Guides
+## 10. Two-Layer Loading Strategy
 
-**CRITICAL: Always consult the reference guides in `docs/reference/` before starting any coding task.**
+This project uses a **two-layer context loading strategy** to optimize AI assistant performance:
 
-On-demand reference guides provide step-by-step instructions for essential development tasks:
+- **Layer 1 (Always Loaded):** Core principles, architecture, and tech stack (this document)
+- **Layer 2 (Load on Demand):** Task-specific reference guides in `docs/reference/`
 
-- **[Service Functions Guide](chargpt-bible-frontend/docs/reference/service-functions-guide.md)** - Creating Directus service functions
-- **[React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md)** - Creating Server/Client components
-- **[Custom Hooks Guide](chargpt-bible-frontend/docs/reference/custom-hooks-guide.md)** - Creating SWR hooks and UI state hooks
-- **[TypeScript Types Guide](chargpt-bible-frontend/docs/reference/typescript-types-guide.md)** - Defining types for Directus collections
-- **[App Router Pages Guide](chargpt-bible-frontend/docs/reference/app-router-pages-guide.md)** - Creating Next.js pages with metadata/static generation
-- **[API Routes Guide](chargpt-bible-frontend/docs/reference/api-routes-guide.md)** - Creating serverless API routes
-- **[Migration Scripts Guide](chargpt-bible-frontend/docs/reference/migration-scripts-guide.md)** - Creating Directus migration scripts
-- **[HTML to Next.js + Directus Guide](chargpt-bible-frontend/docs/reference/html-to-nextjs-directus-guide.md)** - Converting HTML files to Next.js components and integrating with Directus
-- **[Directus + Next.js Workflow](chargpt-bible-frontend/docs/reference/directus-nextjs-workflow.md)** - Complete workflow for collections, blocks, and components
+### Always-Loaded Context (This Document)
 
-**Workflow:** Before coding, identify the task type → Read the relevant reference guide → Follow the checklist → Implement using patterns from the guide.
+The following sections are **always loaded** and apply to all development tasks:
+
+- **Core Principles** (Section 1) - Type safety, separation of concerns, error handling
+- **Tech Stack** (Section 2) - Framework versions, dependencies, tooling
+- **Architecture** (Section 3) - Project structure, patterns, data flow
+- **Code Style** (Section 4) - Naming conventions, formatting, component patterns
+- **Logging** (Section 5) - Logging patterns and error handling
+- **Testing** (Section 6) - Testing frameworks and conventions
+- **API Contracts** (Section 7) - Next.js ↔ Directus integration patterns
+- **Common Patterns** (Section 8) - Reusable code patterns
+- **Development Commands** (Section 9) - npm scripts and workflows
+
+### Load-on-Demand Context (Reference Guides)
+
+**When to use:** Only when working on a specific task type. Read the relevant guide before starting.
+
+**Available Guides:**
+
+#### Core Development Tasks
+
+- **Creating Directus Service Functions**
+  - **When to use:** Fetching data from Directus, creating `lib/services/` functions
+  - **Read:** `docs/reference/service-functions-guide.md`
+
+- **Creating React Components**
+  - **When to use:** Building Server/Client components, UI components
+  - **Read:** `docs/reference/react-components-guide.md`
+
+- **Creating Custom Hooks**
+  - **When to use:** SWR hooks, UI state hooks, client-side data fetching
+  - **Read:** `docs/reference/custom-hooks-guide.md`
+
+- **Defining TypeScript Types**
+  - **When to use:** Creating types that mirror Directus collections
+  - **Read:** `docs/reference/typescript-types-guide.md`
+
+- **Creating Page Builder Blocks**
+  - **When to use:** Building reusable block components for Directus page builder
+  - **Read:** `docs/reference/page-builder-blocks-guide.md`
+
+#### Next.js App Router Tasks
+
+- **Creating App Router Pages**
+  - **When to use:** Creating pages with Server Components, metadata, static generation
+  - **Read:** `docs/reference/app-router-pages-guide.md`
+
+- **Creating API Routes**
+  - **When to use:** Building serverless API routes for webhooks and integrations
+  - **Read:** `docs/reference/api-routes-guide.md`
+
+#### Data Management Tasks
+
+- **Creating Migration Scripts**
+  - **When to use:** Writing Node.js scripts for Directus data migration
+  - **Read:** `docs/reference/migration-scripts-guide.md`
+
+#### Content Conversion Tasks
+
+- **Converting HTML to Next.js + Directus**
+  - **When to use:** Converting HTML files to Next.js components and integrating with Directus
+  - **Read:** `docs/reference/html-to-nextjs-directus-guide.md`
+
+#### Complete Workflows
+
+- **Directus + Next.js Complete Workflow**
+  - **When to use:** End-to-end workflow for creating collections, blocks, and components
+  - **Read:** `docs/reference/directus-nextjs-workflow.md`
+
+### Loading Strategy Workflow
+
+1. **Identify task type** - What are you building? (component, service function, page, etc.)
+2. **Check this document** - Review relevant always-loaded sections (principles, patterns)
+3. **Load reference guide** - Read the specific guide for your task type
+4. **Follow checklist** - Use the guide's checklist to ensure nothing is missed
+5. **Implement** - Write code following patterns from both this document and the guide
 
 ## 11. AI Coding Assistant Instructions
 
-- **ALWAYS check `docs/reference/` guides first** - Read the relevant reference guide for the task type before writing any code. Follow the step-by-step instructions and checklists.
-- **Always read this `CLAUDE.md` and existing code in the relevant directory before making changes**; match the patterns you see.
-- **Use TypeScript consistently**, adding or updating types in `types/` whenever you introduce new Directus fields or component props. See [TypeScript Types Guide](chargpt-bible-frontend/docs/reference/typescript-types-guide.md).
-- **Keep Directus access inside `lib/` and `scripts/`**, not inside React components; UI components should consume typed data passed as props. See [Service Functions Guide](chargpt-bible-frontend/docs/reference/service-functions-guide.md).
-- **Preserve and extend error-handling and logging patterns**, especially for Directus interactions; never introduce silent failures.
-- **Prefer small, focused components and utilities**, following examples like `PromptCard` and `directus-pages` functions. See [React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md).
-- **Respect server vs client component boundaries**, only adding `"use client";` when React hooks or browser APIs are required. See [React Components Guide](chargpt-bible-frontend/docs/reference/react-components-guide.md) and [App Router Pages Guide](chargpt-bible-frontend/docs/reference/app-router-pages-guide.md).
-- **Run `npm run lint` before concluding non-trivial changes** and fix any new issues you introduce.
-- **When adding tests**, colocate them next to the files they cover, and keep them aligned with the patterns described in Section 6.
-- **When integrating new Directus collections or fields**, update service `fields` arrays and TypeScript types together, and keep API contracts explicit. See [Directus + Next.js Workflow](chargpt-bible-frontend/docs/reference/directus-nextjs-workflow.md).
-- **Document new patterns in this file (or a close variant) when they become common**, keeping the document under 500 lines and focused on actionable guidance.
+### Context Loading Protocol
+
+1. **Always start with this document** - Core principles, architecture, and patterns (Sections 1-9) are always loaded
+2. **Identify task type** - Determine what you're building (component, service function, page, block, etc.)
+3. **Load relevant reference guide** - Read the specific guide from Section 10 before writing code
+4. **Follow both layers** - Apply always-loaded principles (this doc) + task-specific steps (reference guide)
+
+### Mandatory Workflow
+
+- **Before coding:** Read this `CLAUDE.md` + relevant reference guide + existing code in target directory
+- **During coding:** Match existing patterns, follow checklists from reference guides
+- **After coding:** Run `npm run lint`, verify against checklists, ensure type safety
+
+### Critical Rules (Always Apply)
+
+- **Type safety is non-negotiable** - All code must be TypeScript with explicit types
+- **Separation of concerns** - Directus access in `lib/`, components receive props only
+- **No silent failures** - Service functions must log errors or throw explicitly
+- **Server Components by default** - Only use `"use client"` when hooks/browser APIs required
+- **Error handling** - Catch at service boundaries, surface friendly fallbacks in UI
+
+### Task-Specific Guidance
+
+- **Creating components** → Read `react-components-guide.md` + Section 4 (Code Style)
+- **Creating service functions** → Read `service-functions-guide.md` + Section 7 (API Contracts)
+- **Creating pages** → Read `app-router-pages-guide.md` + Section 3 (Architecture)
+- **Creating blocks** → Read `page-builder-blocks-guide.md` + Section 3 (Architecture)
+- **Adding types** → Read `typescript-types-guide.md` + Section 7 (API Contracts)
+- **Creating API routes** → Read `api-routes-guide.md` + Section 5 (Logging)
+- **Migration scripts** → Read `migration-scripts-guide.md` + Section 5 (Logging)
+
+### Quality Checks
+
+- [ ] Read relevant reference guide before starting
+- [ ] Followed checklist from reference guide
+- [ ] Matched existing code patterns in directory
+- [ ] TypeScript types defined/updated in `types/`
+- [ ] Error handling implemented (no silent failures)
+- [ ] Logging added where appropriate (Section 5)
+- [ ] `npm run lint` passes
+- [ ] Code follows naming conventions (Section 4)

@@ -9,6 +9,7 @@ On-demand reference guides for essential development tasks in this Next.js + Dir
 - **[Directus + Next.js Workflow](directus-nextjs-workflow.md)** - Creating page blocks, Directus collections, and prompt components (complete workflow)
 - **[Service Functions](service-functions-guide.md)** - Creating Directus service functions in `lib/services/`
 - **[React Components](react-components-guide.md)** - Creating Server and Client components
+- **[Page Builder Blocks](page-builder-blocks-guide.md)** - Creating reusable block components for Directus page builder
 - **[Custom Hooks](custom-hooks-guide.md)** - Creating SWR hooks and UI state hooks
 - **[TypeScript Types](typescript-types-guide.md)** - Defining types that mirror Directus collections
 
@@ -32,6 +33,7 @@ On-demand reference guides for essential development tasks in this Next.js + Dir
 - **Fetch data from Directus** → [Service Functions Guide](service-functions-guide.md)
 - **Create a new page** → [App Router Pages Guide](app-router-pages-guide.md)
 - **Build a React component** → [React Components Guide](react-components-guide.md)
+- **Create a page builder block** → [Page Builder Blocks Guide](page-builder-blocks-guide.md)
 - **Add client-side data fetching** → [Custom Hooks Guide](custom-hooks-guide.md)
 - **Define TypeScript types** → [TypeScript Types Guide](typescript-types-guide.md)
 - **Create an API endpoint** → [API Routes Guide](api-routes-guide.md)
