@@ -1,0 +1,15 @@
+- **Setup**
+  - **Install dependencies**: `npm install`
+- **Local development**
+  - **Run dev server**: `npm run dev` (Next.js dev on the default port; see `next.config.ts` for customizations if any).
+- **Build & serve**
+  - **Build**: `npm run build`
+  - **Start production server**: `npm start`
+- **Linting**
+  - **Run ESLint**: `npm run lint`
+  - Fix issues using editor auto-fix or `eslint --fix` when necessary (keep changes small and focused).
+- **Data migration & validation**
+  - **Dry-run prompt migration**: `npm run migrate:dry-run`
+  - **Run prompt migration**: `npm run migrate`
+  - **Validate migration data**: `npm run validate`
+

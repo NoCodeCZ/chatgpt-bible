@@ -1,0 +1,21 @@
+- **Runtime & Framework**
+  - **Frontend**: Next.js **16.0.1** (App Router) on React **19.2.0**.
+  - **Language**: TypeScript **^5** for app code; Node.js CommonJS for migration scripts.
+- **Styling**
+  - **Tailwind CSS** **^3.4.18** with PostCSS **^8.5.6** and Autoprefixer **^10.4.21**.
+- **CMS / Backend**
+  - **Directus** via `@directus/sdk` **^20.1.1** using REST transport.
+- **Linting & Formatting**
+  - **ESLint** **^9** with `eslint-config-next/core-web-vitals` and `eslint-config-next/typescript` (`eslint.config.mjs`).
+  - Use Prettier-compatible formatting (2 spaces, single quotes) as seen in existing files.
+- **Package Manager & Scripts**
+  - **Package manager**: npm (see `package-lock.json`).
+  - **Core scripts** (from `package.json`):
+    - `npm run dev` → `next dev --webpack`
+    - `npm run build` → `next build --webpack`
+    - `npm start` → `next start`
+    - `npm run lint` → `eslint`
+    - `npm run migrate` → `node scripts/migrate-prompts.js`
+    - `npm run migrate:dry-run` → `node scripts/migrate-prompts.js --dry-run`
+    - `npm run validate` → `node scripts/validate-migration.js`
+

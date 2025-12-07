@@ -1,0 +1,13 @@
+- **Type safety**: All app code in `app/`, `components/`, `lib/`, and `types/` is written in TypeScript. Prefer explicit types on exported functions, props, and public APIs.
+- **App Router first**: Use Next.js App Router patterns (`app/` structure, `generateMetadata`, `generateStaticParams`, `revalidate`, server vs client components) consistently.
+- **Separation of concerns**: 
+  - **Data fetching & Directus access** live in `lib/` and `scripts/`, not inside UI components.
+  - **Presentational components** (in `components/`) receive fully shaped props and do not call Directus directly.
+- **Environment configuration**: All Directus URLs and other environment values must come from `process.env` with early validation (see `lib/directus.ts`).
+- **Error handling**: Catch and log errors at service boundaries; UI surfaces friendly fallbacks (e.g. `notFound()` or skeleton components) rather than raw error messages.
+- **Accessibility & semantics**: Use semantic HTML tags (`main`, `section`, `footer`, `h1`–`h3`) and ARIA roles/labels where appropriate (as in `app/page.tsx`).
+- **Tailwind-first styling**: Use Tailwind utility classes for layout and design. Avoid inline styles except when strictly necessary.
+- **Consistency over cleverness**: Follow existing patterns in this repo (naming, folder structure, hook usage) even if they're slightly more verbose.
+- **Documentation in code**: Use short, focused comments and JSDoc-style docblocks for non-trivial functions, especially in `lib/` and `scripts/`.
+- **No silent failures**: Service functions must never fail silently; they either throw or log with clear context.
+
