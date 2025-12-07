@@ -13,6 +13,13 @@ interface PromptsPageProps {
   }>;
 }
 
+/**
+ * Enable static generation with revalidation
+ * Pages will be statically generated at build time
+ * and revalidated every 5 minutes (300 seconds)
+ */
+export const revalidate = 300;
+
 export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   const params = await searchParams;
 

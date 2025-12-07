@@ -1,8 +1,35 @@
 import type { NextConfig } from "next";
 
+// Get Directus hostname safely
+const getDirectusHostname = (): string | undefined => {
+  const directusUrl = process.env.NEXT_PUBLIC_DIRECTUS_URL;
+  if (!directusUrl) return undefined;
+  try {
+    return new URL(directusUrl).hostname;
+  } catch {
+    return undefined;
+  }
+};
+
+const directusHostname = getDirectusHostname();
+
 const nextConfig: NextConfig = {
   output: 'standalone',
   reactStrictMode: true,
+  images: {
+    ...(directusHostname && {
+      remotePatterns: [
+        {
+          protocol: 'https',
+          hostname: directusHostname,
+          pathname: '/assets/**',
+        },
+      ],
+    }),
+    formats: ['image/avif', 'image/webp'],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+  },
   async headers() {
     return [
       {
@@ -35,6 +62,35 @@ const nextConfig: NextConfig = {
           {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=()',
+          },
+        ],
+      },
+      // Cache-Control for static assets
+      {
+        source: '/_next/static/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/_next/image',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      // Cache-Control for HTML pages (ISR)
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, s-maxage=60, stale-while-revalidate=300',
           },
         ],
       },

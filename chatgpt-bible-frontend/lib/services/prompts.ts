@@ -1,6 +1,7 @@
 import { directus } from '@/lib/directus';
 import { readItems, readItem } from '@directus/sdk';
 import type { PromptCard, Prompt } from '@/types/Prompt';
+import { unstable_cache } from 'next/cache';
 
 export interface GetPromptsResult {
   data: PromptCard[];
@@ -198,7 +199,7 @@ export async function getPrompts(
 }
 
 /**
- * Fetch a single prompt by ID from Directus
+ * Fetch a single prompt by ID from Directus with server-side caching
  *
  * @param id - Prompt ID (numeric ID)
  * @returns Prompt object with all details, or null if not found
@@ -209,36 +210,48 @@ export async function getPrompts(
  * - Includes related categories and job_roles via deep queries
  * - Returns null for 404/not found errors
  * - Throws error for other API failures
+ * 
+ * Cache TTL: 5 minutes (matches ISR revalidate)
+ * Tags: ['prompts', `prompt-${id}`] for on-demand revalidation
  */
 export async function getPromptById(id: string): Promise<Prompt | null> {
-  try {
-    const prompt = await directus.request(
-      readItem('prompts', id, {
-        fields: [
-          'id',
-          'status',
-          'title',
-          'title_th',
-          'title_en',
-          'description',
-          'prompt_text',
-          'difficulty_level',
-          'sort',
-          'prompt_type_id',
-          'subcategory_id',
-        ],
-      })
-    );
+  return unstable_cache(
+    async () => {
+      try {
+        const prompt = await directus.request(
+          readItem('prompts', id, {
+            fields: [
+              'id',
+              'status',
+              'title',
+              'title_th',
+              'title_en',
+              'description',
+              'prompt_text',
+              'difficulty_level',
+              'sort',
+              'prompt_type_id',
+              'subcategory_id',
+            ],
+          })
+        );
 
-    return prompt as unknown as Prompt;
-  } catch (error: any) {
-    // Return null for 404 errors, throw for other errors
-    if (error?.response?.status === 404 || error?.errors?.[0]?.extensions?.code === 'RECORD_NOT_FOUND') {
-      return null;
+        return prompt as unknown as Prompt;
+      } catch (error: any) {
+        // Return null for 404 errors, throw for other errors
+        if (error?.response?.status === 404 || error?.errors?.[0]?.extensions?.code === 'RECORD_NOT_FOUND') {
+          return null;
+        }
+        console.error('Error fetching prompt:', error);
+        throw new Error('Failed to fetch prompt');
+      }
+    },
+    [`prompt-${id}`],
+    {
+      revalidate: 300, // 5 minutes (matches ISR revalidate)
+      tags: ['prompts', `prompt-${id}`],
     }
-    console.error('Error fetching prompt:', error);
-    throw new Error('Failed to fetch prompt');
-  }
+  )();
 }
 
 /**

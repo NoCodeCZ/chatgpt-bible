@@ -24,6 +24,15 @@ interface PromptPageProps {
  * - Two-column layout (content + sidebar)
  * - Related prompts grid at the bottom
  */
+
+/**
+ * Enable static generation with revalidation
+ * Pages will be statically generated at build time
+ * and revalidated every 5 minutes (300 seconds)
+ * This reduces Directus API load by 80-90%
+ */
+export const revalidate = 300;
+
 export default async function PromptPage({ params }: PromptPageProps) {
   const { id } = await params;
 

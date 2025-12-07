@@ -51,6 +51,8 @@ export default function HeroBlock({ data }: HeroBlockProps) {
             fill
             className="object-cover"
             priority
+            sizes="100vw"
+            quality={85}
           />
           <div className="absolute inset-0 bg-black/50" />
         </div>
