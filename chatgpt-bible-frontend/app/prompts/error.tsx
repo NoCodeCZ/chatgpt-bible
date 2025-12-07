@@ -15,18 +15,18 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="container mx-auto px-4 py-8 min-h-screen">
-      <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
-        <div className="text-6xl mb-4">⚠️</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center px-4">
+      <div className="text-center max-w-2xl">
+        <div className="mb-6 text-6xl">⚠️</div>
+        <h2 className="text-2xl font-bold text-white mb-2">
           Failed to load prompts
         </h2>
-        <p className="text-gray-600 mb-6">
+        <p className="text-zinc-400 mb-6">
           We encountered an error while loading the prompts. Please try again.
         </p>
         <button
           onClick={reset}
-          className="px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-6 py-3 bg-purple-600 hover:bg-purple-500 text-white font-semibold rounded-xl transition-colors shadow-lg shadow-purple-500/25"
         >
           Try again
         </button>

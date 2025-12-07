@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 import { getPromptById } from '@/lib/services/prompts';
 import { getRelatedPrompts } from '@/lib/services/related-prompts';
 import PromptDetail from '@/components/prompts/PromptDetail';
@@ -47,10 +47,9 @@ export default async function PromptPage({ params }: PromptPageProps) {
   const user = await getServerUser();
   const hasAccess = await canAccessPrompt(user, prompt.id);
 
-  // Unauthenticated users: redirect to login with return URL
-  if (!user) {
-    redirect(`/login?returnUrl=${encodeURIComponent(`/prompts/${id}`)}`);
-  }
+  // Allow public viewing - show locked state for premium prompts
+  // Only redirect to login if user tries to access locked content
+  // (This allows public browsing of free prompts)
 
   // Fetch related prompts: same subcategory, excluding current
   const relatedPrompts = await getRelatedPrompts(prompt.id, prompt.subcategory_id);

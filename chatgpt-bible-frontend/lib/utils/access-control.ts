@@ -38,9 +38,17 @@ export async function getPromptIndex(promptId: string | number): Promise<number>
       (p: any) => String(p.id) === String(promptId)
     );
 
+    if (index === -1) {
+      console.warn(`Prompt ${promptId} not found in published prompts list`);
+    }
+
     return index;
   } catch (error) {
-    console.error('Error getting prompt index:', error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error('Error getting prompt index:', {
+      promptId,
+      error: errorMessage,
+    });
     // On error, assume prompt is not in free tier (conservative approach)
     return -1;
   }
