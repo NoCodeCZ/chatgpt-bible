@@ -7,10 +7,10 @@ import FAQBlock from '@/components/blocks/FAQBlock';
 import CTABlock from '@/components/blocks/CTABlock';
 import FooterBlock from '@/components/blocks/FooterBlock';
 import BackgroundAnimation from '@/components/BackgroundAnimation';
+import { getPopularPrompts, transformPromptToBlockCard } from '@/lib/services/prompts';
 
-// Force static generation for optimal performance
-export const dynamic = 'force-static';
-export const revalidate = false;
+// Enable ISR for dynamic prompt data
+export const revalidate = 300; // Revalidate every 5 minutes
 
 // SEO metadata
 export const metadata: Metadata = {
@@ -24,7 +24,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // Fetch popular prompts
+  const popularPromptsData = await getPopularPrompts(6);
+  
+  // Transform to block format
+  const blockPrompts = await Promise.all(
+    popularPromptsData.map((prompt, index) => 
+      transformPromptToBlockCard(prompt, index)
+    )
+  );
+
   return (
     <main className="text-white antialiased relative min-h-screen">
       {/* Background Component - UnicornStudio animation */}
@@ -102,62 +112,7 @@ export default function LandingPage() {
           show_view_all: true,
           view_all_text: 'ดู Prompts ทั้งหมด',
           view_all_link: '/prompts',
-          prompts: [
-            {
-              title: 'Business Consultant',
-              tags: ['ธุรกิจ', 'GPT'],
-              badge: 'free',
-              views: 1892,
-              link: '/prompts/business-consultant',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-briefcase w-6 h-6 text-purple-600"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><rect width="20" height="14" x="2" y="6" rx="2"></rect></svg>',
-              icon_color: 'purple',
-            },
-            {
-              title: 'Digital Marketing Strategist',
-              tags: ['การตลาด', 'โซเชียล'],
-              badge: 'free',
-              views: 1778,
-              link: '/prompts/marketing-strategist',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-target w-6 h-6 text-blue-600"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>',
-              icon_color: 'blue',
-            },
-            {
-              title: 'AI Expert',
-              tags: ['AI', 'Research'],
-              badge: 'free',
-              views: 1534,
-              link: '/prompts/ai-expert',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-bot w-6 h-6 text-green-600"><path d="M12 8V4H8"></path><rect width="16" height="12" x="4" y="8" rx="2"></rect><path d="M2 14h2"></path><path d="M20 14h2"></path><path d="M15 13v2"></path><path d="M9 13v2"></path></svg>',
-              icon_color: 'green',
-            },
-            {
-              title: 'Marketing Campaign Creator',
-              tags: ['การตลาด', 'แคมเปญ', 'คอนเทนต์'],
-              badge: 'premium',
-              views: 0,
-              link: '/prompts/campaign-creator',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-megaphone w-6 h-6 text-orange-600"><path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"></path><path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14"></path><path d="M8 6v8"></path></svg>',
-              icon_color: 'orange',
-            },
-            {
-              title: 'Data Analysis Expert',
-              tags: ['ข้อมูล', 'วิเคราะห์'],
-              badge: 'premium',
-              views: 0,
-              link: '/prompts/data-analysis',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-bar-chart-3 w-6 h-6 text-cyan-600"><path d="M3 3v16a2 2 0 0 0 2 2h16"></path><path d="M18 17V9"></path><path d="M13 17V5"></path><path d="M8 17v-3"></path></svg>',
-              icon_color: 'cyan',
-            },
-            {
-              title: 'Language Learning Tutor',
-              tags: ['ภาษา', 'การศึกษา'],
-              badge: 'premium',
-              views: 0,
-              link: '/prompts/language-tutor',
-              icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-book-open w-6 h-6 text-pink-600"><path d="M12 7v14"></path><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"></path></svg>',
-              icon_color: 'pink',
-            },
-          ],
+          prompts: blockPrompts,
         }}
       />
 

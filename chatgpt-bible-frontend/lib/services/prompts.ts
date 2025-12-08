@@ -2,6 +2,8 @@ import { directus } from '@/lib/directus';
 import { readItems, readItem } from '@directus/sdk';
 import type { PromptCard, Prompt } from '@/types/Prompt';
 import { unstable_cache } from 'next/cache';
+import type { PromptCard as BlockPromptCard } from '@/types/blocks';
+import { isPromptInFreeTier } from '@/lib/utils/access-control';
 
 export interface GetPromptsResult {
   data: PromptCard[];
@@ -443,4 +445,133 @@ export async function getPromptsBySubcategory(
     console.error('Error fetching prompts by subcategory:', errorMsg, error);
     return { data: [], total: 0, totalPages: 0 };
   }
+}
+
+/**
+ * Fetch popular prompts for landing page
+ * Returns the most recent published prompts (limited count)
+ * Fetches prompts with subcategory relationship for category tags
+ * 
+ * @param limit - Number of prompts to fetch (default: 6)
+ * @returns Array of PromptCard objects suitable for PromptsGridBlock
+ */
+export async function getPopularPrompts(limit: number = 6): Promise<PromptCard[]> {
+  try {
+    const prompts = await directus.request(
+      readItems('prompts', {
+        filter: {
+          status: { _eq: 'published' },
+        },
+        fields: [
+          'id',
+          'title_th',
+          'title_en',
+          'description',
+          'difficulty_level',
+          'subcategory_id.id',
+          'subcategory_id.name_th',
+          'subcategory_id.name_en',
+          'subcategory_id.category_id.id',
+          'subcategory_id.category_id.name',
+          'subcategory_id.category_id.name_th',
+          'subcategory_id.category_id.name_en',
+          'subcategory_id.category_id.slug',
+        ],
+        limit,
+        sort: ['-id'], // Most recent first
+      })
+    );
+
+    return prompts as unknown as PromptCard[];
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    console.error('Error fetching popular prompts:', errorMsg, error);
+    return [];
+  }
+}
+
+/**
+ * Transform PromptCard to PromptsGridBlock format
+ * Handles badge determination, icon extraction, tag generation, and link creation
+ * 
+ * @param prompt - PromptCard from Directus
+ * @param index - 0-based index of prompt (for premium/free determination)
+ * @returns BlockPromptCard formatted for PromptsGridBlock component
+ */
+export async function transformPromptToBlockCard(
+  prompt: PromptCard,
+  index: number
+): Promise<BlockPromptCard> {
+  // Determine badge (free or premium)
+  const isFree = await isPromptInFreeTier(prompt.id);
+  const badge: 'free' | 'premium' = isFree ? 'free' : 'premium';
+
+  // Get title (prioritize Thai, fallback to English)
+  const title = prompt.title_th || prompt.title_en || 'Untitled Prompt';
+
+  // Extract tags from subcategory's category
+  const tags: string[] = [];
+  
+  // Get category from subcategory relationship
+  if (prompt.subcategory_id && typeof prompt.subcategory_id === 'object') {
+    const subcategory = prompt.subcategory_id;
+    const category = subcategory.category_id;
+    
+    if (category && typeof category === 'object') {
+      // Prefer Thai name, fallback to English, then name
+      const categoryName = category.name_th || category.name_en || category.name;
+      if (categoryName && !tags.includes(categoryName)) {
+        tags.push(categoryName);
+      }
+    }
+    
+    // Add subcategory name as tag if available
+    const subcategoryName = subcategory.name_th || subcategory.name_en;
+    if (subcategoryName && !tags.includes(subcategoryName)) {
+      tags.push(subcategoryName);
+    }
+  }
+
+  // Extract icon and color based on category
+  // For now, we'll use default icons based on category or a generic icon
+  // This can be enhanced later to use actual prompt_type.icon field
+  let icon: string | undefined;
+  let iconColor: string = 'purple';
+
+  // Simple icon color selection based on category from subcategory
+  if (prompt.subcategory_id && typeof prompt.subcategory_id === 'object') {
+    const category = prompt.subcategory_id.category_id;
+    if (category && typeof category === 'object') {
+      // Map categories to icon colors based on slug
+      const categorySlug = category.slug?.toLowerCase() || '';
+      if (categorySlug.includes('business')) {
+        iconColor = 'purple';
+      } else if (categorySlug.includes('marketing')) {
+        iconColor = 'blue';
+      } else if (categorySlug.includes('ai') || categorySlug.includes('tech')) {
+        iconColor = 'green';
+      } else if (categorySlug.includes('education')) {
+        iconColor = 'pink';
+      } else if (categorySlug.includes('data')) {
+        iconColor = 'cyan';
+      }
+    }
+  }
+
+  // Default icon (can be replaced with prompt_type.icon if available)
+  icon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" class="lucide lucide-file-text w-6 h-6"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>`;
+
+  // Create link to prompt detail page
+  const link = `/prompts/${prompt.id}`;
+
+  return {
+    title,
+    description: prompt.description || undefined,
+    icon,
+    icon_color: iconColor,
+    tags: tags.slice(0, 3), // Limit to 3 tags
+    badge,
+    views: 0, // TODO: Add view_count field to prompts collection
+    link,
+  };
 }
