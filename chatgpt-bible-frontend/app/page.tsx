@@ -44,7 +44,7 @@ export default function LandingPage() {
           cta_text: 'เริ่มต้นฟรี',
           cta_link: '/prompts',
           cta_text2: 'ดูตัวอย่าง Premium',
-          cta_link2: '/premium',
+          cta_link2: '/upgrade',
           text_align: 'center',
           theme: 'dark',
           stats: [
