@@ -50,7 +50,7 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
             <Link
               href={prompt.link || '#'}
               key={index}
-              className="block bg-white rounded-2xl p-6 text-zinc-900 hover:shadow-xl hover:shadow-purple-500/10 transition-all group"
+              className="block bg-zinc-900/40 border border-white/10 hover:border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/10 hover:-translate-y-1 backdrop-blur-md group"
             >
               <div className="flex items-start justify-between mb-4">
                 {prompt.icon && (
@@ -69,14 +69,14 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
                 )}
               </div>
 
-              <h3 className="text-lg font-bold mb-3 text-zinc-900 leading-snug line-clamp-2">{prompt.title}</h3>
+              <h3 className="text-lg font-bold mb-3 text-zinc-100 leading-snug line-clamp-2">{prompt.title}</h3>
 
               {prompt.tags && prompt.tags.length > 0 && (
                 <div className="flex flex-wrap gap-2 mb-6">
                   {prompt.tags.map((tag, tagIndex) => (
                     <span
                       key={tagIndex}
-                      className="bg-zinc-100 text-zinc-600 text-xs px-2 py-1 rounded-md"
+                      className="bg-zinc-800/50 text-zinc-300 text-xs px-2 py-1 rounded-md border border-white/5"
                     >
                       {tag}
                     </span>
@@ -84,7 +84,7 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
                 </div>
               )}
 
-              <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
+              <div className="flex items-center justify-between pt-4 border-t border-white/5">
                 <div className="flex items-center gap-1.5 text-sm text-zinc-500">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -103,7 +103,8 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
                   </svg>
                   <span>{prompt.views !== undefined ? prompt.views.toLocaleString() : '0'}</span>
                 </div>
-                <div className="flex items-center gap-1 text-xs text-zinc-500 group-hover:text-purple-600 transition-colors">
+                <div className="flex items-center gap-1 text-xs text-zinc-500 group-hover:text-purple-400 transition-colors font-medium group-hover:translate-x-0.5 duration-300">
+                  <span>View</span>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="24"
@@ -111,13 +112,12 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
-                    strokeWidth="1.5"
+                    strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    className="w-4 h-4"
+                    className="w-3 h-3"
                   >
-                    <path d="M5 12h14"></path>
-                    <path d="m12 5 7 7-7 7"></path>
+                    <path d="M9 5l7 7-7 7"></path>
                   </svg>
                 </div>
               </div>

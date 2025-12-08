@@ -42,7 +42,7 @@ export default function FeaturesBlock({ data }: FeaturesBlockProps) {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="bg-white rounded-2xl p-6 text-zinc-900 hover:shadow-xl hover:shadow-purple-500/10 transition-all"
+              className="bg-zinc-900/40 border border-white/10 hover:border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/10 hover:-translate-y-1 backdrop-blur-md"
             >
               <div className="flex items-start justify-between mb-4">
                 {/* Icon */}
@@ -56,12 +56,12 @@ export default function FeaturesBlock({ data }: FeaturesBlockProps) {
               </div>
 
               {/* Title */}
-              <h3 className="text-lg font-bold mb-3 text-zinc-900 leading-snug">
+              <h3 className="text-lg font-bold mb-3 text-zinc-100 leading-snug">
                 {feature.title}
               </h3>
 
               {/* Description */}
-              <p className="text-sm leading-relaxed text-zinc-600 line-clamp-3">
+              <p className="text-sm leading-relaxed text-zinc-400 line-clamp-3 font-light">
                 {feature.description}
               </p>
             </div>
