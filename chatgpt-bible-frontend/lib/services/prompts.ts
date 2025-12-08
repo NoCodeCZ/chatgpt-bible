@@ -27,10 +27,19 @@ export interface GetPromptsFilters {
  * Query Structure:
  * - Filters for published prompts only
  * - Supports filtering by categories, job roles, difficulty
- * - Supports full-text search (when implemented)
+ * - Enhanced search: Searches in title_th, title_en, description, prompt_text
+ * - Also searches in related category names and job role names
+ * - Uses explicit field matching with _icontains for case-insensitive partial matching
  * - Fetches related categories and job_roles via deep queries
- * - Sorts by newest first (date_created DESC)
+ * - Sorts by newest first (id DESC)
  * - Returns total count for pagination
+ *
+ * Search Behavior:
+ * - Searches prompt fields: title_th, title_en, description, prompt_text
+ * - Searches related data: category names (name, name_th, name_en, slug), job role names (name, slug)
+ * - Combines prompt field matches with related data matches using OR logic
+ * - Case-insensitive partial matching
+ * - Empty search terms are ignored
  */
 export async function getPrompts(
   filters: GetPromptsFilters = {}
@@ -42,6 +51,71 @@ export async function getPrompts(
     
     // Step 1: Get prompt IDs filtered by categories/job roles if needed
     let filteredPromptIds: number[] | null = null;
+    let searchMatchedPromptIds: number[] | null = null;
+
+    // If search is provided, also search in related categories and job roles
+    if (filters.search && filters.search.trim()) {
+      const searchTerm = filters.search.trim();
+      const searchMatchedIds: number[] = [];
+
+      // Search in categories and job roles (parallel queries for performance)
+      const [matchingCategories, matchingJobRoles] = await Promise.all([
+        directus.request(
+          readItems('categories', {
+            filter: {
+              _or: [
+                { name: { _icontains: searchTerm } },
+                { name_th: { _icontains: searchTerm } },
+                { name_en: { _icontains: searchTerm } },
+                { slug: { _icontains: searchTerm } },
+              ],
+            },
+            fields: ['id'],
+          })
+        ),
+        directus.request(
+          readItems('job_roles', {
+            filter: {
+              _or: [
+                { name: { _icontains: searchTerm } },
+                { slug: { _icontains: searchTerm } },
+              ],
+            },
+            fields: ['id'],
+          })
+        ),
+      ]);
+
+      const matchingCategoryIds = matchingCategories.map((c: any) => c.id);
+      const matchingJobRoleIds = matchingJobRoles.map((jr: any) => jr.id);
+
+      // Get prompt IDs from junction tables (parallel queries)
+      const [categoryPrompts, jobRolePrompts] = await Promise.all([
+        matchingCategoryIds.length > 0
+          ? directus.request(
+              readItems('prompt_categories', {
+                filter: { categories_id: { _in: matchingCategoryIds } },
+                fields: ['prompts_id'],
+              })
+            )
+          : Promise.resolve([]),
+        matchingJobRoleIds.length > 0
+          ? directus.request(
+              readItems('prompt_job_roles', {
+                filter: { job_roles_id: { _in: matchingJobRoleIds } },
+                fields: ['prompts_id'],
+              })
+            )
+          : Promise.resolve([]),
+      ]);
+
+      searchMatchedIds.push(...categoryPrompts.map((pc: any) => pc.prompts_id));
+      searchMatchedIds.push(...jobRolePrompts.map((pjr: any) => pjr.prompts_id));
+
+      if (searchMatchedIds.length > 0) {
+        searchMatchedPromptIds = [...new Set(searchMatchedIds)];
+      }
+    }
 
     if (filters.categories && filters.categories.length > 0) {
       // Get category IDs from slugs
@@ -133,8 +207,38 @@ export async function getPrompts(
       sort: ['-id'],
     };
 
-    if (filters.search) {
-      query.search = filters.search;
+    // Enhanced search: Use explicit field matching for better control
+    if (filters.search && filters.search.trim()) {
+      const searchTerm = filters.search.trim();
+      
+      // Build search conditions: field search OR related data search
+      const searchConditions: any[] = [
+        { title_th: { _icontains: searchTerm } },
+        { title_en: { _icontains: searchTerm } },
+        { description: { _icontains: searchTerm } },
+        { prompt_text: { _icontains: searchTerm } },
+      ];
+      
+      // If we found prompts via related data search, include them
+      if (searchMatchedPromptIds !== null && searchMatchedPromptIds.length > 0) {
+        searchConditions.push({ id: { _in: searchMatchedPromptIds } });
+      }
+      
+      const searchFilter = {
+        _or: searchConditions,
+      };
+      
+      // Combine with existing filter using _and
+      if (Object.keys(filter).length > 0) {
+        query.filter = {
+          _and: [
+            filter,
+            searchFilter,
+          ],
+        };
+      } else {
+        query.filter = searchFilter;
+      }
     }
 
     const prompts = await directus.request(
@@ -160,8 +264,37 @@ export async function getPrompts(
       limit: -1,
     };
 
-    if (filters.search) {
-      countQuery.search = filters.search;
+    // Apply same search logic as main query
+    if (filters.search && filters.search.trim()) {
+      const searchTerm = filters.search.trim();
+      
+      // Build search conditions: field search OR related data search
+      const searchConditions: any[] = [
+        { title_th: { _icontains: searchTerm } },
+        { title_en: { _icontains: searchTerm } },
+        { description: { _icontains: searchTerm } },
+        { prompt_text: { _icontains: searchTerm } },
+      ];
+      
+      // If we found prompts via related data search, include them
+      if (searchMatchedPromptIds !== null && searchMatchedPromptIds.length > 0) {
+        searchConditions.push({ id: { _in: searchMatchedPromptIds } });
+      }
+      
+      const searchFilter = {
+        _or: searchConditions,
+      };
+      
+      if (Object.keys(countFilter).length > 0) {
+        countQuery.filter = {
+          _and: [
+            countFilter,
+            searchFilter,
+          ],
+        };
+      } else {
+        countQuery.filter = searchFilter;
+      }
     }
 
     const allMatchingPrompts = await directus.request(

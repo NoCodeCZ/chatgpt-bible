@@ -61,17 +61,24 @@ From `docs/research/prompt-search-improvements.md`:
     };
 
     // Enhanced search: Use explicit field matching for better control
-    if (filters.search) {
+    if (filters.search && filters.search.trim()) {
       const searchTerm = filters.search.trim();
-      // Use _or filter to search across multiple fields
-      // This gives us explicit control over which fields are searched
+      
+      // Build search conditions: field search OR related data search
+      const searchConditions: any[] = [
+        { title_th: { _icontains: searchTerm } },
+        { title_en: { _icontains: searchTerm } },
+        { description: { _icontains: searchTerm } },
+        { prompt_text: { _icontains: searchTerm } },
+      ];
+      
+      // If we found prompts via related data search, include them
+      if (searchMatchedPromptIds !== null && searchMatchedPromptIds.length > 0) {
+        searchConditions.push({ id: { _in: searchMatchedPromptIds } });
+      }
+      
       const searchFilter = {
-        _or: [
-          { title_th: { _icontains: searchTerm } },
-          { title_en: { _icontains: searchTerm } },
-          { description: { _icontains: searchTerm } },
-          { prompt_text: { _icontains: searchTerm } },
-        ],
+        _or: searchConditions,
       };
       
       // Combine with existing filter using _and
@@ -120,61 +127,63 @@ From `docs/research/prompt-search-improvements.md`:
     let searchMatchedPromptIds: number[] | null = null;
 
     // If search is provided, also search in related categories and job roles
-    if (filters.search) {
+    if (filters.search && filters.search.trim()) {
       const searchTerm = filters.search.trim();
       const searchMatchedIds: number[] = [];
 
-      // Search in categories
-      const matchingCategories = await directus.request(
-        readItems('categories', {
-          filter: {
-            _or: [
-              { name: { _icontains: searchTerm } },
-              { name_th: { _icontains: searchTerm } },
-              { name_en: { _icontains: searchTerm } },
-              { slug: { _icontains: searchTerm } },
-            ],
-          },
-          fields: ['id'],
-        })
-      );
-      const matchingCategoryIds = matchingCategories.map((c: any) => c.id);
-
-      if (matchingCategoryIds.length > 0) {
-        const promptCategories = await directus.request(
-          readItems('prompt_categories', {
-            filter: { categories_id: { _in: matchingCategoryIds } },
-            fields: ['prompts_id'],
+      // Search in categories (parallel queries for performance)
+      const [matchingCategories, matchingJobRoles] = await Promise.all([
+        directus.request(
+          readItems('categories', {
+            filter: {
+              _or: [
+                { name: { _icontains: searchTerm } },
+                { name_th: { _icontains: searchTerm } },
+                { name_en: { _icontains: searchTerm } },
+                { slug: { _icontains: searchTerm } },
+              ],
+            },
+            fields: ['id'],
           })
-        );
-        searchMatchedIds.push(...promptCategories.map((pc: any) => pc.prompts_id));
-      }
+        ),
+        directus.request(
+          readItems('job_roles', {
+            filter: {
+              _or: [
+                { name: { _icontains: searchTerm } },
+                { slug: { _icontains: searchTerm } },
+              ],
+            },
+            fields: ['id'],
+          })
+        ),
+      ]);
 
-      // Search in job roles
-      const matchingJobRoles = await directus.request(
-        readItems('job_roles', {
-          filter: {
-            _or: [
-              { name: { _icontains: searchTerm } },
-              { name_th: { _icontains: searchTerm } },
-              { name_en: { _icontains: searchTerm } },
-              { slug: { _icontains: searchTerm } },
-            ],
-          },
-          fields: ['id'],
-        })
-      );
+      const matchingCategoryIds = matchingCategories.map((c: any) => c.id);
       const matchingJobRoleIds = matchingJobRoles.map((jr: any) => jr.id);
 
-      if (matchingJobRoleIds.length > 0) {
-        const promptJobRoles = await directus.request(
-          readItems('prompt_job_roles', {
-            filter: { job_roles_id: { _in: matchingJobRoleIds } },
-            fields: ['prompts_id'],
-          })
-        );
-        searchMatchedIds.push(...promptJobRoles.map((pjr: any) => pjr.prompts_id));
-      }
+      // Get prompt IDs from junction tables (parallel queries)
+      const [categoryPrompts, jobRolePrompts] = await Promise.all([
+        matchingCategoryIds.length > 0
+          ? directus.request(
+              readItems('prompt_categories', {
+                filter: { categories_id: { _in: matchingCategoryIds } },
+                fields: ['prompts_id'],
+              })
+            )
+          : Promise.resolve([]),
+        matchingJobRoleIds.length > 0
+          ? directus.request(
+              readItems('prompt_job_roles', {
+                filter: { job_roles_id: { _in: matchingJobRoleIds } },
+                fields: ['prompts_id'],
+              })
+            )
+          : Promise.resolve([]),
+      ]);
+
+      searchMatchedIds.push(...categoryPrompts.map((pc: any) => pc.prompts_id));
+      searchMatchedIds.push(...jobRolePrompts.map((pjr: any) => pjr.prompts_id));
 
       if (searchMatchedIds.length > 0) {
         searchMatchedPromptIds = [...new Set(searchMatchedIds)];
@@ -190,22 +199,16 @@ From `docs/research/prompt-search-improvements.md`:
     }
 
     // Combine search-matched IDs with filter IDs
-    if (searchMatchedPromptIds !== null) {
-      if (filteredPromptIds !== null) {
-        // Intersect: prompts must match both filters AND search
-        filteredPromptIds = filteredPromptIds.filter(id => searchMatchedPromptIds.includes(id));
-      } else {
-        // Use search-matched IDs as the filter
-        filteredPromptIds = searchMatchedPromptIds;
-      }
-    }
+    // Note: searchMatchedPromptIds will be combined with field search in Task 1 using OR logic
+    // Here we just store it for later use in the filter construction
 ```
 
 **Notes**:
 - Adds search in related categories and job roles
+- **FIXED**: Removed `name_th` and `name_en` from JobRole search (they don't exist in JobRole type)
+- Uses parallel queries (Promise.all) for better performance
 - Finds prompts that match search term in category/job role names
-- Combines with existing category/job role filters
-- Uses union logic: prompt matches if search term found in prompt fields OR related category/job role
+- Search-matched IDs will be combined with field search using OR logic in Task 1
 
 ### Task 3: Update Count Query to Match Search Logic
 
@@ -260,15 +263,24 @@ From `docs/research/prompt-search-improvements.md`:
     };
 
     // Apply same search logic as main query
-    if (filters.search) {
+    if (filters.search && filters.search.trim()) {
       const searchTerm = filters.search.trim();
+      
+      // Build search conditions: field search OR related data search
+      const searchConditions: any[] = [
+        { title_th: { _icontains: searchTerm } },
+        { title_en: { _icontains: searchTerm } },
+        { description: { _icontains: searchTerm } },
+        { prompt_text: { _icontains: searchTerm } },
+      ];
+      
+      // If we found prompts via related data search, include them
+      if (searchMatchedPromptIds !== null && searchMatchedPromptIds.length > 0) {
+        searchConditions.push({ id: { _in: searchMatchedPromptIds } });
+      }
+      
       const searchFilter = {
-        _or: [
-          { title_th: { _icontains: searchTerm } },
-          { title_en: { _icontains: searchTerm } },
-          { description: { _icontains: searchTerm } },
-          { prompt_text: { _icontains: searchTerm } },
-        ],
+        _or: searchConditions,
       };
       
       if (Object.keys(countFilter).length > 0) {
@@ -289,100 +301,15 @@ From `docs/research/prompt-search-improvements.md`:
 - Ensures count matches actual search results
 - Maintains consistency between main query and count query
 
-### Task 4: Add Search Result Count Display
+### Task 4: Skip - No Changes Needed
 
 **File**: `chatgpt-bible-frontend/components/prompts/SearchBar.tsx`  
-**Lines**: 39-76
-
-**BEFORE**:
-```typescript
-  return (
-    <div className="relative group">
-      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-        <svg 
-          className="h-5 w-5 text-zinc-500 group-focus-within:text-purple-400 transition-colors" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-        </svg>
-      </div>
-      <input
-        type="text"
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search prompts by title, description, or category..."
-        className="block w-full pl-12 pr-12 py-4 bg-zinc-900/50 border border-white/10 rounded-2xl text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all shadow-lg backdrop-blur-md"
-      />
-      <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
-        {query && (
-          <button
-            onClick={clearSearch}
-            className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-            aria-label="Clear search"
-          >
-            <svg className="h-4 w-4 text-zinc-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        )}
-        <kbd className="hidden sm:inline-flex items-center border border-white/10 rounded px-2 text-xs font-sans font-medium text-zinc-500">
-          ⌘K
-        </kbd>
-      </div>
-    </div>
-  );
-```
-
-**AFTER**:
-```typescript
-  return (
-    <div className="space-y-2">
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <svg 
-            className="h-5 w-5 text-zinc-500 group-focus-within:text-purple-400 transition-colors" 
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
-        </div>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search prompts by title, description, or category..."
-          className="block w-full pl-12 pr-12 py-4 bg-zinc-900/50 border border-white/10 rounded-2xl text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all shadow-lg backdrop-blur-md"
-        />
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-2">
-          {query && (
-            <button
-              onClick={clearSearch}
-              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
-              aria-label="Clear search"
-            >
-              <svg className="h-4 w-4 text-zinc-400 hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-          )}
-          <kbd className="hidden sm:inline-flex items-center border border-white/10 rounded px-2 text-xs font-sans font-medium text-zinc-500">
-            ⌘K
-          </kbd>
-        </div>
-      </div>
-      {/* Search result count will be displayed by parent component */}
-    </div>
-  );
-```
+**Status**: No changes required
 
 **Notes**: 
-- Minor refactor to allow parent to show result count
-- SearchBar remains focused on input handling
-- Result count display handled by page component
+- SearchBar component is already well-structured
+- Search result count can be displayed by parent components if needed
+- This task is removed from implementation scope
 
 ### Task 5: Update Service Function Documentation
 
@@ -427,9 +354,10 @@ From `docs/research/prompt-search-improvements.md`:
  *
  * Search Behavior:
  * - Searches prompt fields: title_th, title_en, description, prompt_text
- * - Searches related data: category names (name, name_th, name_en, slug), job role names (name, name_th, name_en, slug)
+ * - Searches related data: category names (name, name_th, name_en, slug), job role names (name, slug)
  * - Combines prompt field matches with related data matches using OR logic
  * - Case-insensitive partial matching
+ * - Empty search terms are ignored
  */
 ```
 
@@ -501,9 +429,10 @@ The enhanced search uses a two-phase approach:
    - Combine with existing filters using `_and`
 
 3. **Combination Logic**
-   - If search matched related data, include those prompt IDs in filter
-   - Prompt field search happens in the main query filter
-   - Final result: prompts that match search in fields OR related data
+   - Search in related data (categories/job roles) finds prompt IDs
+   - Search in prompt fields uses explicit field matching
+   - Both are combined using OR logic: prompt matches if search term found in fields OR related data
+   - Final filter: (field search OR related data search) AND (other filters like category/job role/difficulty)
 
 ### Performance Considerations
 
