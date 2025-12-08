@@ -23,19 +23,6 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
     4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
   }[columns] || 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3';
 
-  const getIconColor = (iconColor?: string) => {
-    if (!iconColor) return 'bg-purple-100 text-purple-600';
-    const colorMap: Record<string, string> = {
-      purple: 'bg-purple-100 text-purple-600',
-      blue: 'bg-blue-100 text-blue-600',
-      green: 'bg-green-100 text-green-600',
-      orange: 'bg-orange-100 text-orange-600',
-      cyan: 'bg-cyan-100 text-cyan-600',
-      pink: 'bg-pink-100 text-pink-600',
-    };
-    return colorMap[iconColor] || 'bg-purple-100 text-purple-600';
-  };
-
   return (
     <section className="py-20 px-4 sm:px-6 lg:px-8 bg-transparent relative">
       {/* Subtle overlay for better text readability */}
@@ -60,14 +47,15 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
         {/* Prompts Grid */}
         <div className={`grid ${gridCols} gap-6`}>
           {prompts.map((prompt, index) => (
-            <div
+            <Link
+              href={prompt.link || '#'}
               key={index}
-              className="bg-white rounded-2xl p-6 text-zinc-900 hover:shadow-xl hover:shadow-purple-500/10 transition-all"
+              className="block bg-white rounded-2xl p-6 text-zinc-900 hover:shadow-xl hover:shadow-purple-500/10 transition-all group"
             >
               <div className="flex items-start justify-between mb-4">
                 {prompt.icon && (
-                  <div className={`w-12 h-12 ${getIconColor(prompt.icon_color)} rounded-xl flex items-center justify-center`}>
-                    <span dangerouslySetInnerHTML={{ __html: prompt.icon }} />
+                  <div className="flex items-center justify-center text-purple-400">
+                    <span className="text-2xl" dangerouslySetInnerHTML={{ __html: prompt.icon }} />
                   </div>
                 )}
                 {prompt.badge && (
@@ -81,10 +69,10 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
                 )}
               </div>
 
-              <h3 className="text-lg font-bold mb-2 text-zinc-900">{prompt.title}</h3>
+              <h3 className="text-lg font-bold mb-3 text-zinc-900 leading-snug line-clamp-2">{prompt.title}</h3>
 
               {prompt.tags && prompt.tags.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
+                <div className="flex flex-wrap gap-2 mb-6">
                   {prompt.tags.map((tag, tagIndex) => (
                     <span
                       key={tagIndex}
@@ -97,50 +85,43 @@ export default function PromptsGridBlock({ data }: PromptsGridBlockProps) {
               )}
 
               <div className="flex items-center justify-between pt-4 border-t border-zinc-100">
-                {prompt.views !== undefined && (
-                  <div className="flex items-center gap-1 text-sm text-zinc-500">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-4 h-4"
-                    >
-                      <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
-                      <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                    <span>{prompt.views.toLocaleString()}</span>
-                  </div>
-                )}
-                {prompt.link && (
-                  <Link
-                    href={prompt.link}
-                    className="w-8 h-8 bg-zinc-100 hover:bg-zinc-200 rounded-full flex items-center justify-center transition-all"
+                <div className="flex items-center gap-1.5 text-sm text-zinc-500">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4"
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="w-4 h-4 text-zinc-600"
-                    >
-                      <path d="M5 12h14"></path>
-                      <path d="m12 5 7 7-7 7"></path>
-                    </svg>
-                  </Link>
-                )}
+                    <path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                  </svg>
+                  <span>{prompt.views !== undefined ? prompt.views.toLocaleString() : '0'}</span>
+                </div>
+                <div className="flex items-center gap-1 text-xs text-zinc-500 group-hover:text-purple-600 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="w-4 h-4"
+                  >
+                    <path d="M5 12h14"></path>
+                    <path d="m12 5 7 7-7 7"></path>
+                  </svg>
+                </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
