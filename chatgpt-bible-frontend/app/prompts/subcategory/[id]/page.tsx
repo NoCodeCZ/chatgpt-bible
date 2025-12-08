@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPromptsBySubcategory } from '@/lib/services/prompts';
 import { getSubcategoryById } from '@/lib/services/subcategories';
@@ -7,31 +8,42 @@ import PromptListSkeleton from '@/components/prompts/PromptListSkeleton';
 import Pagination from '@/components/prompts/Pagination';
 import { getServerUser } from '@/lib/auth/server';
 
+/**
+ * Enable static generation with revalidation
+ * Pages will be statically generated at build time
+ * and revalidated every 5 minutes (300 seconds)
+ * This reduces Directus API load and prevents 502 timeout errors
+ */
+export const revalidate = 300;
+
 interface SubcategoryPageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ page?: string }>;
 }
 
 export default async function SubcategoryPage({ params, searchParams }: SubcategoryPageProps) {
-  const { id } = await params;
-  const searchParamsResolved = await searchParams;
-  
-  const currentPage = parseInt(searchParamsResolved.page || '1', 10);
-  const page = isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
+   
+  try {
+    const { id } = await params;
+    const searchParamsResolved = await searchParams;
+    
+    const currentPage = parseInt(searchParamsResolved.page || '1', 10);
+    const page = isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
 
-  // Fetch subcategory to verify it exists
-  const subcategory = await getSubcategoryById(id);
-  if (!subcategory) {
-    notFound();
-  }
+    // Fetch subcategory to verify it exists
+    const subcategory = await getSubcategoryById(id);
+    if (!subcategory) {
+      notFound();
+    }
 
-  // Fetch prompts for this subcategory
-  const { data: prompts, total, totalPages } = await getPromptsBySubcategory(id, page, 20);
+    // Fetch prompts for this subcategory
+    const { data: prompts, total, totalPages } = await getPromptsBySubcategory(id, page, 20);
 
-  // Get current user for access control
-  const user = await getServerUser();
+    // Get current user for access control
+    const user = await getServerUser();
 
-  return (
+     
+    return (
     <div className="min-h-screen bg-black text-zinc-100 antialiased selection:bg-purple-500/30 selection:text-purple-200">
       {/* Aura Background */}
       <div className="fixed top-0 w-full h-screen -z-10 pointer-events-none">
@@ -71,7 +83,38 @@ export default async function SubcategoryPage({ params, searchParams }: Subcateg
         </div>
       </main>
     </div>
-  );
+    );
+  } catch (error) {
+    // Log error for debugging
+    console.error('Error loading subcategory page:', error);
+    
+    // Return error UI instead of throwing (prevents 502 errors)
+    // Note: This catch block only handles data fetching errors, not rendering errors
+     
+    return (
+      <div className="min-h-screen bg-black text-zinc-100 antialiased">
+        <div className="fixed top-0 w-full h-screen -z-10 pointer-events-none">
+          <div className="absolute w-full h-full bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/20 via-black to-black"></div>
+        </div>
+        <main className="pt-24 pb-20 px-4 sm:px-6 max-w-[1400px] mx-auto">
+          <div className="max-w-7xl mx-auto text-center py-20">
+            <h1 className="text-3xl font-semibold mb-4 text-white">
+              Failed to Load Subcategory
+            </h1>
+            <p className="text-zinc-400 mb-8">
+              We encountered an error while loading this page. Please try again later.
+            </p>
+            <Link
+              href="/prompts"
+              className="inline-block px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
+            >
+              Back to Prompts
+            </Link>
+          </div>
+        </main>
+      </div>
+    );
+  }
 }
 
 // Metadata for SEO

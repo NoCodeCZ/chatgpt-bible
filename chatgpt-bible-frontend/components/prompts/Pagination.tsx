@@ -34,7 +34,7 @@ export default function Pagination({ currentPage, totalPages, baseUrl, searchPar
     const pages: React.ReactElement[] = [];
     const showPages = 5; // Show max 5 page numbers
     let startPage = Math.max(1, currentPage - 2);
-    let endPage = Math.min(totalPages, startPage + showPages - 1);
+    const endPage = Math.min(totalPages, startPage + showPages - 1);
 
     // Adjust start if we're near the end
     if (endPage - startPage < showPages - 1) {

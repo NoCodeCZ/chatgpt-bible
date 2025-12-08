@@ -91,51 +91,63 @@ export async function getSubcategories(): Promise<SubcategoryWithCount[]> {
 }
 
 /**
- * Fetch a single subcategory by ID
+ * Fetch a single subcategory by ID with caching
+ * 
+ * Cache TTL: 5 minutes (300 seconds) to reduce Directus load
+ * Tags: ['subcategories', `subcategory-${id}`] for on-demand revalidation
  */
 export async function getSubcategoryById(id: string): Promise<SubcategoryWithCount | null> {
-  try {
-    const subcategory = await directus.request(
-      readItem('subcategories', id, {
-        fields: [
-          'id',
-          'name_th',
-          'name_en',
-          'slug',
-          'description_th',
-          'description_en',
-          'sort',
-          'category_id.id',
-          'category_id.name',
-          'category_id.name_en',
-          'category_id.name_th',
-          'category_id.slug',
-        ],
-      })
-    );
+  return unstable_cache(
+    async () => {
+      try {
+        const subcategory = await directus.request(
+          readItem('subcategories', id, {
+            fields: [
+              'id',
+              'name_th',
+              'name_en',
+              'slug',
+              'description_th',
+              'description_en',
+              'sort',
+              'category_id.id',
+              'category_id.name',
+              'category_id.name_en',
+              'category_id.name_th',
+              'category_id.slug',
+            ],
+          })
+        );
 
-    // Get prompt count
-    const countResult = await directus.request(
-      aggregate('prompts', {
-        aggregate: { count: '*' },
-        query: {
-          filter: {
-            subcategory_id: { _eq: id },
-            status: { _eq: 'published' },
-          },
-        },
-      })
-    );
+        // Get prompt count - expensive aggregate query, now cached
+        const countResult = await directus.request(
+          aggregate('prompts', {
+            aggregate: { count: '*' },
+            query: {
+              filter: {
+                subcategory_id: { _eq: id },
+                status: { _eq: 'published' },
+              },
+            },
+          })
+        );
 
-    return {
-      ...(subcategory as any),
-      prompt_count: Number(countResult[0]?.count) || 0,
-      category: (subcategory as any).category_id,
-    };
-  } catch (error) {
-    console.error('Error fetching subcategory:', error);
-    return null;
-  }
+        return {
+          ...(subcategory as any),
+          prompt_count: Number(countResult[0]?.count) || 0,
+          category: (subcategory as any).category_id,
+        };
+      } catch (error) {
+        console.error('Error fetching subcategory:', error);
+        return null;
+      }
+    },
+    [`subcategory-${id}`],
+    {
+      revalidate: 300, // 5 minutes - matches ISR revalidate
+      tags: ['subcategories', `subcategory-${id}`],
+    }
+  )();
 }
 
 /**
