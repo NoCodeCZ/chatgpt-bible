@@ -1,15 +1,21 @@
 import { Suspense } from 'react';
 import { getSubcategories, getSubcategoriesByCategory } from '@/lib/services/subcategories';
 import { getCategories } from '@/lib/services/categories';
+import { getPrompts, type GetPromptsFilters } from '@/lib/services/prompts';
+import { getServerUser } from '@/lib/auth/server';
 import SubcategoryList from '@/components/prompts/SubcategoryList';
+import PromptList from '@/components/prompts/PromptList';
 import PromptListSkeleton from '@/components/prompts/PromptListSkeleton';
 import PromptFilters from '@/components/prompts/PromptFilters';
 import PromptFiltersMobile from '@/components/prompts/PromptFiltersMobile';
 import SearchBar from '@/components/prompts/SearchBar';
+import Pagination from '@/components/prompts/Pagination';
 
 interface PromptsPageProps {
   searchParams: Promise<{
     categories?: string;
+    search?: string;
+    page?: string;
   }>;
 }
 
@@ -25,22 +31,49 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
 
   // Parse filter parameters
   const categoryFilter = params.categories ? params.categories.split(',').filter(Boolean) : [];
+  const searchQuery = params.search?.trim() || '';
+  const currentPage = parseInt(params.page || '1', 10);
+  const page = isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
 
-  // Fetch data
-  let subcategories;
-  if (categoryFilter.length > 0) {
-    // Fetch subcategories for selected category
-    const subcategoriesByCategory = await Promise.all(
-      categoryFilter.map((cat) => getSubcategoriesByCategory(cat))
-    );
-    subcategories = subcategoriesByCategory.flat();
-  } else {
-    // Fetch all subcategories
-    subcategories = await getSubcategories();
-  }
-
+  // Conditionally fetch data based on search query
   const categoriesData = await getCategories();
-  const total = subcategories.length;
+  let searchResults = null;
+  let subcategories = null;
+  let total = 0;
+  let user = null;
+
+  if (searchQuery) {
+    // Search mode: Fetch prompts matching search query
+    const filters: GetPromptsFilters = {
+      search: searchQuery,
+      page: page,
+      limit: 20,
+    };
+
+    // Add category filter if present
+    if (categoryFilter.length > 0) {
+      filters.categories = categoryFilter;
+    }
+
+    searchResults = await getPrompts(filters);
+    total = searchResults.total;
+    
+    // Get user for access control
+    user = await getServerUser();
+  } else {
+    // Browse mode: Fetch subcategories (current behavior)
+    if (categoryFilter.length > 0) {
+      // Fetch subcategories for selected category
+      const subcategoriesByCategory = await Promise.all(
+        categoryFilter.map((cat) => getSubcategoriesByCategory(cat))
+      );
+      subcategories = subcategoriesByCategory.flat();
+    } else {
+      // Fetch all subcategories
+      subcategories = await getSubcategories();
+    }
+    total = subcategories.length;
+  }
 
   return (
     <div className="min-h-screen bg-black text-zinc-100 antialiased selection:bg-purple-500/30 selection:text-purple-200">
@@ -56,10 +89,12 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
             <div>
               <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-2 text-white">
-                Prompt Library
+                {searchQuery ? 'Search Results' : 'Prompt Library'}
               </h1>
               <p className="text-base text-zinc-400">
-                Browse {total} subcategories of professionally-crafted ChatGPT prompts
+                {searchQuery
+                  ? `Found ${total} ${total === 1 ? 'prompt' : 'prompts'} matching "${searchQuery}"`
+                  : `Browse ${total} subcategories of professionally-crafted ChatGPT prompts`}
               </p>
             </div>
             {/* Mobile Filter Button */}
@@ -83,10 +118,33 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
           {/* Main Content */}
           <div className="flex-1">
             <Suspense fallback={<PromptListSkeleton />}>
-              <SubcategoryList 
-                subcategories={subcategories} 
-                hasActiveFilters={categoryFilter.length > 0}
-              />
+              {searchQuery && searchResults ? (
+                <>
+                  <PromptList 
+                    prompts={searchResults.data} 
+                    hasActiveFilters={categoryFilter.length > 0 || !!searchQuery}
+                    user={user}
+                  />
+                  {searchResults.totalPages > 1 && (
+                    <div className="mt-10">
+                      <Pagination
+                        currentPage={page}
+                        totalPages={searchResults.totalPages}
+                        baseUrl="/prompts"
+                        searchParams={{
+                          search: searchQuery,
+                          categories: categoryFilter.length > 0 ? categoryFilter.join(',') : undefined,
+                        }}
+                      />
+                    </div>
+                  )}
+                </>
+              ) : (
+                <SubcategoryList 
+                  subcategories={subcategories || []} 
+                  hasActiveFilters={categoryFilter.length > 0}
+                />
+              )}
             </Suspense>
           </div>
         </div>

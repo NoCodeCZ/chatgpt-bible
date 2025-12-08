@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function SearchBar() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [query, setQuery] = useState(searchParams.get('search') || '');
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Debounce search input (500ms as per Story 2.4 requirements)
   useEffect(() => {
@@ -25,8 +26,36 @@ export default function SearchBar() {
       router.push(`/prompts?${params.toString()}`);
     }, 500); // 500ms debounce
 
-    return () => clearTimeout(timer);
+    debounceTimerRef.current = timer;
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
   }, [query, router, searchParams]);
+
+  // Handle Enter key press for immediate search
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      
+      // Clear debounce timer
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+
+      // Immediately update URL
+      const params = new URLSearchParams(searchParams);
+      if (query.trim()) {
+        params.set('search', query.trim());
+      } else {
+        params.delete('search');
+      }
+      params.delete('page');
+      router.push(`/prompts?${params.toString()}`);
+    }
+  };
 
   const clearSearch = () => {
     setQuery('');
@@ -52,6 +81,7 @@ export default function SearchBar() {
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={handleKeyDown}
         placeholder="Search prompts by title, description, or category..."
         className="block w-full pl-12 pr-12 py-4 bg-zinc-900/50 border border-white/10 rounded-2xl text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500/50 transition-all shadow-lg backdrop-blur-md"
       />
