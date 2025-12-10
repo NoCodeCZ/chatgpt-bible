@@ -8,6 +8,9 @@ import TestimonialsBlock from './TestimonialsBlock';
 import PromptsGridBlock from './PromptsGridBlock';
 import PricingBlock from './PricingBlock';
 import FAQBlock from './FAQBlock';
+import PainPointsBlock from './PainPointsBlock';
+import TimelineBlock from './TimelineBlock';
+import RegistrationBlock from './RegistrationBlock';
 import FooterBlock from './FooterBlock';
 
 interface BlockRendererProps {
@@ -52,6 +55,15 @@ export default function BlockRenderer({ block }: BlockRendererProps) {
 
     case 'block_faq':
       return <FAQBlock data={block.data as any} />;
+
+    case 'block_pain_points':
+      return <PainPointsBlock data={block.data as any} />;
+
+    case 'block_timeline':
+      return <TimelineBlock data={block.data as any} />;
+
+    case 'block_registration':
+      return <RegistrationBlock data={block.data as any} />;
 
     case 'block_footer':
       return <FooterBlock data={block.data as any} />;

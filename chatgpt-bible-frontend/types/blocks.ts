@@ -162,6 +162,65 @@ export interface FAQBlock extends BaseBlockMeta {
   theme?: 'light' | 'dark';
 }
 
+// Pain Points Block
+export interface PainPoint {
+  icon?: string;
+  title: string;
+  description: string;
+}
+
+export interface PainPointsBlock extends BaseBlockMeta {
+  heading?: string;
+  description?: string;
+  pain_points: PainPoint[];
+  transition_text?: string;
+  theme?: 'light' | 'dark';
+  status?: 'draft' | 'published' | 'archived';
+}
+
+// Timeline Block
+export interface TimelineItem {
+  year: string;
+  title: string;
+  description: string;
+  color?: 'red' | 'amber' | 'emerald';
+}
+
+export interface TimelineBlock extends BaseBlockMeta {
+  heading?: string;
+  description?: string;
+  timeline_items: TimelineItem[];
+  price_anchor_text?: string;
+  price_anchor_time?: string;
+  price_anchor_cost?: string;
+  theme?: 'light' | 'dark';
+  status?: 'draft' | 'published' | 'archived';
+}
+
+// Registration Block (Line-specific)
+export interface BonusItem {
+  icon?: string;
+  title: string;
+  value: string;
+}
+
+export interface RegistrationBlock extends BaseBlockMeta {
+  heading?: string;
+  description?: string;
+  steps?: Array<{
+    number: number;
+    title: string;
+    description: string;
+  }>;
+  line_id?: string;
+  line_qr_code?: string; // UUID of QR code image
+  line_url?: string;
+  bonuses?: BonusItem[];
+  future_pacing_text?: string;
+  theme?: 'light' | 'dark';
+  status?: 'draft' | 'published' | 'archived';
+}
+
 // Footer Block
 export interface FooterLink {
   label: string;
@@ -193,13 +252,16 @@ export type Block =
   | PromptsGridBlock
   | PricingBlock
   | FAQBlock
+  | PainPointsBlock
+  | TimelineBlock
+  | RegistrationBlock
   | FooterBlock;
 
 // Page Block Link (junction table)
 export interface PageBlock {
   id: number;
   pages_id: number;
-  collection: 'block_hero' | 'block_cta' | 'block_features' | 'block_richtext' | 'block_form' | 'block_testimonials' | 'block_prompts_grid' | 'block_pricing' | 'block_faq' | 'block_footer';
+  collection: 'block_hero' | 'block_cta' | 'block_features' | 'block_richtext' | 'block_form' | 'block_testimonials' | 'block_prompts_grid' | 'block_pricing' | 'block_faq' | 'block_pain_points' | 'block_timeline' | 'block_registration' | 'block_footer';
   item: string; // UUID of the block
   sort: number;
   hide_block: boolean;

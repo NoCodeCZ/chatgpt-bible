@@ -12,5 +12,8 @@ export { default as TestimonialsBlock } from './TestimonialsBlock';
 export { default as PromptsGridBlock } from './PromptsGridBlock';
 export { default as PricingBlock } from './PricingBlock';
 export { default as FAQBlock } from './FAQBlock';
+export { default as PainPointsBlock } from './PainPointsBlock';
+export { default as TimelineBlock } from './TimelineBlock';
+export { default as RegistrationBlock } from './RegistrationBlock';
 export { default as FooterBlock } from './FooterBlock';
 export { default as BlockRenderer } from './BlockRenderer';

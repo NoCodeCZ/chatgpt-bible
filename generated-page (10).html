@@ -1,0 +1,957 @@
+<html lang="th"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate AIGC Affiliate System - สร้างรายได้ด้วย AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    
+    <style>
+        body { font-family: 'Noto Sans Thai', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #10b981, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .text-gradient-orange {
+            background: linear-gradient(135deg, #f97316, #eab308);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .glow-green { box-shadow: 0 0 40px rgba(16, 185, 129, 0.3); }
+        .glow-blue { box-shadow: 0 0 40px rgba(59, 130, 246, 0.3); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); } 50% { box-shadow: 0 0 40px rgba(16, 185, 129, 0.8); } }
+        .pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        @keyframes count-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-count { animation: count-up 0.6s ease-out forwards; }
+        .pricing-highlight { background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1)); }
+    </style>
+</head>
+<body class="bg-zinc-950 text-white antialiased overflow-x-hidden">
+    <!-- Background Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-emerald-500/20 blur-[150px] rounded-full"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/15 blur-[120px] rounded-full"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-soft-light"></div>
+    </div>
+
+    <!-- Sticky Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-zinc-950/80 backdrop-blur-xl border-b border-white/5">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-xl sm:text-2xl font-bold tracking-tight">
+                <span class="text-gradient">AIGC</span>
+                <span class="text-white/80">System</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
+                <a href="#results" class="hover:text-white transition-colors">ผลลัพธ์</a>
+                <a href="#packages" class="hover:text-white transition-colors">แพ็คเกจ</a>
+                <a href="#faq" class="hover:text-white transition-colors">คำถาม</a>
+            </div>
+            <a href="#register" class="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-semibold transition-all shadow-lg shadow-emerald-500/25">
+                สมัครเลย
+            </a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="relative z-10 pt-28 sm:pt-32 pb-16 sm:pb-24 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+                <!-- Hero Text -->
+                <div class="space-y-6 sm:space-y-8">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider rounded-full">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                        </span>
+                        รับสมัครรุ่นใหม่ จำกัด 30 ที่
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.1]">
+                        ทำ Affiliate<br>
+                        <span class="text-gradient">ไม่ออกกล้อง</span><br>
+                        <span class="text-slate-400 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">ไม่ซื้อสินค้า ไม่ต้องมี Follower</span>
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg md:text-xl text-slate-400 leading-relaxed max-w-xl">
+                        แต่ได้ค่าคอม <span class="text-emerald-400 font-semibold">400-900 บาทต่อวัน</span> ด้วยคลิป AI ที่ Gen ได้ <span class="text-blue-400 font-semibold">100 คลิปใน 1 คลิก</span>
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#register" class="group bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-semibold transition-all shadow-xl shadow-emerald-500/30 flex items-center justify-center gap-2 pulse-glow">
+                            เริ่มสร้างรายได้วันนี้
+                            <span class="iconify w-5 h-5 group-hover:translate-x-1 transition-transform" data-icon="lucide:arrow-right"></span>
+                        </a>
+                        <a href="#how-it-works" class="group border border-white/20 hover:border-white/40 hover:bg-white/5 px-6 sm:px-8 py-3 sm:py-4 text-sm sm:text-base font-medium transition-all flex items-center justify-center gap-2">
+                            <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:play-circle"></span>
+                            ดูวิธีการทำงาน
+                        </a>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="flex flex-wrap gap-4 sm:gap-8 pt-4 sm:pt-8 border-t border-white/10">
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-bold text-emerald-400">2,000+</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">คลิป/วัน</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-bold text-blue-400">15.3%</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">Conversion Rate</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl sm:text-3xl font-bold text-amber-400">3 ปี</div>
+                            <div class="text-xs text-slate-500 uppercase tracking-wide">ประสบการณ์</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hero Visual -->
+                <div class="relative mt-8 lg:mt-0">
+                    <div class="relative glass-panel p-4 sm:p-6 rounded-2xl glow-green">
+                        <!-- Mock Automation Tool Interface -->
+                        <div class="bg-zinc-900/80 rounded-xl overflow-hidden border border-white/10">
+                            <!-- Window Bar -->
+                            <div class="flex items-center gap-2 px-4 py-3 bg-zinc-800/50 border-b border-white/5">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-amber-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+                                <span class="ml-4 text-xs text-slate-400">AIGC Automation Tool v2.0</span>
+                            </div>
+                            <!-- Content -->
+                            <div class="p-4 sm:p-6 space-y-4">
+                                <div class="flex items-center justify-between">
+                                    <span class="text-sm text-slate-300">จำนวนคลิปที่ต้องการ</span>
+                                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 text-sm font-semibold rounded">100 คลิป</span>
+                                </div>
+                                <div class="h-2 bg-zinc-800 rounded-full overflow-hidden">
+                                    <div class="h-full w-3/4 bg-gradient-to-r from-emerald-500 to-blue-500 rounded-full animate-pulse"></div>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 sm:gap-3">
+                                    <div class="bg-zinc-800/50 p-2 sm:p-3 rounded-lg text-center">
+                                        <div class="text-lg sm:text-xl font-bold text-white">75</div>
+                                        <div class="text-xs text-slate-500">สำเร็จ</div>
+                                    </div>
+                                    <div class="bg-zinc-800/50 p-2 sm:p-3 rounded-lg text-center">
+                                        <div class="text-lg sm:text-xl font-bold text-amber-400">25</div>
+                                        <div class="text-xs text-slate-500">กำลังทำ</div>
+                                    </div>
+                                    <div class="bg-zinc-800/50 p-2 sm:p-3 rounded-lg text-center">
+                                        <div class="text-lg sm:text-xl font-bold text-emerald-400">0</div>
+                                        <div class="text-xs text-slate-500">ล้มเหลว</div>
+                                    </div>
+                                </div>
+                                <button class="w-full py-3 bg-gradient-to-r from-emerald-500 to-emerald-600 font-semibold rounded-lg flex items-center justify-center gap-2">
+                                    <span class="iconify w-5 h-5" data-icon="lucide:zap"></span>
+                                    กด 1 คลิก สร้าง 100 คลิป
+                                </button>
+                            </div>
+                        </div>
+                        <!-- Sample Clips Preview -->
+                        <div class="mt-4 grid grid-cols-4 gap-2">
+                            <div class="aspect-[9/16] bg-gradient-to-br from-pink-500/20 to-purple-500/20 rounded-lg border border-white/10 flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-white/50" data-icon="lucide:play"></span>
+                            </div>
+                            <div class="aspect-[9/16] bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-lg border border-white/10 flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-white/50" data-icon="lucide:play"></span>
+                            </div>
+                            <div class="aspect-[9/16] bg-gradient-to-br from-emerald-500/20 to-teal-500/20 rounded-lg border border-white/10 flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-white/50" data-icon="lucide:play"></span>
+                            </div>
+                            <div class="aspect-[9/16] bg-gradient-to-br from-amber-500/20 to-orange-500/20 rounded-lg border border-white/10 flex items-center justify-center">
+                                <span class="iconify w-6 h-6 text-white/50" data-icon="lucide:play"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -top-4 -right-4 sm:-right-8 glass-panel px-3 sm:px-4 py-2 rounded-lg floating">
+                        <div class="text-xs text-emerald-400 font-semibold">ผลลัพธ์จริง</div>
+                        <div class="text-lg sm:text-xl font-bold">79,000 ฿/เดือน</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Pain Points Section -->
+    <section class="relative z-10 py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-transparent via-red-950/10 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                    คุณเคยรู้สึก<span class="text-red-400">แบบนี้</span>ไหม?
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">ปัญหาที่คนทำ Affiliate ส่วนใหญ่ต้องเจอ</p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Pain Point 1 -->
+                <div class="group glass-panel p-6 rounded-xl hover:border-red-500/30 transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="iconify w-6 h-6 text-red-400" data-icon="lucide:clock"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">ทำคลิปทั้งวันได้น้อยมาก</h3>
+                    <p class="text-sm text-slate-400">ใช้เวลา 2-3 ชม. ทำได้แค่ 1 คลิป แต่ยอดขายไม่มา</p>
+                </div>
+                
+                <!-- Pain Point 2 -->
+                <div class="group glass-panel p-6 rounded-xl hover:border-red-500/30 transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="iconify w-6 h-6 text-red-400" data-icon="lucide:camera-off"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">ไม่กล้าออกกล้อง</h3>
+                    <p class="text-sm text-slate-400">อายที่จะโชว์หน้า หรือพูดไม่เก่ง รู้สึกไม่มั่นใจ</p>
+                </div>
+                
+                <!-- Pain Point 3 -->
+                <div class="group glass-panel p-6 rounded-xl hover:border-red-500/30 transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="iconify w-6 h-6 text-red-400" data-icon="lucide:shopping-bag"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">ซื้อสินค้ามาแล้วขายไม่ได้</h3>
+                    <p class="text-sm text-slate-400">ลงทุนซื้อสินค้ามารีวิว แต่ไม่มีใครสนใจ เสียเงินฟรี</p>
+                </div>
+                
+                <!-- Pain Point 4 -->
+                <div class="group glass-panel p-6 rounded-xl hover:border-red-500/30 transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="iconify w-6 h-6 text-red-400" data-icon="lucide:trending-down"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">เห็นคนอื่นสำเร็จ แต่ตัวเองไม่</h3>
+                    <p class="text-sm text-slate-400">ทำตามที่สอน แต่ทำไมผลลัพธ์ไม่เหมือนกัน?</p>
+                </div>
+                
+                <!-- Pain Point 5 -->
+                <div class="group glass-panel p-6 rounded-xl hover:border-red-500/30 transition-all duration-300">
+                    <div class="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <span class="iconify w-6 h-6 text-red-400" data-icon="lucide:users"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2">ไม่มี Follower</h3>
+                    <p class="text-sm text-slate-400">เริ่มต้นจาก 0 รู้สึกว่าต้องใช้เวลานานกว่าจะมีคนติดตาม</p>
+                </div>
+                
+                <!-- Transition Card -->
+                <div class="group bg-gradient-to-br from-emerald-500/10 to-blue-500/10 border border-emerald-500/30 p-6 rounded-xl">
+                    <div class="w-12 h-12 bg-emerald-500/20 rounded-xl flex items-center justify-center mb-4">
+                        <span class="iconify w-6 h-6 text-emerald-400" data-icon="lucide:lightbulb"></span>
+                    </div>
+                    <h3 class="font-semibold text-lg mb-2 text-emerald-400">แต่ถ้าบอกว่า...</h3>
+                    <p class="text-sm text-slate-300">มีวิธีที่ไม่ต้องทำสิ่งเหล่านั้นเลยล่ะ?</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Promise Section -->
+    <section class="relative z-10 py-16 sm:py-24 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="glass-panel p-6 sm:p-8 lg:p-12 rounded-2xl border-emerald-500/30 glow-green">
+                <div class="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+                    <div>
+                        <div class="inline-block px-4 py-1.5 bg-emerald-500/20 text-emerald-400 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+                            คำสัญญาของเรา
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-6 leading-tight">
+                            สร้างรายได้ <span class="text-gradient">400-900 บาท/วัน</span><br>
+                            โดยไม่ต้องออกกล้องแม้แต่วินาทีเดียว
+                        </h2>
+                        <p class="text-slate-400 text-base sm:text-lg leading-relaxed mb-8">
+                            ระบบ AI จะสร้างคลิปให้คุณอัตโนมัติ 100 คลิปใน 1 คลิก พร้อมกลยุทธ์เลือกสินค้าที่ขายได้จริง และวิธีบริหารช่องที่ทำให้ Conversion Rate สูงถึง 15%
+                        </p>
+                        
+                        <div class="flex flex-wrap gap-4">
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:check-circle"></span>
+                                <span>ไม่ต้องออกกล้อง</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:check-circle"></span>
+                                <span>ไม่ต้องซื้อสินค้า</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-sm">
+                                <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:check-circle"></span>
+                                <span>ไม่ต้องมี Follower</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Instructors -->
+                    <div class="relative">
+                        <div class="flex flex-col sm:flex-row items-center gap-6">
+                            <!-- Instructor 1 -->
+                            <div class="glass-panel p-4 rounded-xl text-center flex-1 w-full sm:w-auto">
+                                <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-emerald-500/30 to-blue-500/30 flex items-center justify-center border-2 border-emerald-500/50">
+                                    <span class="iconify w-10 h-10 text-white/70" data-icon="lucide:user"></span>
+                                </div>
+                                <h4 class="font-semibold">ครูเพชร</h4>
+                                <p class="text-xs text-slate-400">ผู้เชี่ยวชาญ AI Content</p>
+                                <div class="mt-2 text-emerald-400 text-sm font-semibold">3 ปีประสบการณ์</div>
+                            </div>
+                            
+                            <!-- Plus Sign -->
+                            <div class="w-10 h-10 bg-emerald-500/20 rounded-full flex items-center justify-center">
+                                <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:plus"></span>
+                            </div>
+                            
+                            <!-- Instructor 2 -->
+                            <div class="glass-panel p-4 rounded-xl text-center flex-1 w-full sm:w-auto">
+                                <div class="w-20 h-20 mx-auto mb-3 rounded-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center border-2 border-blue-500/50">
+                                    <span class="iconify w-10 h-10 text-white/70" data-icon="lucide:user"></span>
+                                </div>
+                                <h4 class="font-semibold">ครูเลนนี่</h4>
+                                <p class="text-xs text-slate-400">ผู้เชี่ยวชาญ Affiliate</p>
+                                <div class="mt-2 text-blue-400 text-sm font-semibold">Conversion Expert</div>
+                            </div>
+                        </div>
+                        
+                        <!-- Growth Graph Decoration -->
+                        <div class="absolute -bottom-4 -right-4 glass-panel px-4 py-2 rounded-lg">
+                            <div class="flex items-center gap-2">
+                                <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:trending-up"></span>
+                                <span class="text-sm font-semibold">รายได้เติบโต 300%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Backstory Section -->
+    <section class="relative z-10 py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-transparent via-zinc-900/50 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                    เส้นทางที่เราผ่านมา<span class="text-amber-400">ก่อนจะสำเร็จ</span>
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">3 ปีแห่งการลองผิดลองถูก เพื่อสร้างระบบที่ใช้ได้จริง</p>
+            </div>
+            
+            <!-- Timeline -->
+            <div class="relative">
+                <!-- Timeline Line -->
+                <div class="absolute left-4 md:left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-red-500 via-amber-500 to-emerald-500"></div>
+                
+                <!-- Timeline Items -->
+                <div class="space-y-8 sm:space-y-12">
+                    <!-- Item 1 -->
+                    <div class="relative flex flex-col md:flex-row items-start gap-4 md:gap-8">
+                        <div class="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
+                            <div class="glass-panel p-4 sm:p-6 rounded-xl border-red-500/30">
+                                <div class="text-red-400 text-sm font-semibold mb-2">ปีที่ 1</div>
+                                <h4 class="font-semibold text-lg mb-2">ทำงานหนัก 12-14 ชม./วัน</h4>
+                                <p class="text-sm text-slate-400">ทำคลิปเอง ตัดต่อเอง อัพเอง แต่ยอดขายแทบไม่มี</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-4 md:left-1/2 w-4 h-4 -translate-x-1/2 bg-red-500 rounded-full border-4 border-zinc-950"></div>
+                        <div class="md:w-1/2"></div>
+                    </div>
+                    
+                    <!-- Item 2 -->
+                    <div class="relative flex flex-col md:flex-row items-start gap-4 md:gap-8">
+                        <div class="md:w-1/2"></div>
+                        <div class="absolute left-4 md:left-1/2 w-4 h-4 -translate-x-1/2 bg-amber-500 rounded-full border-4 border-zinc-950"></div>
+                        <div class="md:w-1/2 md:pl-12 pl-12">
+                            <div class="glass-panel p-4 sm:p-6 rounded-xl border-amber-500/30">
+                                <div class="text-amber-400 text-sm font-semibold mb-2">ปีที่ 2</div>
+                                <h4 class="font-semibold text-lg mb-2">เสียเงินไปกว่า 100,000 บาท</h4>
+                                <p class="text-sm text-slate-400">ค่า Subscription Tools, ค่าคอร์สต่างๆ, ค่าทดลองสินค้า</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Item 3 -->
+                    <div class="relative flex flex-col md:flex-row items-start gap-4 md:gap-8">
+                        <div class="md:w-1/2 md:text-right md:pr-12 pl-12 md:pl-0">
+                            <div class="glass-panel p-4 sm:p-6 rounded-xl border-emerald-500/30">
+                                <div class="text-emerald-400 text-sm font-semibold mb-2">ปีที่ 3</div>
+                                <h4 class="font-semibold text-lg mb-2">ค้นพบระบบที่ใช้ได้จริง</h4>
+                                <p class="text-sm text-slate-400">รวมความเชี่ยวชาญ AI + Affiliate Strategy = ระบบอัตโนมัติที่ทำเงินได้จริง</p>
+                            </div>
+                        </div>
+                        <div class="absolute left-4 md:left-1/2 w-4 h-4 -translate-x-1/2 bg-emerald-500 rounded-full border-4 border-zinc-950"></div>
+                        <div class="md:w-1/2"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Price Anchor -->
+            <div class="mt-12 sm:mt-16 glass-panel p-6 sm:p-8 rounded-2xl border-amber-500/30 text-center">
+                <p class="text-slate-400 mb-4">ถ้าคุณลองผิดลองถูกเอง จะต้องเสีย:</p>
+                <div class="flex flex-wrap justify-center gap-4 sm:gap-8">
+                    <div>
+                        <div class="text-3xl sm:text-4xl font-bold text-red-400">3 ปี</div>
+                        <div class="text-sm text-slate-500">เวลาที่เสียไป</div>
+                    </div>
+                    <div class="text-2xl sm:text-3xl text-slate-600">+</div>
+                    <div>
+                        <div class="text-3xl sm:text-4xl font-bold text-red-400">&gt;100,000฿</div>
+                        <div class="text-sm text-slate-500">เงินลงทุนทดลอง</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="results" class="relative z-10 py-16 sm:py-24 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12 sm:mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+                    <span class="iconify w-4 h-4" data-icon="lucide:trophy"></span>
+                    ผลลัพธ์จริงจากลูกศิษย์
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                    ลูกศิษย์ <span class="text-gradient">28 คน</span> ได้รายได้ตั้งแต่วันแรก
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">ผลลัพธ์จริงจากคนธรรมดาที่ใช้ระบบของเรา</p>
+            </div>
+            
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-12 sm:mb-16">
+                <div class="glass-panel p-4 sm:p-6 rounded-xl text-center glow-green">
+                    <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-400 mb-2">2,000+</div>
+                    <div class="text-xs sm:text-sm text-slate-400">คลิป/วัน</div>
+                </div>
+                <div class="glass-panel p-4 sm:p-6 rounded-xl text-center glow-blue">
+                    <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-blue-400 mb-2">79,000฿</div>
+                    <div class="text-xs sm:text-sm text-slate-400">รายได้/เดือน (คุณพิม)</div>
+                </div>
+                <div class="glass-panel p-4 sm:p-6 rounded-xl text-center">
+                    <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-amber-400 mb-2">15.3%</div>
+                    <div class="text-xs sm:text-sm text-slate-400">Conversion Rate</div>
+                </div>
+                <div class="glass-panel p-4 sm:p-6 rounded-xl text-center">
+                    <div class="text-3xl sm:text-4xl lg:text-5xl font-bold text-purple-400 mb-2">28</div>
+                    <div class="text-xs sm:text-sm text-slate-400">คนได้รายได้วันแรก</div>
+                </div>
+            </div>
+            
+            <!-- Testimonials -->
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <!-- Testimonial 1 -->
+                <div class="glass-panel p-6 rounded-xl border-emerald-500/20 hover:border-emerald-500/40 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-500/30 to-purple-500/30 flex items-center justify-center border border-white/10">
+                            <span class="font-semibold">มีนา</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold">คุณมีนา</div>
+                            <div class="text-xs text-slate-400">พนักงานออฟฟิศ</div>
+                        </div>
+                    </div>
+                    <div class="text-2xl sm:text-3xl font-bold text-emerald-400 mb-2">37,000 ฿/เดือน</div>
+                    <p class="text-sm text-slate-400">"เริ่มจาก 0 Follower ตอนนี้มีรายได้เสริมทุกเดือน ทำหลังเลิกงานวันละ 2 ชม."</p>
+                    <div class="mt-4 flex gap-1">
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 2 -->
+                <div class="glass-panel p-6 rounded-xl border-blue-500/20 hover:border-blue-500/40 transition-all">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/30 to-cyan-500/30 flex items-center justify-center border border-white/10">
+                            <span class="font-semibold">พิมพ์</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold">คุณพิมพ์</div>
+                            <div class="text-xs text-slate-400">แม่บ้าน</div>
+                        </div>
+                    </div>
+                    <div class="text-2xl sm:text-3xl font-bold text-blue-400 mb-2">400-900 ฿/วัน</div>
+                    <p class="text-sm text-slate-400">"ไม่เคยคิดว่าจะทำได้ ตอนนี้มีรายได้ทุกวันโดยไม่ต้องออกกล้องเลย"</p>
+                    <div class="mt-4 flex gap-1">
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                    </div>
+                </div>
+                
+                <!-- Testimonial 3 -->
+                <div class="glass-panel p-6 rounded-xl border-purple-500/20 hover:border-purple-500/40 transition-all sm:col-span-2 lg:col-span-1">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center border border-white/10">
+                            <span class="font-semibold">นัท</span>
+                        </div>
+                        <div>
+                            <div class="font-semibold">คุณนัท</div>
+                            <div class="text-xs text-slate-400">นักศึกษา</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="text-xl text-slate-500 line-through">5,000 ฿</span>
+                        <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:arrow-right"></span>
+                        <span class="text-2xl sm:text-3xl font-bold text-purple-400">120,000 ฿/เดือน</span>
+                    </div>
+                    <p class="text-sm text-slate-400">"จากรายได้ 5,000 บาท ตอนนี้ทำได้ 120,000 บาท/เดือน ใน 6 เดือน"</p>
+                    <div class="mt-4 flex gap-1">
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                        <span class="iconify w-4 h-4 text-amber-400" data-icon="lucide:star"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Hidden Benefits -->
+            <div class="mt-12 sm:mt-16 glass-panel p-6 sm:p-8 rounded-2xl">
+                <h3 class="text-xl font-semibold mb-6 text-center">สิ่งที่คุณจะได้รับนอกเหนือจากรายได้</h3>
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-emerald-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="iconify w-5 h-5 text-emerald-400" data-icon="lucide:clock"></span>
+                        </div>
+                        <div>
+                            <div class="font-medium">เวลาอิสระ</div>
+                            <div class="text-xs text-slate-400">ทำงานที่ไหนเมื่อไหร่ก็ได้</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="iconify w-5 h-5 text-blue-400" data-icon="lucide:shield"></span>
+                        </div>
+                        <div>
+                            <div class="font-medium">ไม่เสี่ยงขาดทุน</div>
+                            <div class="text-xs text-slate-400">ไม่ต้องสต็อกสินค้า</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="iconify w-5 h-5 text-purple-400" data-icon="lucide:trending-up"></span>
+                        </div>
+                        <div>
+                            <div class="font-medium">Passive Income</div>
+                            <div class="text-xs text-slate-400">รายได้ที่โตได้เรื่อยๆ</div>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-3">
+                        <div class="w-10 h-10 bg-amber-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                            <span class="iconify w-5 h-5 text-amber-400" data-icon="lucide:users"></span>
+                        </div>
+                        <div>
+                            <div class="font-medium">Community</div>
+                            <div class="text-xs text-slate-400">เครือข่ายคนทำ Affiliate</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section id="packages" class="relative z-10 py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-transparent via-emerald-950/10 to-transparent">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-12 sm:mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold uppercase tracking-wider rounded-full mb-6">
+                    <span class="iconify w-4 h-4" data-icon="lucide:sparkles"></span>
+                    เลือกแพ็คเกจที่เหมาะกับคุณ
+                </div>
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                    Ultimate AIGC Affiliate System
+                </h2>
+                <p class="text-slate-400 max-w-2xl mx-auto">เริ่มต้นเพียง 9,700 บาท vs ลองผิดลองถูกเอง 3 ปี + เงิน &gt;100,000 บาท</p>
+            </div>
+            
+            <!-- Pricing Cards -->
+            <div class="grid md:grid-cols-3 gap-6 sm:gap-8">
+                <!-- Package A -->
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl hover:border-slate-500/50 transition-all">
+                    <div class="text-center mb-6">
+                        <div class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-2">Package A</div>
+                        <div class="text-3xl sm:text-4xl font-bold mb-1">9,700 ฿</div>
+                        <div class="text-sm text-slate-500">Basic Access</div>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>เข้าถึงคอร์สเรียนทั้งหมด</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>กลยุทธ์เลือกสินค้าที่ขายได้</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>วิธีบริหารช่อง TikTok</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>เข้ากลุ่ม Community</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm text-slate-500">
+                            <span class="iconify w-5 h-5 flex-shrink-0 mt-0.5" data-icon="lucide:x"></span>
+                            <span>Automation Tool</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm text-slate-500">
+                            <span class="iconify w-5 h-5 flex-shrink-0 mt-0.5" data-icon="lucide:x"></span>
+                            <span>1-on-1 Mentoring</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#register" class="block w-full py-3 text-center border border-white/20 hover:bg-white/5 rounded-lg font-semibold transition-all">
+                        เลือก Package A
+                    </a>
+                </div>
+                
+                <!-- Package B - Popular -->
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border-emerald-500/50 pricing-highlight relative glow-green transform md:scale-105">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-emerald-500 text-xs font-bold uppercase tracking-wider rounded-full">
+                        ยอดนิยม
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="text-sm font-semibold text-emerald-400 uppercase tracking-wider mb-2">Package B</div>
+                        <div class="text-3xl sm:text-4xl font-bold mb-1">19,700 ฿</div>
+                        <div class="text-sm text-slate-500">Pro Access</div>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>ทุกอย่างใน Package A</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span class="font-semibold text-emerald-400">Automation Tool 6 เดือน</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>AI Template 50+ แบบ</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>Hot Product List อัพเดทรายสัปดาห์</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>Group Q&amp;A รายสัปดาห์</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm text-slate-500">
+                            <span class="iconify w-5 h-5 flex-shrink-0 mt-0.5" data-icon="lucide:x"></span>
+                            <span>1-on-1 Mentoring</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#register" class="block w-full py-3 text-center bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 rounded-lg font-semibold transition-all shadow-lg shadow-emerald-500/25">
+                        เลือก Package B
+                    </a>
+                </div>
+                
+                <!-- Package C - Premium -->
+                <div class="glass-panel p-6 sm:p-8 rounded-2xl border-amber-500/30 hover:border-amber-500/50 transition-all relative">
+                    <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-amber-500 text-black text-xs font-bold uppercase tracking-wider rounded-full">
+                        20 คนแรกเท่านั้น
+                    </div>
+                    
+                    <div class="text-center mb-6">
+                        <div class="text-sm font-semibold text-amber-400 uppercase tracking-wider mb-2">Package C</div>
+                        <div class="text-3xl sm:text-4xl font-bold mb-1">39,700 ฿</div>
+                        <div class="text-sm text-slate-500">Premium Access</div>
+                    </div>
+                    
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>ทุกอย่างใน Package B</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" data-icon="lucide:star"></span>
+                            <span class="font-semibold text-amber-400">Automation Tool ฟรี 1 ปี!</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span class="font-semibold">1-on-1 Mentoring 4 ครั้ง</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>Priority Support ตอบภายใน 24 ชม.</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>รีวิวช่องและปรับกลยุทธ์ส่วนตัว</span>
+                        </li>
+                        <li class="flex items-start gap-2 text-sm">
+                            <span class="iconify w-5 h-5 text-emerald-400 flex-shrink-0 mt-0.5" data-icon="lucide:check"></span>
+                            <span>เข้าถึง Beta Features ก่อนใคร</span>
+                        </li>
+                    </ul>
+                    
+                    <a href="#register" class="block w-full py-3 text-center bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-lg font-semibold transition-all shadow-lg shadow-amber-500/25">
+                        เลือก Package C
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Guarantee -->
+            <div class="mt-12 sm:mt-16 text-center">
+                <div class="inline-flex items-center gap-3 glass-panel px-6 py-4 rounded-xl">
+                    <span class="iconify w-8 h-8 text-emerald-400" data-icon="lucide:shield-check"></span>
+                    <div class="text-left">
+                        <div class="font-semibold">รับประกันความพอใจ</div>
+                        <div class="text-sm text-slate-400">ถ้าทำตามระบบแล้วไม่ได้ผล คืนเงิน 100% ใน 30 วัน</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="register" class="relative z-10 py-16 sm:py-24 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="glass-panel p-6 sm:p-8 lg:p-12 rounded-2xl border-emerald-500/30 glow-green">
+                <div class="text-center mb-8 sm:mb-12">
+                    <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                        ถ้าคุณพร้อมที่จะเริ่มต้น...
+                    </h2>
+                    <p class="text-slate-400">ลงทะเบียนง่ายๆ เพียง 3 ขั้นตอน</p>
+                </div>
+                
+                <!-- Steps -->
+                <div class="grid sm:grid-cols-3 gap-6 sm:gap-8 mb-8 sm:mb-12">
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 text-xl font-bold">1</div>
+                        <h4 class="font-semibold mb-2">เลือกแพ็คเกจ</h4>
+                        <p class="text-sm text-slate-400">พิมพ์ A, B หรือ C</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 text-xl font-bold">2</div>
+                        <h4 class="font-semibold mb-2">กรอกข้อมูล</h4>
+                        <p class="text-sm text-slate-400">ชื่อ และ เบอร์โทร</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-12 h-12 mx-auto mb-4 bg-emerald-500/20 rounded-full flex items-center justify-center text-emerald-400 text-xl font-bold">3</div>
+                        <h4 class="font-semibold mb-2">ส่งทาง Line</h4>
+                        <p class="text-sm text-slate-400">ทีมงานจะติดต่อกลับ</p>
+                    </div>
+                </div>
+                
+                <!-- Line CTA -->
+                <div class="bg-[#06C755]/10 border border-[#06C755]/30 p-6 sm:p-8 rounded-xl text-center">
+                    <div class="mb-4">
+                        <span class="iconify w-16 h-16 mx-auto text-[#06C755]" data-icon="simple-icons:line"></span>
+                    </div>
+                    <h3 class="text-xl sm:text-2xl font-bold mb-2">แอดไลน์เพื่อสมัครเลย</h3>
+                    <div class="text-2xl sm:text-3xl font-bold text-[#06C755] mb-4">@aigc_aff</div>
+                    <p class="text-sm text-slate-400 mb-6">หรือสแกน QR Code ด้านล่าง</p>
+                    
+                    <!-- QR Code Placeholder -->
+                    <div class="w-40 h-40 mx-auto bg-white rounded-xl flex items-center justify-center mb-6">
+                        <div class="w-32 h-32 bg-gradient-to-br from-zinc-200 to-zinc-300 rounded-lg flex items-center justify-center">
+                            <span class="text-zinc-500 text-xs text-center">QR Code<br>Line @aigc_aff</span>
+                        </div>
+                    </div>
+                    
+                    <a href="https://line.me" target="_blank" class="inline-flex items-center gap-2 bg-[#06C755] hover:bg-[#05b34d] px-8 py-3 rounded-lg font-semibold transition-all">
+                        <span class="iconify w-5 h-5" data-icon="simple-icons:line"></span>
+                        แอดไลน์ตอนนี้
+                    </a>
+                </div>
+                
+                <!-- Bonuses -->
+                <div class="mt-8 sm:mt-12">
+                    <h3 class="text-lg sm:text-xl font-semibold mb-6 text-center">
+                        <span class="iconify w-5 h-5 inline-block text-amber-400" data-icon="lucide:gift"></span>
+                        ของแถมพิเศษสำหรับผู้สมัครวันนี้
+                    </h3>
+                    <div class="grid sm:grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 glass-panel p-4 rounded-lg">
+                            <span class="iconify w-6 h-6 text-emerald-400" data-icon="lucide:file-code"></span>
+                            <div>
+                                <div class="font-medium text-sm">AI Template 50+ แบบ</div>
+                                <div class="text-xs text-slate-400">มูลค่า 2,990 บาท</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 glass-panel p-4 rounded-lg">
+                            <span class="iconify w-6 h-6 text-blue-400" data-icon="lucide:list"></span>
+                            <div>
+                                <div class="font-medium text-sm">Hot Product List</div>
+                                <div class="text-xs text-slate-400">มูลค่า 1,990 บาท</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 glass-panel p-4 rounded-lg">
+                            <span class="iconify w-6 h-6 text-purple-400" data-icon="lucide:book-open"></span>
+                            <div>
+                                <div class="font-medium text-sm">E-book กลยุทธ์ลับ</div>
+                                <div class="text-xs text-slate-400">มูลค่า 990 บาท</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 glass-panel p-4 rounded-lg">
+                            <span class="iconify w-6 h-6 text-amber-400" data-icon="lucide:users"></span>
+                            <div>
+                                <div class="font-medium text-sm">เข้ากลุ่ม VIP ตลอดชีพ</div>
+                                <div class="text-xs text-slate-400">มูลค่า 4,990 บาท</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Future Pacing -->
+            <div class="mt-8 sm:mt-12 text-center">
+                <p class="text-lg sm:text-xl text-slate-300 max-w-2xl mx-auto">
+                    ลองจินตนาการดู... อีก 3 เดือนข้างหน้า คุณอาจมีรายได้เสริม <span class="text-emerald-400 font-semibold">20,000-50,000 บาท/เดือน</span> โดยไม่ต้องออกจากบ้าน ไม่ต้องเผชิญหน้าลูกค้า แค่กดปุ่มสร้างคลิป AI
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="relative z-10 py-16 sm:py-24 px-4 sm:px-6 bg-gradient-to-b from-transparent via-zinc-900/50 to-transparent">
+        <div class="max-w-4xl mx-auto">
+            <div class="text-center mb-12 sm:mb-16">
+                <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-4">
+                    คำถามที่พบบ่อย
+                </h2>
+                <p class="text-slate-400">ข้อสงสัยที่คุณอาจมี</p>
+            </div>
+            
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">คลิป AI ดูสมจริงแค่ไหน? TikTok จะแบนไหม?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        คลิป AI ที่เราสอนสร้างเป็นแบบ "Creative Content" ไม่ใช่ Deepfake คน TikTok ยอมรับและไม่มีปัญหาเรื่องการแบน เรามีเทคนิคเฉพาะที่ทดสอบมาแล้ว 3 ปี
+                    </div>
+                </details>
+                
+                <!-- FAQ Item 2 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">ไม่มีประสบการณ์ทำ Affiliate เลย เริ่มได้ไหม?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        ได้แน่นอน! คอร์สเราออกแบบมาสำหรับมือใหม่โดยเฉพาะ สอนตั้งแต่เปิดบัญชี TikTok จนถึงการสร้างรายได้ ลูกศิษย์ส่วนใหญ่เริ่มจาก 0 เหมือนกัน
+                    </div>
+                </details>
+                
+                <!-- FAQ Item 3 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">ต้องใช้เวลาทำงานวันละกี่ชั่วโมง?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        หลังจากเรียนรู้ระบบแล้ว ใช้เวลาแค่ 1-2 ชั่วโมง/วัน เพราะ Automation Tool จะทำงานหนักให้คุณ คุณแค่ต้องเลือกสินค้าและตั้งค่าเท่านั้น
+                    </div>
+                </details>
+                
+                <!-- FAQ Item 4 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">Automation Tool ใช้งานยากไหม?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        ง่ายมาก! แค่เลือก Template ใส่ข้อมูลสินค้า แล้วกดปุ่มเดียว ระบบจะสร้างคลิปให้อัตโนมัติ มีวิดีโอสอนใช้งานทุกขั้นตอน
+                    </div>
+                </details>
+                
+                <!-- FAQ Item 5 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">ถ้าทำแล้วไม่ได้ผล มีการรับประกันไหม?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        มีครับ! เรารับประกันความพอใจ 30 วัน ถ้าคุณทำตามระบบแล้วไม่ได้ผลลัพธ์ตามที่สัญญา เราคืนเงินเต็มจำนวน
+                    </div>
+                </details>
+                
+                <!-- FAQ Item 6 -->
+                <details class="group glass-panel rounded-xl overflow-hidden">
+                    <summary class="flex items-center justify-between p-4 sm:p-6 cursor-pointer list-none">
+                        <span class="font-medium text-sm sm:text-base pr-4">เลือกสินค้ายังไงให้ขายได้?</span>
+                        <span class="iconify w-5 h-5 text-slate-400 group-open:rotate-180 transition-transform flex-shrink-0" data-icon="lucide:chevron-down"></span>
+                    </summary>
+                    <div class="px-4 sm:px-6 pb-4 sm:pb-6 text-sm text-slate-400">
+                        เรามี Hot Product List อัพเดทให้ทุกสัปดาห์ พร้อมสอนเทคนิคการวิเคราะห์ Trend และเลือกสินค้าที่มี Commission สูงแต่แข่งขันต่ำ
+                    </div>
+                </details>
+            </div>
+        </div>
+    </section>
+
+    <!-- Final Warning Section -->
+    <section class="relative z-10 py-12 sm:py-16 px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="bg-gradient-to-r from-amber-500/20 to-red-500/20 border border-amber-500/30 p-6 sm:p-8 rounded-2xl text-center">
+                <div class="flex items-center justify-center gap-2 mb-4">
+                    <span class="iconify w-6 h-6 text-amber-400" data-icon="lucide:alert-triangle"></span>
+                    <span class="text-amber-400 font-semibold uppercase tracking-wider text-sm">โอกาสจำกัด</span>
+                </div>
+                <h3 class="text-xl sm:text-2xl md:text-3xl font-bold mb-4">
+                    รับเพียง <span class="text-amber-400">30 ที่</span> เท่านั้น
+                </h3>
+                <p class="text-slate-300 mb-6 text-sm sm:text-base">
+                    Package C สิทธิ์ Automation Tool ฟรี 1 ปี เหลือเพียง <span class="text-amber-400 font-bold">20 คนแรก</span>
+                </p>
+                <div class="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto">
+                    ปี 2568-2569 คือยุคทองของ AI Content<br>
+                    <span class="text-white font-medium">คนที่เริ่มก่อน จะได้เปรียบที่สุด</span>
+                </div>
+                
+                <a href="#register" class="inline-flex items-center gap-2 mt-8 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-8 py-4 rounded-lg font-bold transition-all shadow-lg shadow-amber-500/25">
+                    <span class="iconify w-5 h-5" data-icon="lucide:zap"></span>
+                    คว้าโอกาสนี้เลย
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="relative z-10 border-t border-white/10 py-8 sm:py-12 px-4 sm:px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
+                <div class="text-center sm:text-left">
+                    <a href="#" class="text-xl sm:text-2xl font-bold tracking-tight">
+                        <span class="text-gradient">AIGC</span>
+                        <span class="text-white/80">System</span>
+                    </a>
+                    <p class="text-xs text-slate-500 mt-2">Ultimate AIGC Affiliate System © 2024</p>
+                </div>
+                
+                <div class="flex items-center gap-4 sm:gap-6">
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <span class="iconify w-5 h-5" data-icon="simple-icons:line"></span>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <span class="iconify w-5 h-5" data-icon="simple-icons:tiktok"></span>
+                    </a>
+                    <a href="#" class="text-slate-400 hover:text-white transition-colors">
+                        <span class="iconify w-5 h-5" data-icon="simple-icons:facebook"></span>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-8 border-t border-white/5 text-center">
+                <p class="text-xs text-slate-500">
+                    ผลลัพธ์อาจแตกต่างกันในแต่ละบุคคล ขึ้นอยู่กับความตั้งใจและการปฏิบัติตามระบบ
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating CTA Button -->
+    <a href="#register" class="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 px-4 sm:px-6 py-3 rounded-full font-semibold shadow-xl shadow-emerald-500/30 flex items-center gap-2 pulse-glow text-sm sm:text-base">
+        <span class="iconify w-5 h-5" data-icon="simple-icons:line"></span>
+        <span class="hidden sm:inline">สมัครเลย</span>
+    </a>
+
+
+</body></html>

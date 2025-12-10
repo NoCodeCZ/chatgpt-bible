@@ -72,14 +72,30 @@ export async function getPageBlocks(pageId: number): Promise<PageBlock[]> {
 
 /**
  * Fetch block data for a specific block
+ * For collections with status field, only returns items with status: 'published'
  */
 export async function getBlockData(collection: string, itemId: string): Promise<any> {
   try {
+    // Collections with status field - need to check status after fetching
+    const collectionsWithStatus = [
+      'block_pain_points',
+      'block_timeline',
+      'block_registration',
+    ];
+
     const item = await directus.request(
       readItem(collection, itemId, {
         fields: ['*'],
       })
     );
+
+    // Filter by status for collections that have it
+    if (collectionsWithStatus.includes(collection)) {
+      if (!item.status || item.status !== 'published') {
+        console.warn(`Block ${itemId} from ${collection} is not published (status: ${item.status || 'undefined'})`);
+        return null;
+      }
+    }
 
     return item;
   } catch (error) {
