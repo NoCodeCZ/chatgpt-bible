@@ -39,6 +39,21 @@ export default async function SubcategoryPage({ params, searchParams }: Subcateg
     // Fetch prompts for this subcategory
     const { data: prompts, total, totalPages } = await getPromptsBySubcategory(id, page, 20);
 
+    // Debug: Log what we received from the service
+    console.log('Subcategory page fetched prompts:', {
+      subcategoryId: id,
+      page,
+      total,
+      totalPages,
+      promptsCount: prompts.length,
+      promptsSample: prompts.slice(0, 2).map(p => ({
+        id: p.id,
+        title_th: p.title_th,
+        prompt_type_id: (p as any).prompt_type_id,
+        has_prompt_text: !!(p as any).prompt_text,
+      }))
+    });
+
     // Get current user for access control
     const user = await getServerUser();
 

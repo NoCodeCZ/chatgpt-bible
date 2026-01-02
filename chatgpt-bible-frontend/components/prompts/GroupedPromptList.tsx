@@ -57,6 +57,9 @@ export default function GroupedPromptList({
 }: GroupedPromptListProps) {
   const { copy, isCopied, reset } = useCopyToClipboard();
 
+  // Debug: log what we receive
+  console.log('GroupedPromptList received prompts:', prompts.length, prompts);
+
   // Group prompts by prompt_type.slug (memoized for performance)
   const groups = useMemo(() => {
     const grouped = prompts.reduce<Record<string, PromptGroup>>((acc, prompt) => {
@@ -79,6 +82,9 @@ export default function GroupedPromptList({
 
     return Object.values(grouped);
   }, [prompts]);
+
+  // Debug: log groups
+  console.log('GroupedPromptList groups:', groups.length, groups);
 
   // State to track which sections are open (all open by default)
   const [openSections, setOpenSections] = useState<Set<string>>(() =>
