@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useCopyToClipboard } from './useCopyToClipboard';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
 import { canAccessPrompt } from '@/lib/auth';
@@ -57,33 +57,42 @@ export default function GroupedPromptList({
 }: GroupedPromptListProps) {
   const { copy, isCopied, reset } = useCopyToClipboard();
 
+  // Group prompts by prompt_type.slug (memoized for performance)
+  const groups = useMemo(() => {
+    const grouped = prompts.reduce<Record<string, PromptGroup>>((acc, prompt) => {
+      const typeSlug = prompt.prompt_type?.slug || 'uncategorized';
+      const typeName = prompt.prompt_type?.name_th || 'Unknown';
+
+      if (!acc[typeSlug]) {
+        acc[typeSlug] = {
+          typeSlug,
+          typeName,
+          prompts: [],
+        };
+      }
+
+      acc[typeSlug].prompts.push(prompt as PromptWithCategory);
+      return acc;
+    }, {});
+
+    return Object.values(grouped);
+  }, [prompts]);
+
   // State to track which sections are open (all open by default)
-  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
+  const [openSections, setOpenSections] = useState<Set<string>>(() =>
+    new Set(groups.map(g => g.typeSlug))
+  );
 
-  // Group prompts by prompt_type.slug
-  const grouped = prompts.reduce<Record<string, PromptGroup>>((acc, prompt) => {
-    const typeSlug = prompt.prompt_type?.slug || 'uncategorized';
-    const typeName = prompt.prompt_type?.name_th || 'Unknown';
-
-    if (!acc[typeSlug]) {
-      acc[typeSlug] = {
-        typeSlug,
-        typeName,
-        prompts: [],
-      };
-    }
-
-    acc[typeSlug].prompts.push(prompt as PromptWithCategory);
-    return acc;
-  }, {});
-
-  // Convert to array - order will be determined by database sort
-  const groups = Object.values(grouped);
-
-  // Initialize all sections as open on first render
-  if (openSections.size === 0 && groups.length > 0) {
-    setOpenSections(new Set(groups.map(g => g.typeSlug)));
-  }
+  // Sync open sections when groups change (but preserve user toggle state)
+  useEffect(() => {
+    setOpenSections(prev => {
+      const allTypeSlugs = new Set(groups.map(g => g.typeSlug));
+      // Add any new sections that weren't in the previous state
+      const updated = new Set(prev);
+      allTypeSlugs.forEach(slug => updated.add(slug));
+      return updated;
+    });
+  }, [groups]);
 
   // Toggle section open/closed
   const toggleSection = (typeSlug: string) => {
