@@ -64,6 +64,9 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
     // Browse mode: Fetch categories with subcategories
     let allCategories = await getCategoriesWithSubcategories();
 
+    // Debug logging
+    console.log('Categories fetched:', allCategories.length, allCategories);
+
     // Filter categories if category filter is applied
     if (categoryFilter.length > 0) {
       categoriesWithSubcategories = allCategories.filter((cat) =>

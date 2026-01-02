@@ -8,7 +8,7 @@ export interface CategoryWithSubcategories extends Category {
 }
 
 export interface SubcategoryWithCount {
-  id: string;
+  id: number; // Subcategory IDs are numbers in Directus
   name_th: string | null;
   name_en: string | null;
   slug: string;
