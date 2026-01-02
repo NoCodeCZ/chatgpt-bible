@@ -5,25 +5,25 @@ import DifficultyBadge from '@/components/ui/DifficultyBadge';
 
 interface SubcategoryData {
   id: number;
-  name_th: string;
-  name_en: string;
-  category_id: {
+  name_th?: string | null;
+  name_en?: string | null;
+  category_id?: {
     id: string;
-    name_th: string;
-    name_en: string;
-    slug: string;
-  };
+    name_th?: string | null;
+    name_en?: string | null;
+    slug?: string;
+  } | null;
 }
 
 interface PromptListItemProps {
   prompt: {
     id: number;
-    title_th: string;
-    title_en: string;
-    description: string;
-    prompt_text: string;
-    difficulty_level: 'beginner' | 'intermediate' | 'advanced';
-    subcategory_id: SubcategoryData;
+    title_th?: string | null;
+    title_en?: string | null;
+    description?: string | null;
+    prompt_text?: string | null;
+    difficulty_level?: 'beginner' | 'intermediate' | 'advanced' | null;
+    subcategory_id?: SubcategoryData | null;
   };
   isLocked?: boolean;
 }
@@ -38,19 +38,25 @@ export default function PromptListItem({ prompt, isLocked = false }: PromptListI
   const { copy, isCopied } = useCopyToClipboard();
 
   const handleCopy = () => {
-    copy(prompt.prompt_text);
+    copy(prompt.prompt_text || '');
   };
 
-  // Get category name
-  const categoryName = prompt.subcategory_id?.category_id?.name_th ||
-                       prompt.subcategory_id?.category_id?.name_en ||
+  // Get category name with safe access
+  const categoryName = prompt?.subcategory_id?.category_id?.name_th ||
+                       prompt?.subcategory_id?.category_id?.name_en ||
                        'Category';
 
-  // Get prompt title
-  const title = prompt.title_th || prompt.title_en || 'Untitled Prompt';
+  // Get prompt title with safe access
+  const title = prompt?.title_th || prompt?.title_en || 'Untitled Prompt';
 
-  // Get description
-  const description = prompt.description || '';
+  // Get description with safe access
+  const description = prompt?.description || '';
+
+  // Get prompt text with safe access
+  const promptText = prompt?.prompt_text || 'No prompt text available';
+
+  // Get difficulty with safe access
+  const difficulty = prompt?.difficulty_level || 'beginner';
 
   return (
     <article className="group bg-zinc-900/60 border border-white/10 hover:border-purple-500/20 rounded-2xl p-6 transition-all duration-300">
@@ -64,7 +70,7 @@ export default function PromptListItem({ prompt, isLocked = false }: PromptListI
           </span>
 
           {/* Difficulty Badge */}
-          <DifficultyBadge level={prompt.difficulty_level} />
+          <DifficultyBadge level={difficulty} />
         </div>
 
         {/* Copy Button */}
@@ -122,7 +128,7 @@ export default function PromptListItem({ prompt, isLocked = false }: PromptListI
         {/* Prompt text */}
         <div className="bg-black/40 p-4">
           <pre className="font-mono text-sm text-zinc-300 whitespace-pre-wrap leading-relaxed">
-            {prompt.prompt_text}
+            {promptText}
           </pre>
         </div>
 
