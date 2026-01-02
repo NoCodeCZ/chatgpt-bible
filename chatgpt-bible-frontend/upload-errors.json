@@ -1,0 +1,712 @@
+[
+  {
+    "index": 0,
+    "prompt": "นี่คือรายชื่อคู่แข่งสำคัญในอุตสาหกรรม \\[ระบุอุตสาห",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 1,
+    "prompt": "นี่คือรายการสินค้าและบริการหลักจากคู่แข่งของฉัน: \\",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 2,
+    "prompt": "โปรดระบุช่องทางการตลาดที่คู่แข่งสำคัญของฉันใช้. จา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 3,
+    "prompt": "ใครคือคู่แข่งคนสำคัญใน \\[ระบุอุตสาหกรรม/ตลาดเฉพาะก",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 4,
+    "prompt": "คู่แข่งของฉันมี \\[จุดแข็ง/จุดอ่อน\\] อะไรบ้าง และฉั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 5,
+    "prompt": "คู่แข่งนำเสนอ \\[สินค้า/บริการ\\] ประเภทใดบ้าง และเม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 6,
+    "prompt": "คู่แข่งใช้ \\[กลยุทธ์การตั้งราคา\\] รูปแบบใด และมีคว",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 7,
+    "prompt": "คู่แข่งใช้ \\[กลยุทธ์การตลาด\\] อะไร และมีประสิทธิภา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 8,
+    "prompt": "คู่แข่งเผยแพร่ \\[คอนเทนต์\\] ประเภทใด และฉันจะสร้าง",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 9,
+    "prompt": "คู่แข่งมีตัวตนบน \\[โซเชียลมีเดีย\\] อย่างไร และฉันจ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 10,
+    "prompt": "คู่แข่งมอบ \\[การบริการ/การสนับสนุนลูกค้า\\] ในรูปแบ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 11,
+    "prompt": "คู่แข่งใช้ \\[กลยุทธ์ SEO\\] อะไรบ้าง และฉันจะปรับปร",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 12,
+    "prompt": "คู่แข่งมี \\[พันธมิตร/ความร่วมมือทางธุรกิจ\\] กับองค",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 13,
+    "prompt": "โปรดเขียนแผนธุรกิจสำหรับบริษัทชื่อ \\[ชื่อบริษัท\\]",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 14,
+    "prompt": "โปรดเขียนแผนธุรกิจสำหรับบริษัทชื่อ \\[ชื่อบริษัท\\]",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 15,
+    "prompt": "บริษัทของฉันตั้งเป้าหมายที่จะบรรลุ \\[เป้าหมายหลัก\\",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 16,
+    "prompt": "โปรดกำหนดวัตถุประสงค์และผลลัพธ์หลัก (OKR) ที่มีควา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 17,
+    "prompt": "โปรดแปลงวิสัยทัศน์ต่อไปนี้: '\\[ใส่วิสัยทัศน์ของคุณ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 18,
+    "prompt": "แนวคิดทางธุรกิจของฉันคืออะไร? บริษัทจะนำเสนอสินค้า",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 19,
+    "prompt": "กลุ่มเป้าหมายของฉันคือใคร? พวกเขามีความต้องการและ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 20,
+    "prompt": "กลยุทธ์ด้านการตลาดและการขายของฉันคืออะไร? จะเข้าถึ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 21,
+    "prompt": "โครงสร้างและการจัดองค์กรของธุรกิจจะเป็นอย่างไร? จะ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 22,
+    "prompt": "ประมาณการและเป้าหมายทางการเงินของฉันเป็นอย่างไร? ค",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 23,
+    "prompt": "ความเสี่ยงและความท้าทายที่สำคัญซึ่งธุรกิจอาจต้องเผ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 24,
+    "prompt": "บุคลากรหลักในทีมของฉันคือใคร และแต่ละคนมีบทบาทความ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 25,
+    "prompt": "เป้าหมายทางธุรกิจในระยะสั้นและระยะยาวของฉันคืออะไร",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 26,
+    "prompt": "จะรักษาความสามารถในการแข่งขันและปรับตัวต่อการเปลี่",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 27,
+    "prompt": "จะจัดหาเงินทุนและบริหารกระแสเงินสดของธุรกิจได้อย่า",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 28,
+    "prompt": "โปรดเขียนข้อเสนอสำหรับ \\[ลูกค้าเป้าหมาย\\] ซึ่งกำลั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 29,
+    "prompt": "โปรดเขียนข้อเสนอสำหรับ \\[ลูกค้าเป้าหมาย\\] ซึ่งกำลั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 30,
+    "prompt": "ฉันกำลังจะเสนอโปรเจกต์ให้กับ \\[ชื่อบริษัท/องค์กร\\]",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 31,
+    "prompt": "\\[บริการของคุณ\\] จะสามารถช่วยธุรกิจของลูกค้าในอุตส",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 32,
+    "prompt": "ธุรกิจในอุตสาหกรรม \\[ระบุอุตสาหกรรม\\] จะสร้างความโ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 33,
+    "prompt": "เราจะสามารถช่วย \\[ประเภทธุรกิจของลูกค้า\\] ในการปรั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 34,
+    "prompt": "\\[ประเภทธุรกิจของคุณ\\] สามารถนำเสนอทางแก้ไขอะไรได้",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 35,
+    "prompt": "\\[ประเภทธุรกิจของคุณ\\] จะสามารถช่วยเหลือลูกค้าในกา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 36,
+    "prompt": "\\[ประเภทธุรกิจของคุณ\\] สามารถทำอะไรได้บ้างเพื่อปรั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 37,
+    "prompt": "\\[ประเภทบริการของคุณ\\] จะก้าวนำเทรนด์ของอุตสาหกรรม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 38,
+    "prompt": "\\[ประเภทธุรกิจของคุณ\\] จะแสดงให้เห็นถึงผลตอบแทนจาก",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 39,
+    "prompt": "โปรดสร้างข้อความวิสัยทัศน์ของบริษัท โดยมีองค์ประกอ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 40,
+    "prompt": "โปรดสร้างข้อความวิสัยทัศน์ที่สรุปถึงวัตถุประสงค์แล",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 41,
+    "prompt": "ช่วยระดมสมองหาไอเดียสำหรับข้อความวิสัยทัศน์ของบริษ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 42,
+    "prompt": "ฉันต้องการให้บริษัทของฉันสร้างผลกระทบแบบไหนต่อโลกใ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 43,
+    "prompt": "ฉันต้องการให้บริษัทของฉันยึดมั่นในค่านิยมอะไรบ้าง?",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 44,
+    "prompt": "ฉันต้องการสร้างวัฒนธรรมองค์กรแบบไหนภายในบริษัทของฉ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 45,
+    "prompt": "ฉันต้องการดึงดูดลูกค้าประเภทไหนมาที่บริษัทของฉัน?\"",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 46,
+    "prompt": "ฉันต้องการให้บริษัทของฉันทิ้งมรดกอะไรไว้เบื้องหลัง",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 47,
+    "prompt": "ช่วยปรับแก้ข้อความวิสัยทัศน์ของฉันให้ดีขึ้น โดยการ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 48,
+    "prompt": "ช่วยเปรียบเทียบและชี้ข้อแตกต่างของข้อความวิสัยทัศน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 49,
+    "prompt": "ช่วยให้ฟีดแบ็กเกี่ยวกับข้อความวิสัยทัศน์ของฉัน โดย",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 50,
+    "prompt": "คุณสามารถแนะนำแนวคิดธุรกิจที่เป็นที่ต้องการในปัจจุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 51,
+    "prompt": "คุณสามารถแนะนำแนวคิดธุรกิจที่เป็นที่ต้องการใน \\[ระ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 52,
+    "prompt": "ฉันกำลังมองหาไอเดียธุรกิจที่ใช้เงินลงทุนน้อยที่สุด",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 53,
+    "prompt": "ธุรกิจอะไรบ้างที่มีความเป็นนวัตกรรมและไม่เหมือนใคร",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 54,
+    "prompt": "ฉันทำธุรกิจประเภท \\[อธิบายธุรกิจของคุณ\\] ฉันสามารถ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 55,
+    "prompt": "คุณสามารถแนะนำไอเดียธุรกิจสำหรับสตาร์ทอัพที่มีทรัพ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 56,
+    "prompt": "ฉันสนใจที่จะเริ่มต้นธุรกิจใน \\[ระบุอุตสาหกรรม\\] คุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 57,
+    "prompt": "ธุรกิจอะไรบ้างที่มีศักยภาพในการเติบโตสูง?\"",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 58,
+    "prompt": "ฉันชอบ \\[ระบุความชอบและความสนใจ\\] ฉันสามารถสร้างธุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 59,
+    "prompt": "ฉันมีความสามารถในด้าน \\[ระบุทักษะและประสบการณ์\\] ฉ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 60,
+    "prompt": "ฉันกำลังมองหาไอเดียธุรกิจที่เป็นมิตรต่อสิ่งแวดล้อม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 61,
+    "prompt": "ฉันกำลังมองหาไอเดียธุรกิจที่สามารถทำได้จากที่บ้าน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 62,
+    "prompt": "คุณสามารถแนะนำไอเดียธุรกิจสำหรับเมืองเล็กหรือพื้นท",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 63,
+    "prompt": "ฉันสนใจที่จะเริ่มต้นธุรกิจใน \\[ระบุ Niche หรือตลาด",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 64,
+    "prompt": "คุณสามารถแนะนำไอเดียธุรกิจที่เหมาะสมสำหรับผู้เริ่ม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 65,
+    "prompt": "ฉันต้องการเริ่มต้นธุรกิจใน \\[ระบุอุตสาหกรรม\\] แต่ไ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 66,
+    "prompt": "ธุรกิจอะไรบ้างที่ง่ายต่อการขยายขนาด (Scale up)?\"",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 67,
+    "prompt": "คุณสามารถแนะนำไอเดียธุรกิจที่เป็นที่นิยมในกลุ่ม \\[",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 68,
+    "prompt": "ฉันกำลังมองหาไอเดียธุรกิจที่สร้างผลกระทบต่อสังคม ค",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 69,
+    "prompt": "สมมติว่าคุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแอปพลิเค",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 70,
+    "prompt": "คุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแบรนด์แฟชั่นที่เ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 71,
+    "prompt": "สมมติว่าคุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแพลตฟอร์",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 72,
+    "prompt": "คุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับผลิตภัณฑ์เนื้อจา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 73,
+    "prompt": "สมมติว่าคุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแพลตฟอร์",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 74,
+    "prompt": "คุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับบริการใหม่ที่ช่ว",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 75,
+    "prompt": "สมมติว่าคุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแพลตฟอร์",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 76,
+    "prompt": "คุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแพลตฟอร์มอีคอมเม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 77,
+    "prompt": "สมมติว่าคุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับตลาดออนไ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 78,
+    "prompt": "คุณกำลังนำเสนอแผนต่อนักลงทุนสำหรับแพลตฟอร์มบนเทคโน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 79,
+    "prompt": "ฉันจะสร้างข้อความต้อนรับที่เป็นส่วนตัวสำหรับพนักงา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 80,
+    "prompt": "ข้อความที่ดีในการต้อนรับพนักงานใหม่เข้าสู่ทีม \\[รา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 81,
+    "prompt": "ฉันจะสร้างประสบการณ์การเริ่มต้นงาน (onboarding) ที",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 82,
+    "prompt": "ฉันจะสร้างข้อความสำหรับพนักงานใหม่ในตำแหน่ง \\[ระบุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 83,
+    "prompt": "สมมติว่าคุณกำลังจ้างพนักงานบริการลูกค้าคนใหม่ คุณจ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 84,
+    "prompt": "คุณกำลังจ้างนักพัฒนาซอฟต์แวร์คนใหม่ ทักษะทางเทคนิค",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 85,
+    "prompt": "สมมติว่าคุณกำลังจ้างผู้จัดการฝ่ายการตลาดคนใหม่ ประ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 86,
+    "prompt": "คุณกำลังจ้างพนักงานขายคนใหม่ คุณจะมองหาลักษณะและคุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 87,
+    "prompt": "สมมติว่าคุณกำลังจ้างผู้จัดการฝ่ายทรัพยากรบุคคลคนให",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 88,
+    "prompt": "คุณกำลังจ้างนักบัญชีคนใหม่ ทักษะทางเทคนิคและประสบก",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 89,
+    "prompt": "สมมติว่าคุณกำลังจ้างกราฟิกดีไซเนอร์คนใหม่ ประสบการ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 90,
+    "prompt": "คุณกำลังจ้างผู้จัดการโครงการคนใหม่ คุณจะมองหาลักษณ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 91,
+    "prompt": "สมมติว่าคุณกำลังจ้างผู้ช่วยธุรการคนใหม่ ทักษะและคุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 92,
+    "prompt": "คุณกำลังจ้างนักวิเคราะห์ข้อมูลคนใหม่ ทักษะทางเทคนิ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 93,
+    "prompt": "คุณสมบัติที่จำเป็นสำหรับตำแหน่ง \\[ระบุตำแหน่ง\\] ใน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 94,
+    "prompt": "ตารางการทำงานที่คาดหวังและวัฒนธรรมองค์กรสำหรับตำแห",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 95,
+    "prompt": "คุณสามารถให้คำแนะนำทีละขั้นตอนเกี่ยวกับวิธีการจ้าง",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 96,
+    "prompt": "โปรดสรุป 5 ประเด็นสำคัญจากบันทึกการประชุมนี้: \\[คั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 97,
+    "prompt": "โปรดสรุปการตัดสินใจและขั้นตอนต่อไปที่ได้กำหนดไว้ใน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 98,
+    "prompt": "โปรดสรุปประเด็นสำคัญที่หยิบยกขึ้นมา, แนวทางแก้ไขที",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 99,
+    "prompt": "กรุณาสรุปประเด็นหลักที่หารือกันในการประชุมวันนี้ได",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 100,
+    "prompt": "ผมจะขอบคุณมากถ้าคุณช่วยสรุปย่อการประชุมที่เราเพิ่ง",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 101,
+    "prompt": "คุณช่วยเขียนสรุปการประชุมที่เรามีไปก่อนหน้านี้ได้ไ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 102,
+    "prompt": "กรุณาสรุปประเด็นสำคัญที่ได้จากการประชุมนี้: \\[คัดล",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 103,
+    "prompt": "คุณช่วยรวบรวมสรุปการประชุมที่ผมสามารถนำไปแบ่งปันกั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 104,
+    "prompt": "ผมต้องส่งอีเมลติดตามผลไปยังทุกคนที่เข้าร่วมการประช",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 105,
+    "prompt": "นี่คือเนื้อหาอีเมลฉบับร่างของฉัน: \\[วางเนื้อหาอีเม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 106,
+    "prompt": "สินค้าของฉันคือ \\[สินค้า/บริการ\\] ซึ่งช่วยแก้ปัญหา",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 107,
+    "prompt": "เรากำลังจะเปิดตัว \\[สินค้าใหม่\\] สำหรับ \\[กลุ่มเป้",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 108,
+    "prompt": "มีหัวข้ออีเมลที่ดึงดูดความสนใจสำหรับอีเมลเกี่ยวกับ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 109,
+    "prompt": "ฉันจะสร้างหัวข้ออีเมลที่น่าสนใจซึ่งกระตุ้นให้เกิดก",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 110,
+    "prompt": "มีวิธีใดบ้างในการใช้อารมณ์ขันหรือความมีไหวพริบในหั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 111,
+    "prompt": "ฉันจะสร้างหัวข้ออีเมลที่สอดคล้องกับความสนใจและความ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 112,
+    "prompt": "ฉันจะใช้เทคนิคการปรับเนื้อหาให้เหมาะกับแต่ละบุคคลใ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 113,
+    "prompt": "ช่วยแนะนำหัวข้ออีเมลที่ใช้หลักการสร้างความรู้สึกกล",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 114,
+    "prompt": "มีหัวข้ออีเมลอะไรบ้างที่ใช้ได้ผลในการกระตุ้นผู้ติด",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 115,
+    "prompt": "ฉันจะสร้างหัวข้ออีเมลที่ทั้งชัดเจนและน่าสนใจโดยไม่",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 116,
+    "prompt": "\\[สินค้าหรือบริการ\\] ของเราคือทางออกที่สมบูรณ์แบบส",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 117,
+    "prompt": "เรากำลังจะเปิดตัว \\[สินค้า\\]. สินค้านี้ออกแบบมาเพื",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 118,
+    "prompt": "โปรดสร้างอีเมลการขายสำหรับลูกค้าเป้าหมาย โดยมีองค์",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 119,
+    "prompt": "คุณช่วยฉันเขียนหัวข้ออีเมลที่น่าสนใจซึ่งจะกระตุ้นใ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 120,
+    "prompt": "ฉันจะสร้างประโยคเปิดเรื่องที่ดึงดูดความสนใจของผู้อ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 121,
+    "prompt": "มีวิธีใดบ้างในการสร้างความน่าเชื่อถือและความไว้วาง",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 122,
+    "prompt": "คุณสามารถแนะนำเทคนิคในการสร้างความรู้สึกเร่งด่วนหร",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 123,
+    "prompt": "ฉันจะใช้การเล่าเรื่องเพื่อสร้างความเชื่อมโยงทางอาร",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 124,
+    "prompt": "มีวิธีใดบ้างที่มีประสิทธิภาพในการเน้นย้ำถึงประโยชน",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 125,
+    "prompt": "คุณช่วยฉันสร้างคำกระตุ้นการตัดสินใจที่ชัดเจนและน่า",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 126,
+    "prompt": "มีวิธีใดบ้างในการปรับอีเมลการขายให้เหมาะกับแต่ละบุ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 127,
+    "prompt": "ฉันจะใช้การอ้างอิงจากสังคม (social proof) หรือคำรั",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 128,
+    "prompt": "คุณสามารถแนะนำวิธีติดตามผลและติดต่อกับผู้อ่านหลังจ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 129,
+    "prompt": "โปรดช่วยฉันสร้างหัวข้ออีเมลสำหรับแคมเปญ \\[ชื่อแคมเ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 130,
+    "prompt": "ฉันกำลังมองหาไอเดียสำหรับหัวข้ออีเมลของฉัน. คุณช่ว",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 131,
+    "prompt": "คุณช่วยให้ตัวอย่างของหัวข้ออีเมลที่ประสบความสำเร็จ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 132,
+    "prompt": "คุณจะเขียนหัวข้ออีเมลที่ดึงดูดความสนใจและกระตุ้นให",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 133,
+    "prompt": "มีเทคนิคการเขียนคำโฆษณาอะไรบ้างที่คุณสามารถใช้เพื่",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 134,
+    "prompt": "คุณจะปรับหัวข้ออีเมลของคุณให้เป็นส่วนตัวตามความสนใ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 135,
+    "prompt": "คุณจะใช้ประโยชน์จากอารมณ์, เช่น ความอยากรู้อยากเห็",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 136,
+    "prompt": "คุณจะปรับปรุงหัวข้ออีเมลของคุณสำหรับอุปกรณ์พกพาและ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 137,
+    "prompt": "คุณจะใช้การทดสอบ A/B เพื่อทดลองกับหัวข้ออีเมลต่างๆ",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 138,
+    "prompt": "คุณจะหลีกเลี่ยงตัวกรองสแปมและให้แน่ใจว่าหัวข้ออีเม",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 139,
+    "prompt": "คุณจะวัดความสำเร็จของหัวข้ออีเมลของคุณและทำการตัดส",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 140,
+    "prompt": "มีเครื่องมือหรือแพลตฟอร์มใดบ้างที่สามารถช่วยคุณสร้",
+    "error": "directus.request is not a function"
+  },
+  {
+    "index": 141,
+    "prompt": "คุณจะรวมหัวข้ออีเมลเข้ากับกลยุทธ์การตลาดผ่านอีเมลโ",
+    "error": "directus.request is not a function"
+  }
+]
