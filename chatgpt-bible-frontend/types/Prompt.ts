@@ -60,7 +60,13 @@ export interface Subcategory {
   slug: string;
   description_th?: string;
   description_en?: string;
-  category_id?: string | SubcategoryCategory; // Parent category (can be ID or full object)
+  category_id?: string | SubcategoryCategory | { // Parent category (can be ID or full object)
+    id: string;
+    name?: string;
+    name_th?: string;
+    name_en?: string;
+    slug: string;
+  };
 }
 
 // Optimized type for list views (fewer fields, better performance)
@@ -69,6 +75,7 @@ export interface PromptCard {
   title_th: string;
   title_en: string;
   description: string;
+  prompt_text?: string; // Full prompt text for expanded display
   difficulty_level: DifficultyLevel;
   // Used for grouping in UI (e.g. related prompts within a subcategory)
   prompt_type_id?: string | null;
