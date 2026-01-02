@@ -435,6 +435,10 @@ export async function getPromptById(id: string): Promise<Prompt | null> {
 
 /**
  * Fetch prompts by subcategory ID
+ *
+ * Note: Fetches prompt_types separately to work around public role permissions.
+ * Directus may not expand M2O relations if the public role lacks read access
+ * to the related collection.
  */
 export async function getPromptsBySubcategory(
   subcategoryId: string,
@@ -443,6 +447,9 @@ export async function getPromptsBySubcategory(
 ): Promise<GetPromptsResult> {
   try {
     const offset = (page - 1) * limit;
+
+    // Fetch all prompt types first (for lookup)
+    const promptTypesMap = await getPromptTypesMap();
 
     // Query with full prompt text for expanded display
     const prompts = await directus.request(
@@ -460,12 +467,7 @@ export async function getPromptsBySubcategory(
           'description',
           'prompt_text',
           'difficulty_level',
-          'prompt_type_id.id',
-          'prompt_type_id.name_th',
-          'prompt_type_id.name_en',
-          'prompt_type_id.slug',
-          'prompt_type_id.icon',
-          'prompt_type_id.sort',
+          'prompt_type_id', // Just get the ID
           'subcategory_id.id',
           'subcategory_id.name_th',
           'subcategory_id.name_en',
@@ -477,10 +479,31 @@ export async function getPromptsBySubcategory(
         ],
         limit,
         offset,
-        // Sort by prompt type first (for grouping), then by id
-        sort: ['prompt_type_id.sort', 'id'],
+        sort: ['id'],
       })
     );
+
+    // Merge prompt type data manually and sort by prompt type sort order
+    const promptsWithTypes = (prompts as any[])
+      .map((prompt: any) => ({
+        ...prompt,
+        prompt_type_id: prompt.prompt_type_id
+          ? (promptTypesMap.get(prompt.prompt_type_id) || {
+              id: prompt.prompt_type_id,
+              name_th: 'Unknown',
+              name_en: 'Unknown',
+              slug: 'uncategorized',
+              sort: 999,
+            })
+          : null,
+      }))
+      .sort((a: any, b: any) => {
+        // Sort by prompt_type_id.sort, then by id
+        const aSort = a.prompt_type_id?.sort ?? 999;
+        const bSort = b.prompt_type_id?.sort ?? 999;
+        if (aSort !== bSort) return aSort - bSort;
+        return a.id - b.id;
+      });
 
     // Get total count
     const allPrompts = await directus.request(
@@ -498,7 +521,7 @@ export async function getPromptsBySubcategory(
     const totalPages = Math.ceil(total / limit);
 
     return {
-      data: prompts as unknown as PromptCard[],
+      data: promptsWithTypes as unknown as PromptCard[],
       total,
       totalPages,
     };
@@ -506,6 +529,30 @@ export async function getPromptsBySubcategory(
     const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
     console.error('Error fetching prompts by subcategory:', errorMsg, error);
     return { data: [], total: 0, totalPages: 0 };
+  }
+}
+
+/**
+ * Helper: Fetch all prompt types and return as a Map for quick lookup
+ */
+async function getPromptTypesMap(): Promise<Map<string, PromptType>> {
+  try {
+    const promptTypes = await directus.request(
+      readItems('prompt_types', {
+        fields: ['id', 'name_th', 'name_en', 'slug', 'icon', 'sort'],
+        sort: ['sort'],
+        limit: -1,
+      })
+    );
+
+    const map = new Map<string, PromptType>();
+    for (const pt of promptTypes as any[]) {
+      map.set(pt.id, pt);
+    }
+    return map;
+  } catch (error) {
+    console.error('Error fetching prompt types map:', error);
+    return new Map();
   }
 }
 
@@ -562,7 +609,7 @@ export async function getPopularPrompts(limit: number = 6): Promise<PromptCard[]
  */
 export async function transformPromptToBlockCard(
   prompt: PromptCard,
-  index: number
+  _index: number // eslint-disable-line @typescript-eslint/no-unused-vars
 ): Promise<BlockPromptCard> {
   // Determine badge (free or premium)
   const isFree = await isPromptInFreeTier(prompt.id);

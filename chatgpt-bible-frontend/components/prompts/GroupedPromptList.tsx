@@ -28,6 +28,7 @@ interface PromptWithCategory extends Omit<PromptCardType, 'subcategory_id'> {
 interface PromptGroup {
   typeSlug: string;
   typeName: string;
+  typeSort: number;
   prompts: PromptWithCategory[];
 }
 
@@ -67,11 +68,13 @@ export default function GroupedPromptList({
       const promptType = (prompt as any).prompt_type_id;
       const typeSlug = promptType?.slug || 'uncategorized';
       const typeName = promptType?.name_th || 'Unknown';
+      const typeSort = promptType?.sort || 999;
 
       if (!acc[typeSlug]) {
         acc[typeSlug] = {
           typeSlug,
           typeName,
+          typeSort,
           prompts: [],
         };
       }
@@ -80,7 +83,13 @@ export default function GroupedPromptList({
       return acc;
     }, {});
 
-    return Object.values(grouped);
+    // Sort groups by typeSort, then by typeName
+    return Object.values(grouped).sort((a, b) => {
+      if (a.typeSort !== b.typeSort) {
+        return a.typeSort - b.typeSort;
+      }
+      return a.typeName.localeCompare(b.typeName);
+    });
   }, [prompts]);
 
   // Debug: log groups
