@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getPromptsBySubcategory } from '@/lib/services/prompts';
 import { getSubcategoryById } from '@/lib/services/subcategories';
-import PromptListExpanded from '@/components/prompts/PromptListExpanded';
+import GroupedPromptList from '@/components/prompts/GroupedPromptList';
 import PromptListSkeleton from '@/components/prompts/PromptListSkeleton';
 import Pagination from '@/components/prompts/Pagination';
 import { getServerUser } from '@/lib/auth/server';
@@ -68,7 +68,7 @@ export default async function SubcategoryPage({ params, searchParams }: Subcateg
         {/* Main Content */}
         <div className="max-w-7xl mx-auto">
           <Suspense fallback={<PromptListSkeleton />}>
-            <PromptListExpanded prompts={prompts} user={user} />
+            <GroupedPromptList prompts={prompts} user={user} />
           </Suspense>
 
           {totalPages > 1 && (

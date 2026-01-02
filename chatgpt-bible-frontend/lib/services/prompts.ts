@@ -466,6 +466,7 @@ export async function getPromptsBySubcategory(
           'prompt_type_id.name_en',
           'prompt_type_id.slug',
           'prompt_type_id.icon',
+          'prompt_type_id.sort',
           'subcategory_id.id',
           'subcategory_id.name_th',
           'subcategory_id.name_en',
@@ -477,7 +478,8 @@ export async function getPromptsBySubcategory(
         ],
         limit,
         offset,
-        sort: ['-id'],
+        // Sort by prompt type first (for grouping), then by id
+        sort: ['prompt_type_id.sort', 'id'],
       })
     );
 
