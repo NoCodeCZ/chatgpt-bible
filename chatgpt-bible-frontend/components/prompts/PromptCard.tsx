@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { PromptCard as PromptCardType, SubcategoryCategory } from '@/types/Prompt';
 import LockedPromptOverlay from './LockedPromptOverlay';
+import PromptMethodBadge from './PromptMethodBadge';
 
 interface PromptCardProps {
   prompt: PromptCardType;
@@ -52,9 +53,11 @@ export default function PromptCard({
     return subcategory.description_th || subcategory.description_en || '';
   };
 
-  // Get prompt title (unique per card)
+  // Get prompt title (prefer short_title for card display, falls back to full title)
   const getPromptTitle = (): string => {
-    return prompt.title_th || prompt.title_en || '';
+    // Prefer short_title for card display (falls back to full title)
+    return prompt.short_title_en || prompt.short_title_th ||
+           prompt.title_en || prompt.title_th || 'Untitled Prompt';
   };
 
   // Difficulty badge configuration
@@ -90,6 +93,13 @@ export default function PromptCard({
             </svg>
           </button>
         </div>
+
+        {/* Method Badge - Show prompt type first */}
+        {prompt.prompt_type && (
+          <div className="mb-3">
+            <PromptMethodBadge promptType={prompt.prompt_type} size="sm" />
+          </div>
+        )}
 
         {/* Category Badge */}
         <div className="inline-flex items-center px-2.5 py-1 rounded-md bg-purple-500/10 border border-purple-500/20 text-xs font-medium text-purple-300 mb-4">

@@ -20,6 +20,18 @@ import type { JobRole } from './JobRole';
 
 export type DifficultyLevel = 'beginner' | 'intermediate' | 'advanced';
 export type PromptStatus = 'draft' | 'published' | 'archived';
+export type PromptUseCase = 'quick' | 'brainstorm' | 'learn';
+
+export interface PromptType {
+  id: string;
+  name_th: string;
+  name_en: string;
+  slug: string;
+  icon?: string;
+  description_th?: string;
+  description_en?: string;
+  sort?: number | null;
+}
 
 export interface Prompt {
   id: number;
@@ -35,6 +47,7 @@ export interface Prompt {
   subcategory_id: number | null;
 
   // Relationships (populated via Directus API deep queries)
+  prompt_type?: PromptType | null;
   categories?: Array<{
     categories_id: Category;
   }>;
@@ -74,12 +87,16 @@ export interface PromptCard {
   id: number;
   title_th: string;
   title_en: string;
+  short_title_th?: string | null; // Short title for card display
+  short_title_en?: string | null; // Short English title
   description: string;
   prompt_text?: string; // Full prompt text for expanded display
   difficulty_level: DifficultyLevel;
   // Used for grouping in UI (e.g. related prompts within a subcategory)
   prompt_type_id?: string | null;
   prompt_type_name?: string | null;
+  prompt_type?: PromptType | null; // Full prompt type object for badge rendering
+  prompt_type_icon?: string | null; // Icon for quick access
   subcategory_id?: Subcategory | null; // M2O relationship - Directus returns the related object
   categories?: Array<{
     categories_id: Pick<Category, 'id' | 'name' | 'slug'>;

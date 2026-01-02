@@ -1,6 +1,6 @@
 import { directus } from '@/lib/directus';
 import { readItems, readItem } from '@directus/sdk';
-import type { PromptCard, Prompt } from '@/types/Prompt';
+import type { PromptCard, Prompt, PromptType } from '@/types/Prompt';
 import { unstable_cache } from 'next/cache';
 import type { PromptCard as BlockPromptCard } from '@/types/blocks';
 import { isPromptInFreeTier } from '@/lib/utils/access-control';
@@ -17,7 +17,28 @@ export interface GetPromptsFilters {
   categories?: string[]; // Array of category slugs
   jobRoles?: string[]; // Array of job role slugs
   difficulty?: string; // 'beginner' | 'intermediate' | 'advanced'
+  promptType?: string; // Filter by prompt type slug
   search?: string; // Search query (for Story 2.4)
+}
+
+/**
+ * Helper: Get prompt type IDs by slug
+ * Used for filtering prompts by prompt type slug
+ */
+async function getPromptTypeIdsBySlug(slug: string): Promise<string[]> {
+  try {
+    const promptTypes = await directus.request(
+      readItems('prompt_types', {
+        filter: { slug: { _eq: slug } },
+        fields: ['id'],
+        limit: 1,
+      })
+    );
+    return promptTypes.map((pt: any) => pt.id);
+  } catch (error) {
+    console.error('Error fetching prompt type by slug:', error);
+    return [];
+  }
 }
 
 /**
@@ -194,6 +215,13 @@ export async function getPrompts(
       filter['difficulty_level'] = { _eq: filters.difficulty };
     }
 
+    // Add prompt type filter
+    if (filters.promptType) {
+      filter['prompt_type_id'] = {
+        _in: await getPromptTypeIdsBySlug(filters.promptType),
+      };
+    }
+
     // Step 3: Fetch prompts with simple fields
     const query: any = {
       filter,
@@ -203,8 +231,16 @@ export async function getPrompts(
         'id',
         'title_th',
         'title_en',
+        'short_title_th',
+        'short_title_en',
         'description',
         'difficulty_level',
+        'prompt_type_id',
+        'prompt_type_id.id',
+        'prompt_type_id.name_th',
+        'prompt_type_id.name_en',
+        'prompt_type_id.slug',
+        'prompt_type_id.icon',
         'subcategory_id.id',
         'subcategory_id.name_th',
         'subcategory_id.name_en',
@@ -419,9 +455,17 @@ export async function getPromptsBySubcategory(
           'id',
           'title_th',
           'title_en',
+          'short_title_th',
+          'short_title_en',
           'description',
           'prompt_text',
           'difficulty_level',
+          'prompt_type_id',
+          'prompt_type_id.id',
+          'prompt_type_id.name_th',
+          'prompt_type_id.name_en',
+          'prompt_type_id.slug',
+          'prompt_type_id.icon',
           'subcategory_id.id',
           'subcategory_id.name_th',
           'subcategory_id.name_en',
@@ -591,4 +635,31 @@ export async function transformPromptToBlockCard(
     views: 0, // TODO: Add view_count field to prompts collection
     link,
   };
+}
+
+/**
+ * Fetch all prompt types from Directus with server-side caching
+ *
+ * @returns Array of PromptType objects for filtering and display
+ *
+ * Query Structure:
+ * - Fetches all prompt types
+ * - Sorts by sort field (if available)
+ * - Returns empty array on error
+ */
+export async function getPromptTypes(): Promise<PromptType[]> {
+  try {
+    const promptTypes = await directus.request(
+      readItems('prompt_types', {
+        fields: ['id', 'name_th', 'name_en', 'slug', 'icon', 'description_th', 'description_en', 'sort'],
+        sort: ['sort'],
+      })
+    );
+
+    return promptTypes as unknown as PromptType[];
+  } catch (error) {
+    const errorMsg = error instanceof Error ? error.message : JSON.stringify(error);
+    console.error('Error fetching prompt types:', errorMsg, error);
+    return [];
+  }
 }

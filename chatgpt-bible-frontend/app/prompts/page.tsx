@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import { getCategoriesWithSubcategories, getCategories } from '@/lib/services/categories';
-import { getPrompts, type GetPromptsFilters } from '@/lib/services/prompts';
+import { getPrompts, type GetPromptsFilters, getPromptTypes } from '@/lib/services/prompts';
 import { getServerUser } from '@/lib/auth/server';
 import CategoryList from '@/components/prompts/CategoryList';
 import PromptList from '@/components/prompts/PromptList';
@@ -9,12 +9,14 @@ import PromptFilters from '@/components/prompts/PromptFilters';
 import PromptFiltersMobile from '@/components/prompts/PromptFiltersMobile';
 import SearchBar from '@/components/prompts/SearchBar';
 import Pagination from '@/components/prompts/Pagination';
+import type { PromptType } from '@/types/Prompt';
 
 interface PromptsPageProps {
   searchParams: Promise<{
     categories?: string;
     search?: string;
     page?: string;
+    promptType?: string;
   }>;
 }
 
@@ -36,6 +38,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
 
   // Conditionally fetch data based on search query
   const categoriesData = await getCategories();
+  const promptTypesData = await getPromptTypes();
   let searchResults = null;
   let categoriesWithSubcategories = null;
   let total = 0;
@@ -111,7 +114,11 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
             </div>
             {/* Mobile Filter Button */}
             <div className="lg:hidden">
-              <PromptFiltersMobile categories={categoriesData} jobRoles={[]} />
+              <PromptFiltersMobile
+                categories={categoriesData}
+                jobRoles={[]}
+                promptTypes={promptTypesData}
+              />
             </div>
           </div>
           
@@ -123,7 +130,11 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
           {/* Desktop Filter Sidebar */}
           <aside className="hidden lg:block w-full lg:w-64 flex-shrink-0 space-y-6">
             <div className="sticky top-24">
-              <PromptFilters categories={categoriesData} jobRoles={[]} />
+              <PromptFilters
+                categories={categoriesData}
+                jobRoles={[]}
+                promptTypes={promptTypesData}
+              />
             </div>
           </aside>
 

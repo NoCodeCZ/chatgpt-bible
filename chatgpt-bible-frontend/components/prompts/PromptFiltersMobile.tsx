@@ -6,13 +6,15 @@ import { XMarkIcon, FunnelIcon } from '@heroicons/react/24/outline';
 import PromptFilters from './PromptFilters';
 import type { Category } from '@/types/Category';
 import type { JobRole } from '@/types/JobRole';
+import type { PromptType } from '@/types/Prompt';
 
 interface PromptFiltersMobileProps {
   categories: Category[];
   jobRoles: JobRole[];
+  promptTypes?: PromptType[];
 }
 
-export default function PromptFiltersMobile({ categories, jobRoles }: PromptFiltersMobileProps) {
+export default function PromptFiltersMobile({ categories, jobRoles, promptTypes }: PromptFiltersMobileProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -55,7 +57,11 @@ export default function PromptFiltersMobile({ categories, jobRoles }: PromptFilt
                   <XMarkIcon className="w-6 h-6 text-gray-600" />
                 </button>
               </div>
-              <PromptFilters categories={categories} jobRoles={jobRoles} />
+              <PromptFilters
+                categories={categories}
+                jobRoles={jobRoles}
+                promptTypes={promptTypes}
+              />
             </div>
           </div>
         </>

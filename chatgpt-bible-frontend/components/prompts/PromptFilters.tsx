@@ -4,13 +4,15 @@ import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import type { Category } from '@/types/Category';
 import type { JobRole } from '@/types/JobRole';
+import type { PromptType } from '@/types/Prompt';
 
 interface PromptFiltersProps {
   categories: Category[];
   jobRoles: JobRole[];
+  promptTypes?: PromptType[];
 }
 
-export default function PromptFilters({ categories, jobRoles }: PromptFiltersProps) {
+export default function PromptFilters({ categories, jobRoles, promptTypes }: PromptFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -18,38 +20,52 @@ export default function PromptFilters({ categories, jobRoles }: PromptFiltersPro
   const currentCategories = searchParams.get('categories')?.split(',') || [];
   const currentJobRoles = searchParams.get('jobRoles')?.split(',') || [];
   const currentDifficulty = searchParams.get('difficulty') || '';
-  
+  const currentPromptType = searchParams.get('promptType') || '';
+
   const [selectedCategories, setSelectedCategories] = useState<string[]>(currentCategories);
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>(currentJobRoles);
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>(currentDifficulty);
+  const [selectedPromptType, setSelectedPromptType] = useState<string>(currentPromptType);
 
-  const updateFilters = (newCategories: string[], newJobRoles: string[], newDifficulty: string) => {
+  const updateFilters = (
+    newCategories: string[],
+    newJobRoles: string[],
+    newDifficulty: string,
+    newPromptType: string
+  ) => {
     const params = new URLSearchParams(searchParams);
-    
+
     // Update category filter
     if (newCategories.length > 0) {
       params.set('categories', newCategories.join(','));
     } else {
       params.delete('categories');
     }
-    
+
     // Update job role filter
     if (newJobRoles.length > 0) {
       params.set('jobRoles', newJobRoles.join(','));
     } else {
       params.delete('jobRoles');
     }
-    
+
     // Update difficulty filter
     if (newDifficulty) {
       params.set('difficulty', newDifficulty);
     } else {
       params.delete('difficulty');
     }
-    
+
+    // Update prompt type filter
+    if (newPromptType) {
+      params.set('promptType', newPromptType);
+    } else {
+      params.delete('promptType');
+    }
+
     // Reset to page 1 when filters change
     params.delete('page');
-    
+
     router.push(`/prompts?${params.toString()}`);
   };
 
@@ -57,39 +73,49 @@ export default function PromptFilters({ categories, jobRoles }: PromptFiltersPro
     const newCategories = selectedCategories.includes(slug)
       ? selectedCategories.filter((c) => c !== slug)
       : [...selectedCategories, slug];
-    
+
     setSelectedCategories(newCategories);
-    updateFilters(newCategories, selectedJobRoles, selectedDifficulty);
+    updateFilters(newCategories, selectedJobRoles, selectedDifficulty, selectedPromptType);
   };
 
   const handleJobRoleToggle = (slug: string) => {
     const newJobRoles = selectedJobRoles.includes(slug)
       ? selectedJobRoles.filter((r) => r !== slug)
       : [...selectedJobRoles, slug];
-    
+
     setSelectedJobRoles(newJobRoles);
-    updateFilters(selectedCategories, newJobRoles, selectedDifficulty);
+    updateFilters(selectedCategories, newJobRoles, selectedDifficulty, selectedPromptType);
   };
 
   const handleDifficultyChange = (difficulty: string) => {
     const newDifficulty = selectedDifficulty === difficulty ? '' : difficulty;
     setSelectedDifficulty(newDifficulty);
-    updateFilters(selectedCategories, selectedJobRoles, newDifficulty);
+    updateFilters(selectedCategories, selectedJobRoles, newDifficulty, selectedPromptType);
+  };
+
+  // Prompt type handler
+  const handlePromptTypeChange = (promptTypeSlug: string) => {
+    const newPromptType = selectedPromptType === promptTypeSlug ? '' : promptTypeSlug;
+    setSelectedPromptType(newPromptType);
+    updateFilters(selectedCategories, selectedJobRoles, selectedDifficulty, newPromptType);
   };
 
   const clearAllFilters = () => {
     setSelectedCategories([]);
     setSelectedJobRoles([]);
     setSelectedDifficulty('');
+    setSelectedPromptType('');
     const params = new URLSearchParams(searchParams);
     params.delete('categories');
     params.delete('jobRoles');
     params.delete('difficulty');
+    params.delete('promptType');
     params.delete('page');
     router.push(`/prompts?${params.toString()}`);
   };
 
-  const activeFilterCount = selectedCategories.length + selectedJobRoles.length + (selectedDifficulty ? 1 : 0);
+  const activeFilterCount = selectedCategories.length + selectedJobRoles.length +
+    (selectedDifficulty ? 1 : 0) + (selectedPromptType ? 1 : 0);
 
   return (
     <div className="space-y-6">
@@ -237,6 +263,65 @@ export default function PromptFilters({ categories, jobRoles }: PromptFiltersPro
           })}
         </div>
       </div>
+
+      {/* Prompt Type Filter */}
+      {promptTypes && promptTypes.length > 0 && (
+        <div className="bg-zinc-900/30 border border-white/5 rounded-2xl p-5 backdrop-blur-sm">
+          <h3 className="text-sm font-semibold text-white mb-4 tracking-wide">Prompt Method</h3>
+          <div className="space-y-3">
+            {promptTypes.map((promptType) => {
+              const isSelected = selectedPromptType === promptType.slug;
+
+              // Get icon and label config
+              const getPromptTypeConfig = () => {
+                switch (promptType.slug) {
+                  case 'fill-in-blank':
+                    return { icon: '📝', label: promptType.name_en || 'Template', color: 'blue' };
+                  case 'open-ended':
+                    return { icon: '💡', label: promptType.name_en || 'Brainstorm', color: 'yellow' };
+                  case 'question-based':
+                    return { icon: '❓', label: promptType.name_en || 'Questions', color: 'purple' };
+                  case 'educational':
+                    return { icon: '📚', label: promptType.name_en || 'Learn', color: 'green' };
+                  default:
+                    return { icon: '📄', label: promptType.name_en || 'Prompt', color: 'zinc' };
+                }
+              };
+
+              const config = getPromptTypeConfig();
+
+              return (
+                <label
+                  key={promptType.id}
+                  className="flex items-center gap-3 cursor-pointer group"
+                >
+                  <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors
+                    ${isSelected
+                      ? `border-${config.color}-500`
+                      : `border-zinc-700 group-hover:border-${config.color}-500/50`
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="promptType"
+                      checked={isSelected}
+                      onChange={() => handlePromptTypeChange(promptType.slug)}
+                      className="appearance-none w-full h-full cursor-pointer outline-none"
+                    />
+                    <div className={`w-2 h-2 rounded-full
+                      ${isSelected ? `bg-${config.color}-500` : ''
+                    }`} />
+                  </div>
+                  <span className="text-base leading-none mr-1">{config.icon}</span>
+                  <span className={`text-sm transition-colors ${isSelected ? 'text-white' : 'text-zinc-400 group-hover:text-white'}`}>
+                    {config.label}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
