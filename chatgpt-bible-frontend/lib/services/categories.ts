@@ -152,3 +152,91 @@ export async function getCategoriesWithSubcategories(): Promise<CategoryWithSubc
   )();
 }
 
+/**
+ * Fetch a single category by slug with its subcategories
+ * Used for category detail page
+ *
+ * Cache TTL: 1 hour
+ * Tags: ['categories', `category-${slug}`] for on-demand revalidation
+ */
+export async function getCategoryBySlug(slug: string): Promise<CategoryWithSubcategories | null> {
+  return unstable_cache(
+    async () => {
+      try {
+        const categories = await directus.request(
+          readItems('categories', {
+            filter: { slug: { _eq: slug } },
+            fields: ['id', 'name', 'slug', 'description', 'sort', 'name_th', 'name_en'],
+            limit: 1,
+          })
+        );
+
+        if (!categories || categories.length === 0) {
+          return null;
+        }
+
+        const category = categories[0] as any;
+
+        // Fetch subcategories for this category
+        const subcategories = await directus.request(
+          readItems('subcategories', {
+            filter: { category_id: { _eq: category.id } },
+            fields: [
+              'id',
+              'name_th',
+              'name_en',
+              'slug',
+              'description_th',
+              'description_en',
+              'sort',
+            ],
+            sort: ['sort', 'name_th'],
+          })
+        );
+
+        // Get prompt counts for each subcategory
+        const subcategoriesWithCounts = await Promise.all(
+          (subcategories as any[]).map(async (sub) => {
+            try {
+              const countResult = await directus.request(
+                aggregate('prompts', {
+                  aggregate: { count: '*' },
+                  query: {
+                    filter: {
+                      subcategory_id: { _eq: sub.id },
+                      status: { _eq: 'published' },
+                    },
+                  },
+                })
+              );
+              const count = Number(countResult[0]?.count) || 0;
+              return {
+                ...sub,
+                prompt_count: count,
+              };
+            } catch {
+              return {
+                ...sub,
+                prompt_count: 0,
+              };
+            }
+          })
+        );
+
+        return {
+          ...category,
+          subcategories: subcategoriesWithCounts.filter((sub) => sub.prompt_count > 0),
+        };
+      } catch (error) {
+        console.error('Error fetching category by slug:', error);
+        return null;
+      }
+    },
+    [`category-${slug}`],
+    {
+      revalidate: 3600,
+      tags: ['categories', `category-${slug}`],
+    }
+  )();
+}
+

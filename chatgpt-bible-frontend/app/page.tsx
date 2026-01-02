@@ -7,7 +7,9 @@ import FAQBlock from '@/components/blocks/FAQBlock';
 import CTABlock from '@/components/blocks/CTABlock';
 import FooterBlock from '@/components/blocks/FooterBlock';
 import BackgroundAnimation from '@/components/BackgroundAnimation';
+import CategoryGrid from '@/components/prompts/CategoryGrid';
 import { getPopularPrompts, transformPromptToBlockCard } from '@/lib/services/prompts';
+import { getCategoriesWithSubcategories } from '@/lib/services/categories';
 
 // Enable ISR for dynamic prompt data
 export const revalidate = 300; // Revalidate every 5 minutes
@@ -27,13 +29,16 @@ export const metadata: Metadata = {
 export default async function LandingPage() {
   // Fetch popular prompts
   const popularPromptsData = await getPopularPrompts(6);
-  
+
   // Transform to block format
   const blockPrompts = await Promise.all(
-    popularPromptsData.map((prompt, index) => 
+    popularPromptsData.map((prompt, index) =>
       transformPromptToBlockCard(prompt, index)
     )
   );
+
+  // Fetch categories with subcategories
+  const categoriesWithSubcategories = await getCategoriesWithSubcategories();
 
   return (
     <main className="text-white antialiased relative min-h-screen">
@@ -101,6 +106,9 @@ export default async function LandingPage() {
           ],
         }}
       />
+
+      {/* Browse by Category Section */}
+      <CategoryGrid categories={categoriesWithSubcategories} limit={6} />
 
       {/* Popular Prompts Section */}
       <PromptsGridBlock

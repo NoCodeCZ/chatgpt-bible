@@ -62,7 +62,16 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
     user = await getServerUser();
   } else {
     // Browse mode: Fetch categories with subcategories
-    categoriesWithSubcategories = await getCategoriesWithSubcategories();
+    let allCategories = await getCategoriesWithSubcategories();
+
+    // Filter categories if category filter is applied
+    if (categoryFilter.length > 0) {
+      categoriesWithSubcategories = allCategories.filter((cat) =>
+        categoryFilter.includes(cat.slug)
+      );
+    } else {
+      categoriesWithSubcategories = allCategories;
+    }
 
     // Calculate totals
     total = categoriesWithSubcategories.reduce(
@@ -140,7 +149,10 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
                   )}
                 </>
               ) : (
-                <CategoryList categories={categoriesWithSubcategories || []} />
+                <CategoryList
+                  categories={categoriesWithSubcategories || []}
+                  hasActiveFilters={categoryFilter.length > 0}
+                />
               )}
             </Suspense>
           </div>
