@@ -1,9 +1,8 @@
 import { Suspense } from 'react';
-import { getSubcategories, getSubcategoriesByCategory } from '@/lib/services/subcategories';
-import { getCategories } from '@/lib/services/categories';
+import { getCategoriesWithSubcategories, getCategories } from '@/lib/services/categories';
 import { getPrompts, type GetPromptsFilters } from '@/lib/services/prompts';
 import { getServerUser } from '@/lib/auth/server';
-import SubcategoryList from '@/components/prompts/SubcategoryList';
+import CategoryList from '@/components/prompts/CategoryList';
 import PromptList from '@/components/prompts/PromptList';
 import PromptListSkeleton from '@/components/prompts/PromptListSkeleton';
 import PromptFilters from '@/components/prompts/PromptFilters';
@@ -38,8 +37,9 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
   // Conditionally fetch data based on search query
   const categoriesData = await getCategories();
   let searchResults = null;
-  let subcategories = null;
+  let categoriesWithSubcategories = null;
   let total = 0;
+  let totalSubcategories = 0;
   let user = null;
 
   if (searchQuery) {
@@ -57,22 +57,22 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
 
     searchResults = await getPrompts(filters);
     total = searchResults.total;
-    
+
     // Get user for access control
     user = await getServerUser();
   } else {
-    // Browse mode: Fetch subcategories (current behavior)
-    if (categoryFilter.length > 0) {
-      // Fetch subcategories for selected category
-      const subcategoriesByCategory = await Promise.all(
-        categoryFilter.map((cat) => getSubcategoriesByCategory(cat))
-      );
-      subcategories = subcategoriesByCategory.flat();
-    } else {
-      // Fetch all subcategories
-      subcategories = await getSubcategories();
-    }
-    total = subcategories.length;
+    // Browse mode: Fetch categories with subcategories
+    categoriesWithSubcategories = await getCategoriesWithSubcategories();
+
+    // Calculate totals
+    total = categoriesWithSubcategories.reduce(
+      (sum, cat) => sum + cat.subcategories.reduce((subSum, sub) => subSum + (sub.prompt_count || 0), 0),
+      0
+    );
+    totalSubcategories = categoriesWithSubcategories.reduce(
+      (sum, cat) => sum + cat.subcategories.length,
+      0
+    );
   }
 
   return (
@@ -94,7 +94,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
               <p className="text-base text-zinc-400">
                 {searchQuery
                   ? `Found ${total} ${total === 1 ? 'prompt' : 'prompts'} matching "${searchQuery}"`
-                  : `Browse ${total} subcategories of professionally-crafted ChatGPT prompts`}
+                  : `Browse ${total} professionally-crafted ChatGPT prompts across ${totalSubcategories} subcategories`}
               </p>
             </div>
             {/* Mobile Filter Button */}
@@ -120,8 +120,8 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
             <Suspense fallback={<PromptListSkeleton />}>
               {searchQuery && searchResults ? (
                 <>
-                  <PromptList 
-                    prompts={searchResults.data} 
+                  <PromptList
+                    prompts={searchResults.data}
                     hasActiveFilters={categoryFilter.length > 0 || !!searchQuery}
                     user={user}
                   />
@@ -140,10 +140,7 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
                   )}
                 </>
               ) : (
-                <SubcategoryList 
-                  subcategories={subcategories || []} 
-                  hasActiveFilters={categoryFilter.length > 0}
-                />
+                <CategoryList categories={categoriesWithSubcategories || []} />
               )}
             </Suspense>
           </div>
