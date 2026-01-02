@@ -39,7 +39,6 @@ export interface Prompt {
   title: string | null; // Deprecated, use title_th and title_en
   title_th: string;
   title_en: string;
-  description: string;
   prompt_text: string;
   difficulty_level: DifficultyLevel;
   sort: number | null;
@@ -89,7 +88,6 @@ export interface PromptCard {
   title_en: string;
   short_title_th?: string | null; // Short title for card display
   short_title_en?: string | null; // Short English title
-  description?: string | null; // Optional description (can be empty/null)
   prompt_text?: string; // Full prompt text for expanded display
   difficulty_level: DifficultyLevel;
   // Used for grouping in UI (e.g. related prompts within a subcategory)

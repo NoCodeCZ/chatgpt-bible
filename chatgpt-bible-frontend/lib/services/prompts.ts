@@ -233,7 +233,6 @@ export async function getPrompts(
         'title_en',
         'short_title_th',
         'short_title_en',
-        'description',
         'difficulty_level',
         'prompt_type_id',
         'prompt_type_id.id',
@@ -261,7 +260,6 @@ export async function getPrompts(
       const searchConditions: any[] = [
         { title_th: { _icontains: searchTerm } },
         { title_en: { _icontains: searchTerm } },
-        { description: { _icontains: searchTerm } },
         { prompt_text: { _icontains: searchTerm } },
       ];
       
@@ -318,7 +316,6 @@ export async function getPrompts(
       const searchConditions: any[] = [
         { title_th: { _icontains: searchTerm } },
         { title_en: { _icontains: searchTerm } },
-        { description: { _icontains: searchTerm } },
         { prompt_text: { _icontains: searchTerm } },
       ];
       
@@ -405,7 +402,6 @@ export async function getPromptById(id: string): Promise<Prompt | null> {
               'title',
               'title_th',
               'title_en',
-              'description',
               'prompt_text',
               'difficulty_level',
               'sort',
@@ -464,7 +460,6 @@ export async function getPromptsBySubcategory(
           'title_en',
           'short_title_th',
           'short_title_en',
-          'description',
           'prompt_text',
           'difficulty_level',
           'prompt_type_id', // Just get the ID
@@ -575,7 +570,6 @@ export async function getPopularPrompts(limit: number = 6): Promise<PromptCard[]
           'id',
           'title_th',
           'title_en',
-          'description',
           'difficulty_level',
           'subcategory_id.id',
           'subcategory_id.name_th',
@@ -675,7 +669,7 @@ export async function transformPromptToBlockCard(
 
   return {
     title,
-    description: prompt.description || undefined,
+    description: undefined, // No longer available - removed from schema
     icon,
     icon_color: iconColor,
     tags: tags.slice(0, 3), // Limit to 3 tags

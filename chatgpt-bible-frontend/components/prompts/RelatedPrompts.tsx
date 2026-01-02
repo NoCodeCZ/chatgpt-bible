@@ -99,7 +99,7 @@ export default function RelatedPrompts({
 
                     {/* Prompt Description */}
                     <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 mb-6 font-light">
-                      {truncateText(prompt.description, 120) || 'No description available'}
+                      {truncateText(prompt.prompt_text, 120) || 'Click to view prompt'}
                     </p>
                   </div>
 

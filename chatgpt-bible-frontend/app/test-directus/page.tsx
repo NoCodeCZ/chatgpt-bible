@@ -70,7 +70,7 @@ export default async function TestDirectusPage() {
                 <h2 className="font-bold text-lg">
                   {prompt.title_en || prompt.title_th || 'Untitled'}
                 </h2>
-                <p className="text-gray-600 text-sm mt-1">{prompt.description}</p>
+                <p className="text-gray-600 text-sm mt-1">{prompt.prompt_text?.slice(0, 100) || 'No text'}</p>
                 <span className="text-xs text-gray-500 mt-2 inline-block">
                   Difficulty: {prompt.difficulty_level}
                 </span>

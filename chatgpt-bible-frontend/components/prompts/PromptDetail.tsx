@@ -91,7 +91,8 @@ export default function PromptDetail({
         </div>
 
         <p className="pl-11 text-sm font-light leading-relaxed text-zinc-400">
-          {prompt.description}
+          {prompt.prompt_text?.slice(0, 200) || 'No additional content'}
+          {prompt.prompt_text && prompt.prompt_text.length > 200 ? '...' : ''}
         </p>
 
         {/* Prompt code block */}

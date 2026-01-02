@@ -248,6 +248,6 @@ export async function generateMetadata({
 
   return {
     title: `${displayTitle} | CharGPT Bible`,
-    description: prompt.description.slice(0, 160),
+    description: prompt.prompt_text.slice(0, 160),
   };
 }
