@@ -460,7 +460,6 @@ export async function getPromptsBySubcategory(
           'description',
           'prompt_text',
           'difficulty_level',
-          'prompt_type_id',
           'prompt_type_id.id',
           'prompt_type_id.name_th',
           'prompt_type_id.name_en',

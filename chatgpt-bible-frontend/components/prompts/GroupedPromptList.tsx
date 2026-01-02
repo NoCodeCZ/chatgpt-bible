@@ -60,8 +60,10 @@ export default function GroupedPromptList({
   // Group prompts by prompt_type.slug (memoized for performance)
   const groups = useMemo(() => {
     const grouped = prompts.reduce<Record<string, PromptGroup>>((acc, prompt) => {
-      const typeSlug = prompt.prompt_type?.slug || 'uncategorized';
-      const typeName = prompt.prompt_type?.name_th || 'Unknown';
+      // Directus returns nested relation under prompt_type_id
+      const promptType = (prompt as any).prompt_type_id;
+      const typeSlug = promptType?.slug || 'uncategorized';
+      const typeName = promptType?.name_th || 'Unknown';
 
       if (!acc[typeSlug]) {
         acc[typeSlug] = {
