@@ -408,7 +408,7 @@ export async function getPromptsBySubcategory(
   try {
     const offset = (page - 1) * limit;
 
-    // Simple query - just get basic prompt fields
+    // Query with full prompt text for expanded display
     const prompts = await directus.request(
       readItems('prompts', {
         filter: {
@@ -420,6 +420,7 @@ export async function getPromptsBySubcategory(
           'title_th',
           'title_en',
           'description',
+          'prompt_text',
           'difficulty_level',
           'subcategory_id.id',
           'subcategory_id.name_th',
