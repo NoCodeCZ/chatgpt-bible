@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useCopyToClipboard } from './useCopyToClipboard';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
 import { canAccessPrompt } from '@/lib/auth';
@@ -39,22 +40,25 @@ interface GroupedPromptListProps {
  * GroupedPromptList Component
  *
  * Displays prompts grouped by prompt type (Fill-in-the-blank, Open-ended, Question-based)
- * with section headers matching the markdown structure.
+ * with collapsible dropdown sections for each prompt type.
  *
  * Structure:
- * ### PROMPT แบบเติมคำ (FILL-IN-THE-BLANK PROMPTS)
- * - Prompt 1
- * - Prompt 2
+ * ### PROMPT แบบเติมคำ (FILL-IN-THE-BLANK PROMPTS) [Collapsible]
+ *   - Prompt 1
+ *   - Prompt 2
  *
- * ### PROMPT เชิงคำถาม (QUESTIONS-BASED PROMPTS)
- * - Prompt 3
- * - Prompt 4
+ * ### PROMPT เชิงคำถาม (QUESTIONS-BASED PROMPTS) [Collapsible]
+ *   - Prompt 3
+ *   - Prompt 4
  */
 export default function GroupedPromptList({
   prompts,
   user = null,
 }: GroupedPromptListProps) {
   const { copy, isCopied, reset } = useCopyToClipboard();
+
+  // State to track which sections are open (all open by default)
+  const [openSections, setOpenSections] = useState<Set<string>>(new Set());
 
   // Group prompts by prompt_type.slug
   const grouped = prompts.reduce<Record<string, PromptGroup>>((acc, prompt) => {
@@ -75,6 +79,34 @@ export default function GroupedPromptList({
 
   // Convert to array - order will be determined by database sort
   const groups = Object.values(grouped);
+
+  // Initialize all sections as open on first render
+  if (openSections.size === 0 && groups.length > 0) {
+    setOpenSections(new Set(groups.map(g => g.typeSlug)));
+  }
+
+  // Toggle section open/closed
+  const toggleSection = (typeSlug: string) => {
+    setOpenSections(prev => {
+      const next = new Set(prev);
+      if (next.has(typeSlug)) {
+        next.delete(typeSlug);
+      } else {
+        next.add(typeSlug);
+      }
+      return next;
+    });
+  };
+
+  // Expand all sections
+  const expandAll = () => {
+    setOpenSections(new Set(groups.map(g => g.typeSlug)));
+  };
+
+  // Collapse all sections
+  const collapseAll = () => {
+    setOpenSections(new Set());
+  };
 
   if (groups.length === 0 || prompts.length === 0) {
     return (
@@ -111,35 +143,109 @@ export default function GroupedPromptList({
   };
 
   return (
-    <div className="space-y-10">
-      {groups.map((group) => (
-        <section key={group.typeSlug}>
-          {/* Section Header */}
-          <h2 className="text-xl font-semibold text-zinc-100 mb-5 pb-2 border-b border-white/10 flex items-center gap-2">
+    <div className="space-y-4">
+      {/* Expand/Collapse All Buttons */}
+      <div className="flex items-center justify-end gap-3 mb-6">
+        <button
+          onClick={expandAll}
+          className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+        >
+          Expand All
+        </button>
+        <span className="text-zinc-600">|</span>
+        <button
+          onClick={collapseAll}
+          className="text-sm text-purple-400 hover:text-purple-300 transition-colors"
+        >
+          Collapse All
+        </button>
+      </div>
+
+      {groups.map((group) => {
+        const isOpen = openSections.has(group.typeSlug);
+
+        return (
+          <CollapsibleSection
+            key={group.typeSlug}
+            group={group}
+            isOpen={isOpen}
+            onToggle={() => toggleSection(group.typeSlug)}
+            user={user}
+            isCopied={isCopied}
+            onCopy={handleCopy}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+/**
+ * Collapsible section for a prompt type group
+ */
+interface CollapsibleSectionProps {
+  group: PromptGroup;
+  isOpen: boolean;
+  onToggle: () => void;
+  user: User | null;
+  isCopied: boolean;
+  onCopy: (promptText: string) => void;
+}
+
+function CollapsibleSection({ group, isOpen, onToggle, user, isCopied, onCopy }: CollapsibleSectionProps) {
+  return (
+    <section className="border border-white/10 rounded-2xl overflow-hidden bg-zinc-900/40">
+      {/* Collapsible Header */}
+      <button
+        onClick={onToggle}
+        className="w-full px-6 py-4 flex items-center justify-between bg-zinc-800/40 hover:bg-zinc-800/60 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          {/* Chevron Icon */}
+          <svg
+            className={`w-5 h-5 text-zinc-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+
+          {/* Type Name */}
+          <h2 className="text-lg font-semibold text-zinc-100">
             {group.typeName}
-            <span className="text-sm font-normal text-zinc-500">
-              ({group.prompts.length} {group.prompts.length === 1 ? 'prompt' : 'prompts'})
-            </span>
           </h2>
 
-          {/* Prompts in this group */}
-          <div className="space-y-4">
-            {group.prompts.map((prompt, index) => {
-              const isLocked = !canAccessPrompt(user, prompt.id - 1);
-              return (
-                <PromptItem
-                  key={prompt.id}
-                  prompt={prompt}
-                  isLocked={isLocked}
-                  isCopied={isCopied}
-                  onCopy={() => handleCopy(prompt.prompt_text || '')}
-                />
-              );
-            })}
-          </div>
-        </section>
-      ))}
-    </div>
+          {/* Prompt Count */}
+          <span className="text-sm font-normal text-zinc-500 bg-zinc-800/60 px-2 py-0.5 rounded-full">
+            {group.prompts.length} {group.prompts.length === 1 ? 'prompt' : 'prompts'}
+          </span>
+        </div>
+
+        {/* Expand/Collapse Indicator */}
+        <span className="text-xs text-zinc-500">
+          {isOpen ? 'Click to collapse' : 'Click to expand'}
+        </span>
+      </button>
+
+      {/* Collapsible Content */}
+      {isOpen && (
+        <div className="px-6 py-4 space-y-4 border-t border-white/5">
+          {group.prompts.map((prompt) => {
+            const isLocked = !canAccessPrompt(user, prompt.id - 1);
+            return (
+              <PromptItem
+                key={prompt.id}
+                prompt={prompt}
+                isLocked={isLocked}
+                isCopied={isCopied}
+                onCopy={() => onCopy(prompt.prompt_text || '')}
+              />
+            );
+          })}
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -169,7 +275,7 @@ function PromptItem({ prompt, isLocked, isCopied, onCopy }: PromptItemProps) {
                        null;
 
   return (
-    <article className="group bg-zinc-900/60 border border-white/10 hover:border-purple-500/20 rounded-2xl p-5 transition-all duration-300">
+    <article className="bg-zinc-900/60 border border-white/10 hover:border-purple-500/20 rounded-xl p-4 transition-all duration-300">
       {/* Header: Title + Badges + Copy Button */}
       <div className="flex items-start justify-between gap-4 mb-3">
         {/* Left: Title + Badges */}
