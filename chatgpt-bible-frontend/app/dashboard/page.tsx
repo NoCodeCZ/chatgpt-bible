@@ -101,42 +101,63 @@ export default function DashboardPage() {
                       : 'bg-zinc-700/50 text-zinc-300 border border-zinc-600/50'
                   }`}
                 >
-                  {isPaidUser ? 'Premium' : 'Free'}
+                  {isPaidUser ? 'Premium Member' : 'Free Member'}
                 </span>
               </div>
             </div>
           </div>
 
-          {isPaidUser && renewalDate && (
-            <p className="text-sm text-zinc-400 mb-4">
-              ต่ออายุ: {renewalDate}
-            </p>
-          )}
+          {isPaidUser ? (
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-sm text-green-400">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+                <span>คุณมีสิทธิ์เข้าถึง Prompts ทั้งหมด</span>
+              </div>
 
-          {!isPaidUser && (
-            <p className="text-sm text-zinc-400 mb-4">
-              อัปเกรดเป็น Premium เพื่อเข้าถึง prompts ทั้งหมด
-            </p>
-          )}
+              {renewalDate ? (
+                <p className="text-sm text-zinc-400">
+                  หมดอายุ: {renewalDate}
+                </p>
+              ) : (
+                <p className="text-sm text-zinc-400">
+                  สมาชิกตลอดชีพ (ไม่มีวันหมดอายุ)
+                </p>
+              )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-3 mt-4">
-            {isPaidUser ? (
-              <Link
-                href="/account/subscription"
-                className="px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-medium text-sm transition-all border border-zinc-700 hover:border-zinc-600 text-center"
-              >
-                จัดการการสมัครสมาชิก
-              </Link>
-            ) : (
-              <Link
-                href="/upgrade"
-                className="px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold text-sm transition-all shadow-lg shadow-purple-500/25 text-center"
-              >
-                อัปเกรดเป็น Premium
-              </Link>
-            )}
-          </div>
+              <div className="pt-2">
+                <Link
+                  href="/prompts"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-white font-medium text-sm transition-all"
+                >
+                  <span>ดู Prompts ทั้งหมด</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              <p className="text-sm text-zinc-400">
+                อัปเกรดเป็น Premium เพื่อเข้าถึง Prompts ทั้งหมด
+              </p>
+
+              <div className="pt-2">
+                <Link
+                  href="/upgrade"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-500 hover:to-purple-400 text-white font-semibold text-sm transition-all shadow-lg shadow-purple-500/25"
+                >
+                  <span>อัปเกรดเป็น Premium</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                  </svg>
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Quick Actions */}
@@ -169,6 +190,37 @@ export default function DashboardPage() {
                     ดู Prompts
                   </h3>
                   <p className="text-sm text-zinc-400">เรียกดูคอลเลกชัน prompts ทั้งหมด</p>
+                </div>
+              </div>
+            </Link>
+
+            <Link
+              href="/account/settings"
+              className="p-6 rounded-xl bg-zinc-900/50 border border-zinc-800 hover:border-purple-500/50 transition-all group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center group-hover:bg-purple-500/30 transition-colors">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-purple-400"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-white mb-1 group-hover:text-purple-400 transition-colors">
+                    ตั้งค่าบัญชี
+                  </h3>
+                  <p className="text-sm text-zinc-400">เปลี่ยนรหัสผ่านและข้อมูลส่วนตัว</p>
                 </div>
               </div>
             </Link>

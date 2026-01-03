@@ -10,9 +10,35 @@ export interface User {
   avatar: string | null;
   role: string;
   subscription_status: 'free' | 'paid';
+  subscription_expires_at: string | null;
+
+  // DEPRECATED: Stripe fields - kept for backward compatibility
+  // @deprecated No longer used with one-time purchase model
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
-  subscription_expires_at: string | null;
+}
+
+/**
+ * Premium license information (from premium_licenses collection)
+ * Admin creates this record in Directus when activating a user
+ */
+export interface PremiumLicense {
+  id: string;
+  user_id: string;
+  purchase_method: 'bank_transfer' | 'qr_code' | 'other';
+  purchase_date: string | null;
+  activated_at: string | null;
+  expires_at: string | null;  // null = lifetime
+  notes: string | null;
+}
+
+/**
+ * User's premium status with license details
+ */
+export interface PremiumStatus {
+  is_premium: boolean;
+  expires_at: string | null;
+  license: PremiumLicense | null;
 }
 
 /**
