@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import type { PromptCard } from '@/types/Prompt';
 import type { SubcategoryCategory } from '@/types/Prompt';
+import { getPromptText } from '@/lib/utils/prompt-utils';
 
 interface RelatedPromptsProps {
   prompts: PromptCard[];
@@ -99,7 +100,7 @@ export default function RelatedPrompts({
 
                     {/* Prompt Description */}
                     <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 mb-6 font-light">
-                      {truncateText(prompt.prompt_text, 120) || 'Click to view prompt'}
+                      {truncateText(getPromptText(prompt.prompt_text || ''), 120) || 'Click to view prompt'}
                     </p>
                   </div>
 

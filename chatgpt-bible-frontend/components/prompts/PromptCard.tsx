@@ -4,6 +4,7 @@ import Link from 'next/link';
 import type { PromptCard as PromptCardType, SubcategoryCategory } from '@/types/Prompt';
 import LockedPromptOverlay from './LockedPromptOverlay';
 import PromptMethodBadge from './PromptMethodBadge';
+import { getPromptText } from '@/lib/utils/prompt-utils';
 
 interface PromptCardProps {
   prompt: PromptCardType;
@@ -113,7 +114,7 @@ export default function PromptCard({
 
         {/* Prompt Description (unique per card) */}
         <p className="text-base sm:text-sm text-zinc-400 leading-relaxed sm:leading-relaxed line-clamp-3 mb-4 sm:mb-6 font-light">
-          {truncateText(prompt.prompt_text, 120) || 'Click to view prompt'}
+          {truncateText(getPromptText(prompt.prompt_text || ''), 120) || 'Click to view prompt'}
         </p>
       </div>
 

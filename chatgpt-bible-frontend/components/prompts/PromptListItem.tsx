@@ -2,6 +2,7 @@
 
 import { useCopyToClipboard } from './useCopyToClipboard';
 import DifficultyBadge from '@/components/ui/DifficultyBadge';
+import { getPromptText } from '@/lib/utils/prompt-utils';
 
 interface SubcategoryData {
   id: number;
@@ -38,7 +39,7 @@ export default function PromptListItem({ prompt, isLocked = false }: PromptListI
   const { copy, isCopied } = useCopyToClipboard();
 
   const handleCopy = () => {
-    copy(prompt.prompt_text || '');
+    copy(getPromptText(prompt.prompt_text || ''));
   };
 
   // Get category name with safe access
@@ -52,8 +53,8 @@ export default function PromptListItem({ prompt, isLocked = false }: PromptListI
   // Get description with safe access
   const description = prompt?.description || '';
 
-  // Get prompt text with safe access
-  const promptText = prompt?.prompt_text || 'No prompt text available';
+  // Get prompt text as-is (preserves all placeholders)
+  const promptText = getPromptText(prompt?.prompt_text || '') || 'No prompt text available';
 
   // Get difficulty with safe access
   const difficulty = prompt?.difficulty_level || 'beginner';

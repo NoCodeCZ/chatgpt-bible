@@ -2,6 +2,7 @@ import type { Prompt } from '@/types/Prompt';
 import PromptMetadata from './PromptMetadata';
 import CopyButton from './CopyButton';
 import UpgradeCTA from './UpgradeCTA';
+import { getPromptText } from '@/lib/utils/prompt-utils';
 
 interface PromptDetailProps {
   prompt: Prompt;
@@ -24,6 +25,9 @@ export default function PromptDetail({
   hasAccess,
   isPaidUser,
 }: PromptDetailProps) {
+  // Get the prompt text as-is (preserves all placeholders and context)
+  const promptText = getPromptText(prompt.prompt_text || '');
+
   // Use title_en if available, fallback to title_th, then to deprecated title field
   const displayTitle =
     prompt.title_en || prompt.title_th || prompt.title || 'Untitled Prompt';
@@ -91,8 +95,8 @@ export default function PromptDetail({
         </div>
 
         <p className="pl-11 text-sm font-light leading-relaxed text-zinc-400">
-          {prompt.prompt_text?.slice(0, 200) || 'No additional content'}
-          {prompt.prompt_text && prompt.prompt_text.length > 200 ? '...' : ''}
+          {promptText?.slice(0, 200) || 'No additional content'}
+          {promptText && promptText.length > 200 ? '...' : ''}
         </p>
 
         {/* Prompt code block */}
@@ -147,11 +151,11 @@ export default function PromptDetail({
                   </div>
                 </div>
 
-                <CopyButton text={prompt.prompt_text} size="sm" />
+                <CopyButton text={promptText} size="sm" />
               </div>
 
               <div className="bg-black/40 p-5 font-mono text-sm leading-relaxed text-zinc-300">
-                <pre className="whitespace-pre-wrap">{prompt.prompt_text}</pre>
+                <pre className="whitespace-pre-wrap">{promptText}</pre>
               </div>
             </div>
           ) : (
@@ -190,7 +194,7 @@ export default function PromptDetail({
                 <div className="blur-md">
                   <div className="font-mono text-sm leading-relaxed text-zinc-300">
                     <pre className="whitespace-pre-wrap">
-                      {prompt.prompt_text}
+                      {promptText}
                     </pre>
                   </div>
                 </div>

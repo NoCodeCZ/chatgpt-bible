@@ -6,6 +6,7 @@ import DifficultyBadge from '@/components/ui/DifficultyBadge';
 import { canAccessPrompt } from '@/lib/auth';
 import type { PromptCard as PromptCardType } from '@/types/Prompt';
 import type { User } from '@/types/User';
+import { getPromptText } from '@/lib/utils/prompt-utils';
 
 interface SubcategoryData {
   id: number;
@@ -259,7 +260,7 @@ function CollapsibleSection({ group, isOpen, onToggle, user, isCopied, onCopy }:
                 prompt={prompt}
                 isLocked={isLocked}
                 isCopied={isCopied}
-                onCopy={() => onCopy(prompt.prompt_text || '')}
+                onCopy={() => onCopy(getPromptText(prompt.prompt_text || ''))}
               />
             );
           })}
@@ -283,8 +284,8 @@ function PromptItem({ prompt, isLocked, isCopied, onCopy }: PromptItemProps) {
   // Get prompt title
   const title = prompt?.title_th || prompt?.title_en || 'Untitled Prompt';
 
-  // Get prompt text
-  const promptText = prompt?.prompt_text || 'No prompt text available';
+  // Get prompt text as-is (preserves all placeholders)
+  const promptText = getPromptText(prompt?.prompt_text || '') || 'No prompt text available';
 
   // Get difficulty
   const difficulty = prompt?.difficulty_level || 'beginner';
