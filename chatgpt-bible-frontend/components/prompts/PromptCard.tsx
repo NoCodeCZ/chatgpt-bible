@@ -77,11 +77,11 @@ export default function PromptCard({
 
   // When locked, don't wrap in Link to avoid nested <a> tags
   const cardContent = (
-    <article className="group bg-zinc-900/40 border border-white/10 hover:border-purple-500/30 rounded-2xl p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/10 hover:-translate-y-1 flex flex-col justify-between h-full backdrop-blur-md relative">
+    <article className="group bg-zinc-900/40 border border-white/10 hover:border-purple-500/30 rounded-2xl p-4 sm:p-6 transition-all duration-300 hover:shadow-xl hover:shadow-purple-900/10 hover:-translate-y-1 flex flex-col justify-between h-full backdrop-blur-md relative">
       <div>
         {/* Header: Subcategory name (context) + Bookmark */}
-        <div className="flex items-center justify-between mb-4">
-          <span className="text-[10px] uppercase tracking-wider font-semibold text-zinc-500">
+        <div className="flex items-center justify-between mb-3 sm:mb-4">
+          <span className="text-[11px] xs:text-[10px] uppercase tracking-wider font-semibold text-zinc-500">
             {subcategoryTH || 'Subcategory'}
           </span>
           <button 
@@ -107,18 +107,18 @@ export default function PromptCard({
         </div>
 
         {/* Prompt Title (unique per card) */}
-        <h3 className="text-lg font-medium text-zinc-100 mb-3 leading-snug line-clamp-2">
+        <h3 className="text-base sm:text-lg font-medium text-zinc-100 mb-3 sm:mb-3 leading-snug sm:leading-snug line-clamp-2">
           {truncateText(promptTitle, 80) || 'Untitled Prompt'}
         </h3>
 
         {/* Prompt Description (unique per card) */}
-        <p className="text-sm text-zinc-400 leading-relaxed line-clamp-3 mb-6 font-light">
+        <p className="text-base sm:text-sm text-zinc-400 leading-relaxed sm:leading-relaxed line-clamp-3 mb-4 sm:mb-6 font-light">
           {truncateText(prompt.prompt_text, 120) || 'Click to view prompt'}
         </p>
       </div>
 
       {/* Footer: Difficulty + View */}
-      <div className="flex items-center justify-between pt-4 border-t border-white/5">
+      <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-white/5">
         <span className={`flex items-center gap-1.5 px-2 py-1 rounded-full border text-[11px] font-medium
           ${difficultyConfig.color === 'green' 
             ? 'border-green-500/20 bg-green-500/5 text-green-400' 

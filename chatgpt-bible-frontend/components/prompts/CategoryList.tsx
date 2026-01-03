@@ -42,12 +42,12 @@ export default function CategoryList({ categories, hasActiveFilters = false }: C
   return (
     <div>
       {/* Quick Stats */}
-      <div className="flex items-center gap-6 mb-8 p-4 bg-zinc-900/30 border border-white/5 rounded-xl">
+      <div className="flex items-center gap-4 sm:gap-6 mb-8 p-3 sm:p-4 bg-zinc-900/30 border border-white/5 rounded-xl">
         <div className="flex items-center gap-2">
           <svg className="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
           </svg>
-          <span className="text-sm text-zinc-400">
+          <span className="text-sm sm:text-sm text-zinc-400">
             <span className="text-white font-medium">{totalPrompts}</span> prompts
           </span>
         </div>
@@ -56,7 +56,7 @@ export default function CategoryList({ categories, hasActiveFilters = false }: C
           <svg className="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
           </svg>
-          <span className="text-sm text-zinc-400">
+          <span className="text-sm sm:text-sm text-zinc-400">
             <span className="text-white font-medium">{totalSubcategories}</span> subcategories
           </span>
         </div>
@@ -65,7 +65,7 @@ export default function CategoryList({ categories, hasActiveFilters = false }: C
           <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
           </svg>
-          <span className="text-sm text-zinc-400">
+          <span className="text-sm sm:text-sm text-zinc-400">
             <span className="text-white font-medium">{categories.length}</span> categories
           </span>
         </div>

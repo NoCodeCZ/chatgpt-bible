@@ -98,15 +98,15 @@ export default async function PromptsPage({ searchParams }: PromptsPageProps) {
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-purple-600/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2"></div>
       </div>
 
-      <main className="pt-24 pb-20 px-4 sm:px-6 max-w-[1400px] mx-auto">
+      <main className="pt-20 sm:pt-24 pb-16 sm:pb-20 px-4 sm:px-6 max-w-[1400px] mx-auto">
         {/* Header & Search */}
-        <div className="mb-10 max-w-7xl mx-auto">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8 gap-4">
+        <div className="mb-8 sm:mb-10 max-w-7xl mx-auto">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6 sm:mb-8 gap-4">
             <div>
-              <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight mb-2 text-white">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-white">
                 {searchQuery ? 'Search Results' : 'Prompt Library'}
               </h1>
-              <p className="text-base text-zinc-400">
+              <p className="text-base sm:text-base text-zinc-400">
                 {searchQuery
                   ? `Found ${total} ${total === 1 ? 'prompt' : 'prompts'} matching "${searchQuery}"`
                   : `Browse ${total} professionally-crafted ChatGPT prompts across ${totalSubcategories} subcategories`}

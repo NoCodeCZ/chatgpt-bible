@@ -7,6 +7,29 @@
 @layer base {
   body {
     font-family: 'Noto Sans Thai', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    /* Mobile text readability improvements */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Improve text readability on mobile */
+  @media (max-width: 640px) {
+    body {
+      font-size: 16px; /* Ensure base size is at least 16px */
+      line-height: 1.6;
+    }
+
+    /* Improve paragraph spacing on mobile */
+    p {
+      line-height: 1.7;
+      letter-spacing: 0.01em;
+    }
+
+    /* Better heading spacing on mobile */
+    h1, h2, h3, h4, h5, h6 {
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
   }
 }
 
