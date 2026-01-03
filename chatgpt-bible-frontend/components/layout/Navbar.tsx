@@ -83,9 +83,9 @@ export default function Navbar({ items, logo }: NavbarProps) {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/5 supports-[backdrop-filter]:bg-black/20">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6" style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}>
+        <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Logo & Breadcrumb */}
           <div className="flex items-center gap-3">
             <Link href={logoConfig.href} className="flex items-center gap-3">
@@ -246,7 +246,7 @@ export default function Navbar({ items, logo }: NavbarProps) {
             <button
               type="button"
               onClick={toggleMobileMenu}
-              className="lg:hidden inline-flex items-center justify-center p-2 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 transition-colors"
+              className="lg:hidden inline-flex items-center justify-center p-3 rounded-lg text-zinc-400 hover:text-white hover:bg-white/10 active:bg-white/20 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-purple-500 transition-all min-h-[44px] min-w-[44px]"
               aria-expanded={isMobileMenuOpen}
               aria-label="Toggle navigation menu"
             >
@@ -267,8 +267,8 @@ export default function Navbar({ items, logo }: NavbarProps) {
 
       {/* Mobile menu */}
       {isMobileMenuOpen && (
-        <div className="lg:hidden border-t border-white/5 bg-black/95 backdrop-blur-xl">
-          <div className="px-4 pt-4 pb-6 space-y-2">
+        <div className="lg:hidden border-t border-white/5 bg-black/95 backdrop-blur-xl animate-in slide-in-from-top-2 duration-200">
+          <div className="px-4 pt-4 pb-6 space-y-2 max-h-[calc(100vh-3.5rem)] overflow-y-auto" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom, 0px))' }}>
             {/* Browse Prompts Link */}
             <Link
               href="/prompts"

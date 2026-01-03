@@ -19,33 +19,33 @@ export default function PricingBlock({ data }: PricingBlockProps) {
   }[theme];
 
   return (
-    <section className={`sm:px-6 lg:px-8 bg-zinc-950 pt-20 pr-4 pb-20 pl-4 ${themeClasses} relative z-20`}>
+    <section className={`sm:px-6 lg:px-8 bg-zinc-950 pt-16 sm:pt-20 pb-16 sm:pb-20 px-4 ${themeClasses} relative z-20`}>
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         {(heading || description) && (
-          <div className="text-center mb-16">
+          <div className="text-center mb-10 sm:mb-16 px-4">
             {heading && (
-              <h2 className={`text-3xl sm:text-4xl font-bold tracking-tight mb-4 ${textColorClasses}`}>
+              <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight mb-3 sm:mb-4 ${textColorClasses}`}>
                 {heading}
               </h2>
             )}
             {description && (
-              <p className={`text-base font-medium ${theme === 'dark' ? 'text-zinc-300' : 'text-zinc-600'}`}>
+              <p className={`text-sm sm:text-base font-medium ${theme === 'dark' ? 'text-zinc-300' : 'text-zinc-600'}`}>
                 {description}
               </p>
             )}
           </div>
         )}
 
-        {/* Pricing Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        {/* Pricing Plans - Horizontal scroll on mobile for comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto md:grid">
           {plans.map((plan, index) => (
             <div
               key={index}
               className={`relative flex flex-col ${
                 plan.featured
-                  ? 'bg-zinc-900 border-2 border-purple-500 rounded-2xl p-8 shadow-xl shadow-purple-500/20 md:-mt-2 md:mb-2'
-                  : 'bg-zinc-900/80 border border-white/10 rounded-2xl p-8 hover:border-white/20 hover:bg-zinc-900/90 transition-all'
+                  ? 'bg-zinc-900 border-2 border-purple-500 rounded-2xl p-5 sm:p-6 md:p-8 shadow-xl shadow-purple-500/20 md:-mt-2 md:mb-2'
+                  : 'bg-zinc-900/80 border border-white/10 rounded-2xl p-5 sm:p-6 md:p-8 hover:border-white/20 hover:bg-zinc-900/90 transition-all'
               }`}
             >
               {/* Badge */}
@@ -58,19 +58,19 @@ export default function PricingBlock({ data }: PricingBlockProps) {
               )}
 
               {/* Plan Header */}
-              <div className="text-center mb-8">
+              <div className="text-center mb-5 sm:mb-8">
                 <h3
-                  className={`text-lg font-bold mb-2 ${
+                  className={`text-base sm:text-lg font-bold mb-2 ${
                     plan.featured ? 'text-purple-400' : 'text-zinc-400'
                   }`}
                 >
                   {plan.name}
                 </h3>
                 <div className="flex items-baseline justify-center gap-1 mb-2">
-                  <span className="text-4xl sm:text-5xl font-bold text-white">{plan.price}</span>
+                  <span className="text-3xl sm:text-4xl md:text-5xl font-bold text-white">{plan.price}</span>
                 </div>
                 {plan.price_period && (
-                  <p className="text-sm text-zinc-500 mt-2">{plan.price_period}</p>
+                  <p className="text-xs sm:text-sm text-zinc-500 mt-2">{plan.price_period}</p>
                 )}
                 {plan.description && (
                   <>
@@ -156,13 +156,13 @@ export default function PricingBlock({ data }: PricingBlockProps) {
               )}
 
               {/* CTA Button - Push to bottom */}
-              <div className="mt-auto pt-8">
+              <div className="mt-auto pt-5 sm:pt-8">
                 <Link
                   href={plan.button_link}
-                  className={`w-full font-medium py-3 rounded-xl transition-all text-center block ${
+                  className={`w-full font-medium min-h-[48px] py-3 sm:py-3 rounded-xl transition-all text-center block flex items-center justify-center ${
                     plan.featured
-                      ? 'bg-purple-600 hover:bg-purple-700 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40'
-                      : 'bg-white/10 hover:bg-white/15 text-white border border-white/10 hover:border-white/20'
+                      ? 'bg-purple-600 hover:bg-purple-700 active:bg-purple-800 text-white shadow-lg shadow-purple-600/25 hover:shadow-purple-600/40'
+                      : 'bg-white/10 hover:bg-white/15 active:bg-white/20 text-white border border-white/10 hover:border-white/20'
                   }`}
                 >
                   {plan.button_text}

@@ -10,6 +10,8 @@
     /* Mobile text readability improvements */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Smooth scrolling for better mobile experience */
+    scroll-behavior: smooth;
   }
 
   /* Improve text readability on mobile */
@@ -29,6 +31,33 @@
     h1, h2, h3, h4, h5, h6 {
       line-height: 1.3;
       letter-spacing: -0.01em;
+    }
+
+    /* Safe area insets for notched devices (iPhone X+) */
+    .safe-bottom {
+      padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    .safe-top {
+      padding-top: env(safe-area-inset-top, 0px);
+    }
+
+    /* Prevent text selection on interactive elements for better touch */
+    button, a {
+      -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
+    }
+  }
+
+  /* Better focus states for accessibility */
+  *:focus-visible {
+    outline: 2px solid rgb(139 92 246);
+    outline-offset: 2px;
+  }
+
+  /* Improve touch feedback */
+  @media (hover: none) and (pointer: coarse) {
+    button, a {
+      -webkit-tap-highlight-color: rgba(139, 92, 246, 0.3);
     }
   }
 }
